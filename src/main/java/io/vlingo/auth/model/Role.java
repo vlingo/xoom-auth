@@ -35,7 +35,7 @@ public final class Role {
 
   public void unassign(final Group group) {
     assigned.unassign(group);
-    
+
     group.unassignFrom(this);
   }
 
@@ -46,8 +46,8 @@ public final class Role {
   }
 
   public void unassign(final User user) {
-    assigned.unassignFrom(user);
-    
+    assigned.unassign(user);
+
     user.unassignFrom(this);
   }
 
