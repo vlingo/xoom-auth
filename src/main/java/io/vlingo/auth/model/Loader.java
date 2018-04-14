@@ -10,5 +10,7 @@ package io.vlingo.auth.model;
 public interface Loader {
   public Group loadGroup(final TenantId tenantId, final String groupName);
 
+  public Permission loadPermission(final TenantId tenantId, final String permissionName);
+
   public Role loadRole(final TenantId tenantId, final String roleName);
 }

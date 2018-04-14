@@ -12,11 +12,17 @@ import java.util.Map;
 
 public class Repository implements Loader {
   private final Map<String,Group> groups = new HashMap<>();
+  private final Map<String,Permission> permissions = new HashMap<>();
   private final Map<String,Role> roles = new HashMap<>();
 
   @Override
   public Group loadGroup(final TenantId tenantId, final String groupName) {
     return groups.get(keyFor(tenantId, groupName));
+  }
+
+  @Override
+  public Permission loadPermission(TenantId tenantId, String permissionName) {
+    return permissions.get(keyFor(tenantId, permissionName));
   }
 
   @Override
@@ -26,6 +32,10 @@ public class Repository implements Loader {
 
   void add(final Group group) {
     groups.put(keyFor(group.tenantId(), group.name()), group);
+  }
+
+  void add(final Permission permission) {
+    permissions.put(keyFor(permission.tenantId(), permission.name()), permission);
   }
 
   void add(final Role role) {

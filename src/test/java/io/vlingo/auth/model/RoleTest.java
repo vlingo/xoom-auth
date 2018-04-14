@@ -13,6 +13,8 @@ import static io.vlingo.auth.model.ModelFixtures.tenant;
 import static io.vlingo.auth.model.ModelFixtures.user;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -148,5 +150,48 @@ public class RoleTest {
     role.unassign(user);
     assertFalse(role.isInRole(user, repository));
     assertFalse(user.isInRole(role, repository));
+  }
+
+  @Test
+  public void testThatRolePermissionAttaches() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Role role = role(tenant);
+    repository.add(role);
+    final Permission permission = Permission.with(tenant.tenantId(), "Test", "A test permission.");
+    repository.add(permission);
+    role.attach(permission);
+    assertNotNull(role.permissionOf(permission.name(), repository));
+    assertEquals(1, role.permissions(repository).size());
+  }
+
+  @Test
+  public void testThatRolePermissionDettaches() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Role role = role(tenant);
+    repository.add(role);
+    final Permission permission = Permission.with(tenant.tenantId(), "Test", "A test permission.");
+    repository.add(permission);
+    role.attach(permission);
+    assertNotNull(role.permissionOf(permission.name(), repository));
+    assertEquals(1, role.permissions(repository).size());
+    role.dettach(permission);
+    assertNull(role.permissionOf(permission.name(), repository));
+    assertTrue(role.permissions(repository).isEmpty());
+  }
+
+  @Test
+  public void testThatRolePermissionEnforcesConstraint() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Role role = role(tenant);
+    repository.add(role);
+    final Permission permission = Permission.with(tenant.tenantId(), "Test", "A test permission.");
+    repository.add(permission);
+    role.attach(permission);
+    final Constraint constraint = Constraint.of("LimitPerCustomer", "3", "A limit of 3 per customer.");
+    role.permissionOf(permission.name(), repository).enforce(constraint);
+    assertEquals("3", role.permissionOf(permission.name(), repository).constraintOf("LimitPerCustomer").value);
   }
 }

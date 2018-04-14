@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import io.vlingo.auth.model.EncodedMember.GroupMember;
+import io.vlingo.auth.model.EncodedMember.PermissionMember;
 import io.vlingo.auth.model.EncodedMember.RoleMember;
 import io.vlingo.auth.model.EncodedMember.UserMember;
 
@@ -26,6 +27,19 @@ public class EncodedMemberTest {
     assertEquals("Test", member.id);
     assertTrue(member.isGroup());
     assertTrue(member.isSameAs(GroupMember.GroupType));
+    assertFalse(member.isPermission());
+    assertFalse(member.isRole());
+    assertFalse(member.isUser());
+  }
+
+  @Test
+  public void testPermissionMember() {
+    final PermissionMember member = new PermissionMember(Permission.with(TenantId.unique(), "Test", "A test permission."));
+    
+    assertEquals("Test", member.id);
+    assertTrue(member.isPermission());
+    assertTrue(member.isSameAs(GroupMember.PermissionType));
+    assertFalse(member.isGroup());
     assertFalse(member.isRole());
     assertFalse(member.isUser());
   }
@@ -38,6 +52,7 @@ public class EncodedMemberTest {
     assertTrue(member.isRole());
     assertTrue(member.isSameAs(GroupMember.RoleType));
     assertFalse(member.isGroup());
+    assertFalse(member.isPermission());
     assertFalse(member.isUser());
   }
 
@@ -49,6 +64,7 @@ public class EncodedMemberTest {
     assertTrue(member.isUser());
     assertTrue(member.isSameAs(GroupMember.UserType));
     assertFalse(member.isGroup());
+    assertFalse(member.isPermission());
     assertFalse(member.isRole());
   }
 

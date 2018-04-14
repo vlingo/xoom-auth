@@ -9,6 +9,7 @@ package io.vlingo.auth.model;
 
 abstract class EncodedMember {
   static final char GroupType = 'G';
+  static final char PermissionType = 'P';
   static final char RoleType = 'R';
   static final char UserType = 'U';
 
@@ -24,8 +25,8 @@ abstract class EncodedMember {
     return type == GroupType;
   }
 
-  boolean isSameAs(final char type) {
-    return this.type == type;
+  boolean isPermission() {
+    return type == PermissionType;
   }
 
   boolean isRole() {
@@ -34,6 +35,10 @@ abstract class EncodedMember {
 
   boolean isUser() {
     return type == UserType;
+  }
+
+  boolean isSameAs(final char type) {
+    return this.type == type;
   }
 
   @Override
@@ -60,6 +65,12 @@ abstract class EncodedMember {
   static final class GroupMember extends EncodedMember {
     GroupMember(final Group group) {
       super(group.name(), GroupType);
+    }
+  }
+
+  static final class PermissionMember extends EncodedMember {
+    PermissionMember(final Permission permission) {
+      super(permission.name(), PermissionType);
     }
   }
 

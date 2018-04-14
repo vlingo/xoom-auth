@@ -7,12 +7,19 @@
 
 package io.vlingo.auth.model;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import io.vlingo.auth.model.EncodedMember.PermissionMember;
+
 public final class Role {
   private static final String RoleGroupPrefix = "role:";
 
   private String description;
   private final Group assigned;
   private final String name;
+  private final Set<EncodedMember> permissions;
   private final TenantId tenantId;
 
   public static Role with(final TenantId tenantId, final String name, final String description) {
@@ -51,18 +58,45 @@ public final class Role {
     user.unassignFrom(this);
   }
 
+  public void attach(final Permission permission) {
+    permissions.add(new PermissionMember(permission));
+  }
+
+  public void dettach(final Permission permission) {
+    permissions.remove(new PermissionMember(permission));
+  }
+
+  public Permission permissionOf(final String name, final Loader loader) {
+    for (final EncodedMember member : permissions) {
+      if (member.id.equals(name)) {
+        return loader.loadPermission(tenantId, member.id);
+      }
+    }
+    return null;
+  }
+
+  public Set<Permission> permissions(final Loader loader) {
+    final Set<Permission> loaded = new HashSet<>(permissions.size());
+
+    for (final EncodedMember member : permissions) {
+      loaded.add(loader.loadPermission(tenantId, member.id));
+    }
+
+    return Collections.unmodifiableSet(loaded);
+  }
+
   public boolean isInRole(final Group group, final Loader loader) {
     if (assigned.isMember(group, loader)) {
       return true;
     }
-    return false; //group.isInRole(this, loader);
+    return false;
   }
 
   public boolean isInRole(final User user, final Loader loader) {
     if (assigned.isMember(user, loader)) {
       return true;
     }
-    return false; //user.isInRole(this, loader);
+    return false;
   }
 
   public String name() {
@@ -83,5 +117,6 @@ public final class Role {
     this.name = name;
     this.description = description;
     this.assigned = Group.forRole(tenantId, RoleGroupPrefix + name, "Internal group for role " + name + ".");
+    this.permissions = new HashSet<>(2);
   }
 }
