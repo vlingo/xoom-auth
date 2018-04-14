@@ -43,25 +43,33 @@ public final class Group {
 
   public void assign(final Group group) {
     if (members.add(new GroupMember(group))) {
-      group.assignTo(this);
+      if (this.isNormalGroup()) {
+        group.assignTo(this);
+      }
     }
   }
 
   public void unassign(final Group group) {
     if (members.remove(new GroupMember(group))) {
-      group.unassignFrom(this);
+      if (this.isNormalGroup()) {
+        group.unassignFrom(this);
+      }
     }
   }
 
   public void assign(final User user) {
     if (members.add(new UserMember(user))) {
-      user.assignTo(this);
+      if (this.isNormalGroup()) {
+        user.assignTo(this);
+      }
     }
   }
 
   public void unassign(final User user) {
     if (members.remove(new UserMember(user))) {
-      user.unassignFrom(this);
+      if (this.isNormalGroup()) {
+        user.unassignFrom(this);
+      }
     }
   }
 
