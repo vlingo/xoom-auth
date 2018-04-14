@@ -60,6 +60,15 @@ public final class User {
     return Collections.unmodifiableSet(credentials);
   }
 
+  public Credential vlingoCredential() {
+    for (final Credential credential : credentials) {
+      if (credential.isVlingo()) {
+        return credential;
+      }
+    }
+    return null;
+  }
+
   public void replace(final Profile profile) {
     this.profile = profile;
   }

@@ -42,11 +42,15 @@ public class ModelFixtures {
   }
 
   public static User user(final Tenant tenant) {
+    return user(tenant, "bigsecret");
+  }
+
+  public static User user(final Tenant tenant, final String secret) {
     final User user =
             tenant.registerUser(
                     "test",
                     Profile.with(PersonName.of("Given", "A", "Family"), EmailAddress.of("given@family.org"), Phone.of("303-555-1212")),
-                    Credential.vlingoCredentialFrom("vlingo-platform", "given@family.org", "bigsecret"),
+                    Credential.vlingoCredentialFrom("vlingo-platform", "given@family.org", secret),
                     true);
     return user;
   }

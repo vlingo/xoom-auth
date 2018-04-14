@@ -35,6 +35,10 @@ public final class Credential implements Comparable<Credential> {
     return secret;
   }
 
+  public boolean isVlingo() {
+    return this.type == Type.VLINGO;
+  }
+
   public Type type() {
     return type;
   }
