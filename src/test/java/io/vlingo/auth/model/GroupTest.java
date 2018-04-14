@@ -13,6 +13,7 @@ import static io.vlingo.auth.model.ModelFixtures.tenant;
 import static io.vlingo.auth.model.ModelFixtures.user;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -40,14 +41,41 @@ public class GroupTest {
   }
 
   @Test
+  public void testThatGroupMemberGroupUnassigned() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Group group = group(tenant);
+    repository.add(group);
+    final Group another = group(tenant, "Another", "Another test group.");
+    repository.add(another);
+    group.assign(another);
+    assertTrue(group.isMember(another, repository));
+    group.unassign(another);
+    assertFalse(group.isMember(another, repository));
+  }
+
+  @Test
   public void testThatGroupUserMemberAssigned() {
     final Tenant tenant = tenant();
     final Repository repository = new Repository();
     final Group group = group(tenant);
+    repository.add(group);
     final User user = user(tenant);
     group.assign(user);
-    repository.add(group);
     assertTrue(group.isMember(user, repository));
+  }
+
+  @Test
+  public void testThatGroupUserMemberUnassigned() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Group group = group(tenant);
+    repository.add(group);
+    final User user = user(tenant);
+    group.assign(user);
+    assertTrue(group.isMember(user, repository));
+    group.unassign(user);
+    assertFalse(group.isMember(user, repository));
   }
 
   @Test

@@ -12,6 +12,7 @@ import static io.vlingo.auth.model.ModelFixtures.role;
 import static io.vlingo.auth.model.ModelFixtures.tenant;
 import static io.vlingo.auth.model.ModelFixtures.user;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -39,6 +40,20 @@ public class RoleTest {
   }
 
   @Test
+  public void testThatRoleGroupUnassigned() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Group group = group(tenant);
+    repository.add(group);
+    final Role role = role(tenant);
+    repository.add(role);
+    role.assign(group);
+    assertTrue(role.isInRole(group, repository));
+    role.unassign(group);
+    assertFalse(role.isInRole(group, repository));
+  }
+
+  @Test
   public void testThatRoleNestedGroupAssigned() {
     final Tenant tenant = tenant();
     final Repository repository = new Repository();
@@ -54,6 +69,24 @@ public class RoleTest {
   }
 
   @Test
+  public void testThatRoleNestedGroupUnassigned() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Group group = group(tenant);
+    repository.add(group);
+    final Group nested = group(tenant, "Nested", "The nested group.");
+    repository.add(nested);
+    group.assign(nested);
+    final Role role = role(tenant);
+    role.assign(group);
+    assertTrue(role.isInRole(nested, repository));
+    assertTrue(nested.isInRole(role, repository));
+    role.unassign(group);
+    assertFalse(role.isInRole(nested, repository));
+    assertFalse(nested.isInRole(role, repository));
+  }
+
+  @Test
   public void testThatRoleUserAssigned() {
     final Tenant tenant = tenant();
     final Repository repository = new Repository();
@@ -63,6 +96,21 @@ public class RoleTest {
     role.assign(user);
     assertTrue(role.isInRole(user, repository));
     assertTrue(user.isInRole(role, repository));
+  }
+
+  @Test
+  public void testThatRoleUserUnassigned() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Role role = role(tenant);
+    repository.add(role);
+    final User user = user(tenant);
+    role.assign(user);
+    assertTrue(role.isInRole(user, repository));
+    assertTrue(user.isInRole(role, repository));
+    role.unassign(user);
+    assertFalse(role.isInRole(user, repository));
+    assertFalse(user.isInRole(role, repository));
   }
 
   @Test
@@ -80,5 +128,25 @@ public class RoleTest {
     role.assign(user);
     assertTrue(role.isInRole(user, repository));
     assertTrue(user.isInRole(role, repository));
+  }
+
+  @Test
+  public void testThatRoleUserInNestedGroupUnassigned() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Group group = group(tenant);
+    repository.add(group);
+    final Group nested = group(tenant, "Nested", "The nested group.");
+    repository.add(nested);
+    group.assign(nested);
+    final User user = user(tenant);
+    final Role role = role(tenant);
+    repository.add(role);
+    role.assign(user);
+    assertTrue(role.isInRole(user, repository));
+    assertTrue(user.isInRole(role, repository));
+    role.unassign(user);
+    assertFalse(role.isInRole(user, repository));
+    assertFalse(user.isInRole(role, repository));
   }
 }

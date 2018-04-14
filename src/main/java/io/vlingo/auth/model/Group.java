@@ -47,9 +47,21 @@ public final class Group {
     }
   }
 
+  public void unassign(final Group group) {
+    if (members.remove(new GroupMember(group))) {
+      group.unassignFrom(this);
+    }
+  }
+
   public void assign(final User user) {
     if (members.add(new UserMember(user))) {
       user.assignTo(this);
+    }
+  }
+
+  public void unassign(final User user) {
+    if (members.remove(new UserMember(user))) {
+      user.unassignFrom(this);
     }
   }
 
@@ -77,7 +89,8 @@ public final class Group {
     }
     for (final EncodedMember member : outer) {
       if (member.isGroup()) {
-        if (loader.loadGroup(tenantId, member.id).isInRole(roleName, loader)) {
+        final Group group = loader.loadGroup(tenantId, member.id);
+        if (group != null && group.isNormalGroup() && group.isInRole(roleName, loader)) {
           return true;
         }
       }
@@ -91,7 +104,7 @@ public final class Group {
 
   @Override
   public String toString() {
-    return "Group[tenantId=" + tenantId + " name=" + name + " description=" + description + "]";
+    return "Group[tenantId=" + tenantId + " name=" + name + " description=" + description + " type=" + type + " members=" + members + "]";
   }
 
   void assignTo(final Group group) {
@@ -116,7 +129,7 @@ public final class Group {
     }
   }
 
-  boolean isGroup() {
+  boolean isNormalGroup() {
     return type == Type.Group;
   }
 

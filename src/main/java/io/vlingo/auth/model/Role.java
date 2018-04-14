@@ -8,6 +8,8 @@
 package io.vlingo.auth.model;
 
 public final class Role {
+  private static final String RoleGroupPrefix = "role:";
+
   private String description;
   private final Group assigned;
   private final String name;
@@ -31,8 +33,10 @@ public final class Role {
     group.assignTo(this);
   }
 
-  public void unassignFrom(final Group group) {
-    assigned.unassignFrom(group);
+  public void unassign(final Group group) {
+    assigned.unassign(group);
+    
+    group.unassignFrom(this);
   }
 
   public void assign(final User user) {
@@ -41,7 +45,7 @@ public final class Role {
     user.assignTo(this);
   }
 
-  public void unassignFrom(final User user) {
+  public void unassign(final User user) {
     assigned.unassignFrom(user);
     
     user.unassignFrom(this);
@@ -78,6 +82,6 @@ public final class Role {
     this.tenantId = tenantId;
     this.name = name;
     this.description = description;
-    this.assigned = Group.forRole(tenantId, name, "Internal group for role " + name + ".");
+    this.assigned = Group.forRole(tenantId, RoleGroupPrefix + name, "Internal group for role " + name + ".");
   }
 }
