@@ -131,12 +131,6 @@ public final class Group {
     this.roles.remove(new RoleMember(role));
   }
 
-  void unassignFrom(final User user) {
-    if (members.remove(new UserMember(user))) {
-      user.unassignFrom(this);
-    }
-  }
-
   boolean isNormalGroup() {
     return type == Type.Group;
   }
