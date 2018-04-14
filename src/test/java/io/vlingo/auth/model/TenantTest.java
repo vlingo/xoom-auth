@@ -93,7 +93,7 @@ public class TenantTest {
     assertEquals("vlingo-platform", user.credentials().iterator().next().authority);
     assertEquals("given@family.org", user.credentials().iterator().next().id);
     assertEquals("bigsecret", user.credentials().iterator().next().secret);
-    assertEquals(Credential.Type.VLINGO, user.credentials().iterator().next().type);
+    assertTrue(user.credentials().iterator().next().isVlingo());
 
     assertTrue(user.isActive());
   }

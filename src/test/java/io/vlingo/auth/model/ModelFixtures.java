@@ -50,7 +50,7 @@ public class ModelFixtures {
             tenant.registerUser(
                     "test",
                     Profile.with(PersonName.of("Given", "A", "Family"), EmailAddress.of("given@family.org"), Phone.of("303-555-1212")),
-                    Credential.vlingoCredentialFrom("vlingo-platform", "given@family.org", secret),
+                    Credential.vlingoCredentialFrom(Credential.VlingoPlatformAuthority, "given@family.org", secret),
                     true);
     return user;
   }

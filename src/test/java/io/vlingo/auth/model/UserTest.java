@@ -11,7 +11,6 @@ import static io.vlingo.auth.model.ModelFixtures.group;
 import static io.vlingo.auth.model.ModelFixtures.role;
 import static io.vlingo.auth.model.ModelFixtures.tenant;
 import static io.vlingo.auth.model.ModelFixtures.user;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -52,12 +51,12 @@ public class UserTest {
     assertEquals("partner-platform", credential1.authority);
     assertEquals("me@about.org", credential1.id);
     assertEquals("reallybigsecret", credential1.secret);
-    assertEquals(Credential.Type.OATH, credential1.type);
+    assertTrue(credential1.isOauth());
     
     assertEquals("vlingo-platform", credential2.authority);
     assertEquals("given@family.org", credential2.id);
     assertEquals("bigsecret", credential2.secret);
-    assertEquals(Credential.Type.VLINGO, credential2.type);
+    assertTrue(credential2.isVlingo());
   }
 
   @Test
