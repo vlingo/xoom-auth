@@ -99,7 +99,7 @@ public class UserTest {
   }
 
   @Test
-  public void testUserIsInRole() {
+  public void testThatUserIsInRole() {
     final Repository repository = new Repository();
     final User user = user();
     final Role role = role();
@@ -111,7 +111,7 @@ public class UserTest {
   }
 
   @Test
-  public void testUserIsInRoleByGroup() {
+  public void testThatUserIsInRoleByGroup() {
     final Repository repository = new Repository();
     final Tenant tenant = tenant();
     final User user = user(tenant);
@@ -127,6 +127,42 @@ public class UserTest {
     
     assertTrue(user.isInRole(role, repository));
     assertTrue(role.isInRole(user, repository));
+  }
+
+  @Test
+  public void testThatUserHasRolePermission() {
+    final Repository repository = new Repository();
+    final Tenant tenant = tenant();
+    final User user = user(tenant);
+    final Role role = role(tenant);
+    repository.add(role);
+    final Permission permission = Permission.with(tenant.tenantId(), "Test", "A test permission.");
+    repository.add(permission);
+    role.attach(permission);
+    role.assign(user);
+    
+    assertTrue(user.hasPermission(permission, repository));
+  }
+
+  @Test
+  public void testThatUserHasRolePermissionByGroup() {
+    final Repository repository = new Repository();
+    final Tenant tenant = tenant();
+    final User user = user(tenant);
+    final Group group = group(tenant);
+    repository.add(group);
+    final Group innerGroup = group(tenant, "Inner", "Inner description.");
+    repository.add(innerGroup);
+    group.assign(innerGroup);
+    innerGroup.assign(user);
+    final Role role = role(tenant);
+    repository.add(role);
+    final Permission permission = Permission.with(tenant.tenantId(), "Test", "A test permission.");
+    repository.add(permission);
+    role.attach(permission);
+    role.assign(group);
+    
+    assertTrue(user.hasPermission(permission, repository));
   }
 
   @Test

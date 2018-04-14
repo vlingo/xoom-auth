@@ -66,6 +66,15 @@ public final class Role {
     permissions.remove(new PermissionMember(permission));
   }
 
+  public boolean hasPermissionOf(final String name) {
+    for (final EncodedMember member : permissions) {
+      if (member.id.equals(name)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public Permission permissionOf(final String name, final Loader loader) {
     for (final EncodedMember member : permissions) {
       if (member.id.equals(name)) {

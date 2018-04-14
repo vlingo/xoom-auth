@@ -60,6 +60,15 @@ public final class User {
     return Collections.unmodifiableSet(credentials);
   }
 
+  public Credential credentialOf(final String authority) {
+    for (final Credential credential : credentials) {
+      if (credential.authority.equals(authority)) {
+        return credential;
+      }
+    }
+    return null;
+  }
+
   public Credential vlingoCredential() {
     for (final Credential credential : credentials) {
       if (credential.isVlingo()) {
@@ -67,6 +76,30 @@ public final class User {
       }
     }
     return null;
+  }
+
+  public boolean hasPermission(final Permission permission, final Loader loader) {
+    return hasPermission(permission.name(), loader);
+  }
+
+  public boolean hasPermission(final String permissionName, final Loader loader) {
+    for (final EncodedMember member : memberships) {
+      if (member.isRole()) {
+        final Role role = loader.loadRole(tenantId, member.id);
+        if (role != null && role.hasPermissionOf(permissionName)) {
+          return true;
+        }
+      }
+    }
+    for (final EncodedMember member : memberships) {
+      if (member.isGroup()) {
+        final Group group = loader.loadGroup(tenantId, member.id);
+        if (group != null && group.hasPermission(permissionName, loader)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   public void replace(final Profile profile) {

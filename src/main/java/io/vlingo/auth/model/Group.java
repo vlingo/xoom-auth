@@ -85,6 +85,28 @@ public final class Group {
     return name;
   }
 
+  public boolean hasPermission(final Permission permission, final Loader loader) {
+    return hasPermission(permission.name(), loader);
+  }
+
+  public boolean hasPermission(String permissionName, final Loader loader) {
+    for (final EncodedMember member : roles) {
+      final Role role = loader.loadRole(tenantId, member.id);
+      if (role != null && role.hasPermissionOf(permissionName)) {
+        return true;
+      }
+    }
+    for (final EncodedMember member : outer) {
+      if (member.isGroup()) {
+        final Group group = loader.loadGroup(tenantId, member.id);
+        if (group != null && group.isNormalGroup() && group.hasPermission(permissionName, loader)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   public boolean isInRole(final Role role, final Loader loader) {
     return this.isInRole(role.name(), loader);
   }

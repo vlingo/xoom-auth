@@ -125,6 +125,7 @@ public class GroupTest {
     final Role role = role(tenant);
     role.assign(group);
     assertTrue(role.isInRole(group, repository));
+    assertTrue(group.isInRole(role, repository));
   }
 
   @Test
@@ -139,6 +140,40 @@ public class GroupTest {
     final Role role = role(tenant);
     role.assign(group);
     assertTrue(role.isInRole(nested, repository));
+    assertTrue(nested.isInRole(role, repository));
+  }
+
+  @Test
+  public void testThatGroupHasRolePermission() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Group group = group(tenant);
+    repository.add(group);
+    final Role role = role(tenant);
+    repository.add(role);
+    final Permission permission = Permission.with(tenant.tenantId(), "Test", "A test permission.");
+    repository.add(permission);
+    role.attach(permission);
+    role.assign(group);
+    assertTrue(group.hasPermission(permission, repository));
+  }
+
+  @Test
+  public void testThatNestedGroupHasRolePermission() {
+    final Tenant tenant = tenant();
+    final Repository repository = new Repository();
+    final Group group = group(tenant);
+    repository.add(group);
+    final Group nested = group(tenant, "Nested", "The nested group.");
+    repository.add(nested);
+    group.assign(nested);
+    final Role role = role(tenant);
+    repository.add(role);
+    final Permission permission = Permission.with(tenant.tenantId(), "Test", "A test permission.");
+    repository.add(permission);
+    role.attach(permission);
+    role.assign(group);
+    assertTrue(nested.hasPermission(permission, repository));
   }
 
   @Test
