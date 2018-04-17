@@ -8,12 +8,14 @@
 package io.vlingo.auth.model;
 
 public final class Tenant {
+  public static final Tenant NonExisting = new Tenant(null, null, null, false);
+
   private boolean active;
   private String description;
   private String name;
   private final TenantId tenantId;
 
-  public static Tenant with(String name, String description, boolean active) {
+  public static Tenant subscribeFor(String name, String description, boolean active) {
     return new Tenant(TenantId.unique(), name, description, active);
   }
 
@@ -49,6 +51,10 @@ public final class Tenant {
     return tenantId;
   }
 
+  public boolean doesNotExist() {
+    return tenantId == null;
+  }
+
   public Group provisionGroup(final String name, final String description) {
     return Group.with(tenantId, name, description);
   }
@@ -59,6 +65,25 @@ public final class Tenant {
 
   public User registerUser(final String username, final Profile profile, final Credential credential, final boolean active) {
     return User.of(tenantId, username, profile, credential, active);
+  }
+
+  @Override
+  public int hashCode() {
+    return 31 * this.tenantId.value.hashCode();
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (other == null || other.getClass() != Tenant.class) {
+      return false;
+    }
+    
+    return this.tenantId.equals(((Tenant) other).tenantId);
+  }
+
+  @Override
+  public String toString() {
+    return "Tenant[tenantId=" + tenantId + " name=" + name + " description=" + description + " active=" + active + "]";
   }
 
   private Tenant(TenantId tenantId, String name, String description, boolean active) {
