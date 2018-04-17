@@ -18,7 +18,7 @@ public class TenantTest {
 
   @Test
   public void testThatTenantIsCreated() {
-    final Tenant tenant = Tenant.with("Test", "A test tenant.", true);
+    final Tenant tenant = Tenant.subscribeFor("Test", "A test tenant.", true);
     assertNotNull(tenant);
     assertTrue(tenant.isActive());
     assertEquals("Test", tenant.name());
@@ -27,7 +27,7 @@ public class TenantTest {
 
   @Test
   public void testThatTenantDeactivatesActivates() {
-    final Tenant tenant = Tenant.with("Test", "A test tenant.", true);
+    final Tenant tenant = Tenant.subscribeFor("Test", "A test tenant.", true);
     assertTrue(tenant.isActive());
     tenant.deactivate();
     assertFalse(tenant.isActive());
@@ -37,7 +37,7 @@ public class TenantTest {
 
   @Test
   public void testThatDescriptionChanges() {
-    final Tenant tenant = Tenant.with("Test", "A test tenant.", true);
+    final Tenant tenant = Tenant.subscribeFor("Test", "A test tenant.", true);
     assertEquals("A test tenant.", tenant.description());
     tenant.changeDescription("A test tenant re-described.");
     assertEquals("A test tenant re-described.", tenant.description());
@@ -45,7 +45,7 @@ public class TenantTest {
 
   @Test
   public void testThatNameChanges() {
-    final Tenant tenant = Tenant.with("Test", "A test tenant.", true);
+    final Tenant tenant = Tenant.subscribeFor("Test", "A test tenant.", true);
     assertEquals("Test", tenant.name());
     tenant.changeName("Test-Renamed");
     assertEquals("Test-Renamed", tenant.name());
@@ -53,7 +53,7 @@ public class TenantTest {
 
   @Test
   public void testThatTenantProvisionsGroup() {
-    final Tenant tenant = Tenant.with("Test", "A test tenant.", true);
+    final Tenant tenant = Tenant.subscribeFor("Test", "A test tenant.", true);
     final Group group = tenant.provisionGroup("Test", "A test group.");
     assertNotNull(group);
     assertEquals("Test", group.name());
@@ -62,7 +62,7 @@ public class TenantTest {
 
   @Test
   public void testThatTenantProvisionsRole() {
-    final Tenant tenant = Tenant.with("Test", "A test tenant.", true);
+    final Tenant tenant = Tenant.subscribeFor("Test", "A test tenant.", true);
     final Role role = tenant.provisionRole("Test", "A test role.");
     assertNotNull(role);
     assertEquals("Test", role.name());
@@ -71,7 +71,7 @@ public class TenantTest {
 
   @Test
   public void testThatUserRegisters() {
-    final Tenant tenant = Tenant.with("Test", "A test tenant.", true);
+    final Tenant tenant = Tenant.subscribeFor("Test", "A test tenant.", true);
     final User user =
             tenant.registerUser(
                     "test",

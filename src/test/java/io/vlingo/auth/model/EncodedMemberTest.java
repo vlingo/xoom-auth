@@ -69,7 +69,7 @@ public class EncodedMemberTest {
   }
 
   private User user() {
-    final Tenant tenant = Tenant.with("Test", "", true);
+    final Tenant tenant = Tenant.subscribeFor("Test", "", true);
 
     final User user =
             tenant.registerUser(

@@ -34,7 +34,7 @@ public class ModelFixtures {
   }
 
   public static Tenant tenant() {
-    return Tenant.with("Test", "A test tenant.", true);
+    return Tenant.subscribeFor("Test", "A test tenant.", true);
   }
 
   public static User user() {
