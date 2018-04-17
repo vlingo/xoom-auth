@@ -12,7 +12,7 @@ import java.io.IOException;
 public final class Properties {
   public static final Properties instance;
 
-  private static final String propertiesFile = "/vlingo-directory.properties";
+  private static final String propertiesFile = "/vlingo-auth.properties";
 
   static {
     instance = open();
@@ -29,6 +29,10 @@ public final class Properties {
       throw new IllegalStateException("Must provide properties file on classpath: " + propertiesFile);
     }
 
+    return new Properties(properties);
+  }
+
+  static Properties openForTest(java.util.Properties properties) {
     return new Properties(properties);
   }
 
