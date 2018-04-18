@@ -10,7 +10,7 @@ package io.vlingo.auth.model;
 public final class Credential implements Comparable<Credential> {
   public static final String VlingoPlatformAuthority = "vlingo-platform";
 
-  private enum Type { VLINGO, OATH }
+  public enum Type { VLINGO, OATH }
 
   public final String authority;
   public final String id;

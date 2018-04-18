@@ -9,6 +9,7 @@ package io.vlingo.auth.infra.resource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -145,6 +146,64 @@ public class TenantResourceTest {
     assertEquals("New-Name", getRenamedTenantData.name);
   }
 
+  @Test
+  public void testThatTenantGroupProvisions() {
+    final TenantData tenantData = tenantData();
+
+    final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
+    assertEquals(Response.Created, createdResponse.status);
+    final TenantData createdTenantData = deserialized(createdResponse.entity.content, TenantData.class);
+    
+    final Response groupProvisionedResponse = postProvisionGroup(createdTenantData.tenantId, "Group", "A group description.");
+    assertEquals(Response.Created, groupProvisionedResponse.status);
+    final GroupData groupData = deserialized(groupProvisionedResponse.entity.content, GroupData.class);
+    assertEquals(createdTenantData.tenantId, groupData.tenantId);
+    assertEquals("Group", groupData.name);
+    assertEquals("A group description.", groupData.description);
+  }
+
+  @Test
+  public void testThatTenantRoleProvisions() {
+    final TenantData tenantData = tenantData();
+
+    final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
+    assertEquals(Response.Created, createdResponse.status);
+    final TenantData createdTenantData = deserialized(createdResponse.entity.content, TenantData.class);
+    
+    final Response roleProvisionedResponse = postProvisionRole(createdTenantData.tenantId, "Role", "A role description.");
+    assertEquals(Response.Created, roleProvisionedResponse.status);
+    final RoleData roleData = deserialized(roleProvisionedResponse.entity.content, RoleData.class);
+    assertEquals(createdTenantData.tenantId, roleData.tenantId);
+    assertEquals("Role", roleData.name);
+    assertEquals("A role description.", roleData.description);
+  }
+
+  @Test
+  public void testThatTenantUserRegisters() {
+    final TenantData tenantData = tenantData();
+
+    final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
+    assertEquals(Response.Created, createdResponse.status);
+    final TenantData createdTenantData = deserialized(createdResponse.entity.content, TenantData.class);
+    
+    final UserRegistrationData userRegData = userRegistrationData(createdTenantData.tenantId);
+    final Response registerUserResponse = postRegisterUser(createdTenantData.tenantId, userRegData);
+    assertEquals(Response.Created, registerUserResponse.status);
+    final UserRegistrationData userRegistrateredData = deserialized(registerUserResponse.entity.content, UserRegistrationData.class);
+    assertEquals(createdTenantData.tenantId, userRegistrateredData.tenantId);
+    assertEquals(userRegData.username, userRegistrateredData.username);
+    assertEquals(userRegData.profile.name.given, userRegistrateredData.profile.name.given);
+    assertEquals(userRegData.profile.name.second, userRegistrateredData.profile.name.second);
+    assertEquals(userRegData.profile.name.family, userRegistrateredData.profile.name.family);
+    assertEquals(userRegData.profile.emailAddress, userRegistrateredData.profile.emailAddress);
+    assertEquals(userRegData.profile.phone, userRegistrateredData.profile.phone);
+    assertEquals(userRegData.credential.authority, userRegistrateredData.credential.authority);
+    assertEquals(userRegData.credential.id, userRegistrateredData.credential.id);
+    assertNotEquals(userRegData.credential.secret, userRegistrateredData.credential.secret);
+    assertEquals("VLINGO", userRegistrateredData.credential.type);
+    assertTrue(userRegistrateredData.active);
+  }
+
   @Before
   public void setUp() throws Exception {
     world = World.start("tenant-resource-test");
@@ -159,7 +218,7 @@ public class TenantResourceTest {
     properties.setProperty("server.probe.timeout", "10");
     properties.setProperty("server.request.missing.content.timeout", "100");
 
-    properties.setProperty("resource.name.tenant", "[subscribe, queryTenant, activate, deactivate, description, name]");
+    properties.setProperty("resource.name.tenant", "[subscribe, queryTenant, activate, deactivate, description, name, provisionGroup, provisionRole, registerUser]");
     properties.setProperty("resource.tenant.handler", "io.vlingo.auth.infra.resource.TenantResource");
     properties.setProperty("resource.tenant.pool", "10");
     properties.setProperty("resource.tenant.disallowPathParametersWithSlash", "true");
@@ -192,6 +251,21 @@ public class TenantResourceTest {
     properties.setProperty("action.tenant.name.uri", "/tenants/{tenantId}/name");
     properties.setProperty("action.tenant.name.to", "changeName(String tenantId, body:java.lang.String name)");
     properties.setProperty("action.tenant.name.permission", "io.vlingo.auth.TenantRepresentative");
+    
+    properties.setProperty("action.tenant.provisionGroup.method", "POST");
+    properties.setProperty("action.tenant.provisionGroup.uri", "/tenants/{tenantId}/groups");
+    properties.setProperty("action.tenant.provisionGroup.to", "provisionGroup(String tenantId, body:io.vlingo.auth.infra.resource.GroupData groupData)");
+    properties.setProperty("action.tenant.provisionGroup.permission", "io.vlingo.auth.TenantRepresentative");
+    
+    properties.setProperty("action.tenant.provisionRole.method", "POST");
+    properties.setProperty("action.tenant.provisionRole.uri", "/tenants/{tenantId}/roles");
+    properties.setProperty("action.tenant.provisionRole.to", "provisionRole(String tenantId, body:io.vlingo.auth.infra.resource.RoleData roleData)");
+    properties.setProperty("action.tenant.provisionRole.permission", "io.vlingo.auth.TenantRepresentative");
+    
+    properties.setProperty("action.tenant.registerUser.method", "POST");
+    properties.setProperty("action.tenant.registerUser.uri", "/tenants/{tenantId}/users");
+    properties.setProperty("action.tenant.registerUser.to", "registerUser(String tenantId, body:io.vlingo.auth.infra.resource.UserRegistrationData userData)");
+    properties.setProperty("action.tenant.registerUser.permission", "io.vlingo.auth.TenantRepresentative");
     
     server = Server.startWith(world.stage(), properties);
     Thread.sleep(10); // delay for server startup
@@ -253,6 +327,15 @@ public class TenantResourceTest {
     return TenantData.from(withId ? tenant.tenantId().value : null, tenant.name(), tenant.description(), tenant.isActive());
   }
 
+  protected UserRegistrationData userRegistrationData(final String tenantId) {
+    return UserRegistrationData.from(
+            tenantId,
+            "useroftheyear",
+            ProfileData.from(PersonNameData.of("Given", "A", "Family"), "me@family.us", "212-555-1212"),
+            CredentialData.from("vlingo-platform", "useroftheyear", "topsecret"),
+            true);
+  }
+
   protected Response getTenantRequestResponse(final String tenantLocation) {
     final String request = "GET " + tenantLocation + " HTTP/1.1\nHost: vlingo.io\n\n";
     return requestResponse(request);
@@ -278,8 +361,26 @@ public class TenantResourceTest {
     return requestResponse(request);
   }
 
+  protected Response postProvisionGroup(final String tenantId, final String name, final String description) {
+    final String body = serialized(GroupData.from(name, description));
+    final String request = "POST /tenants/" + tenantId + "/groups HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
+    return requestResponse(request);
+  }
+
+  protected Response postProvisionRole(final String tenantId, final String name, final String description) {
+    final String body = serialized(RoleData.from(name, description));
+    final String request = "POST /tenants/" + tenantId + "/roles HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
+    return requestResponse(request);
+  }
+
   protected Response postTenantSubscribesRequestResponse(final TenantData tenantToSubscribe) {
     final String request = postSubscribeRequest(serialized(tenantToSubscribe));
+    return requestResponse(request);
+  }
+  
+  protected Response postRegisterUser(String tenantId, UserRegistrationData userRegData) {
+    final String body = serialized(userRegData);
+    final String request = "POST /tenants/" + tenantId + "/users HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
   

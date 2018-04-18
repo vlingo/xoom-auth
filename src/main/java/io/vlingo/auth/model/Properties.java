@@ -66,6 +66,11 @@ public final class Properties {
     return p;
   }
 
+  public final String cryptoType() {
+    final String type = getString("crypto.type", "argon2");
+    return type;
+  }
+
   public final Boolean getBoolean(final String key, final Boolean defaultValue) {
     final String value = getString(key, defaultValue.toString());
     return Boolean.parseBoolean(value);
