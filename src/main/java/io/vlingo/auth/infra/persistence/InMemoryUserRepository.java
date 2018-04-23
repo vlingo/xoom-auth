@@ -19,7 +19,8 @@ public class InMemoryUserRepository extends BaseRepository implements UserReposi
 
   @Override
   public User userOf(final TenantId tenantId, final String username) {
-    return users.get(keyFor(tenantId, username));
+    final User user = users.get(keyFor(tenantId, username));
+    return user == null ? User.NonExisting : user;
   }
 
   @Override

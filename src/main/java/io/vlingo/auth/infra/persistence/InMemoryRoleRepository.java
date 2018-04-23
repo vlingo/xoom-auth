@@ -19,7 +19,8 @@ public class InMemoryRoleRepository extends BaseRepository implements RoleReposi
 
   @Override
   public Role roleOf(final TenantId tenantId, final String roleName) {
-    return roles.get(keyFor(tenantId, roleName));
+    final Role role = roles.get(keyFor(tenantId, roleName));
+    return role == null ? Role.NonExisting : role;
   }
 
   @Override

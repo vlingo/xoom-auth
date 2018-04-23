@@ -19,7 +19,8 @@ public class InMemoryGroupRepository extends BaseRepository implements GroupRepo
 
   @Override
   public Group groupOf(final TenantId tenantId, final String groupName) {
-    return groups.get(keyFor(tenantId, groupName));
+    final Group group = groups.get(keyFor(tenantId, groupName));
+    return group == null ? Group.NonExisting : group;
   }
 
   @Override

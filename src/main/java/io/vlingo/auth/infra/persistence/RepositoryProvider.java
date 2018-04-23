@@ -8,6 +8,7 @@
 package io.vlingo.auth.infra.persistence;
 
 import io.vlingo.auth.model.GroupRepository;
+import io.vlingo.auth.model.Loader;
 import io.vlingo.auth.model.PermissionRepository;
 import io.vlingo.auth.model.Properties;
 import io.vlingo.auth.model.RoleRepository;
@@ -20,6 +21,7 @@ public class RepositoryProvider {
   private static RoleRepository roleRepository;
   private static TenantRepository tenantRepository;
   private static UserRepository userRepository;
+  private static Loader loader;
 
   public static synchronized GroupRepository groupRepository() {
     if (groupRepository == null) {
@@ -54,6 +56,13 @@ public class RepositoryProvider {
       userRepository = instanceOf("repository.user", "io.vlingo.auth.infra.persistence.InMemoryUserRepository");
     }
     return userRepository;
+  }
+
+  public static synchronized Loader loader() {
+    if (loader == null) {
+      loader = new InMemoryLoader(groupRepository, permissionRepository, roleRepository);
+    }
+    return loader;
   }
 
   @SuppressWarnings("unchecked")

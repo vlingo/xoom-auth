@@ -19,7 +19,8 @@ public class InMemoryPermissionRepository extends BaseRepository implements Perm
 
   @Override
   public Permission permissionOf(final TenantId tenantId, final String permissionName) {
-    return permissions.get(keyFor(tenantId, permissionName));
+    final Permission permission = permissions.get(keyFor(tenantId, permissionName));
+    return permission == null ? Permission.NonExisting : permission;
   }
 
   @Override
