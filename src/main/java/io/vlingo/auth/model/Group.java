@@ -15,6 +15,8 @@ import io.vlingo.auth.model.EncodedMember.RoleMember;
 import io.vlingo.auth.model.EncodedMember.UserMember;
 
 public final class Group {
+  public static final Group NonExisting = new Group(null, null, null, null);
+
   private enum Type { Group, RoleGroup }
 
   private String description;
@@ -31,6 +33,10 @@ public final class Group {
 
   static Group forRole(final TenantId tenantId, final String name, final String description) {
     return new Group(tenantId, name, description, Type.RoleGroup);
+  }
+
+  public boolean doesNotExist() {
+    return this.tenantId == null || this.name == null;
   }
 
   public void changeDescription(final String description) {
