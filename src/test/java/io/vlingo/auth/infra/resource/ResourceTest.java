@@ -111,6 +111,21 @@ public abstract class ResourceTest {
     return requestResponse(request);
   }
 
+  protected Response getRoleRequestResponse(String tenantId, String name) {
+    final String request = "GET /tenants/" + tenantId + "/roles/" + name + " HTTP/1.1\nHost: vlingo.io\n\n";
+    return requestResponse(request);
+  }
+
+  protected Response getRoleGroupRequestResponse(RoleData roleData, String groupName) {
+    final String request = "GET /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/groups/" + groupName + " HTTP/1.1\nHost: vlingo.io\n\n";
+    return requestResponse(request);
+  }
+
+  protected Response getRoleUserRequestResponse(RoleData roleData, String username) {
+    final String request = "GET /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/users/" + username + " HTTP/1.1\nHost: vlingo.io\n\n";
+    return requestResponse(request);
+  }
+
   protected Response postProvisionGroup(final String tenantId, final String name, final String description) {
     final String body = serialized(GroupData.from(name, description));
     final String request = "POST /tenants/" + tenantId + "/groups HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
