@@ -15,6 +15,8 @@ import io.vlingo.auth.model.EncodedMember.GroupMember;
 import io.vlingo.auth.model.EncodedMember.RoleMember;
 
 public final class User {
+  public static final User NonExisting = new User(null, null, null, null, false);
+
   private boolean active;
   private Set<Credential> credentials;
   private final Set<EncodedMember> memberships;
@@ -24,6 +26,10 @@ public final class User {
 
   public static User of(final TenantId tenantId, final String username, final Profile profile, final Credential credential, final boolean active) {
     return new User(tenantId, username, profile, credential, active);
+  }
+
+  public boolean doesNotExist() {
+    return this.tenantId == null || this.username == null;
   }
 
   public void activate() {
@@ -156,6 +162,15 @@ public final class User {
   }
 
   private User(final TenantId tenantId, final String username, final Profile profile, final Credential credential, final boolean active) {
+    if (tenantId == null && username == null && profile == null && credential == null) {
+      this.tenantId = tenantId;
+      this.username = username;
+      this.profile = profile;
+      this.credentials = null;
+      this.active = active;
+      this.memberships = null;
+      return;
+    }
     if (tenantId == null) throw new IllegalArgumentException("User tenant id required.");
     this.tenantId = tenantId;
 
