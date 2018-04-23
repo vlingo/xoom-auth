@@ -19,6 +19,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import io.vlingo.auth.model.Constraint.Type;
+
 public class RoleTest {
 
   @Test
@@ -176,7 +178,7 @@ public class RoleTest {
     role.attach(permission);
     assertNotNull(role.permissionOf(permission.name(), repository));
     assertEquals(1, role.permissions(repository).size());
-    role.dettach(permission);
+    role.detach(permission);
     assertNull(role.permissionOf(permission.name(), repository));
     assertTrue(role.permissions(repository).isEmpty());
   }
@@ -190,7 +192,7 @@ public class RoleTest {
     final Permission permission = Permission.with(tenant.tenantId(), "Test", "A test permission.");
     repository.add(permission);
     role.attach(permission);
-    final Constraint constraint = Constraint.of("LimitPerCustomer", "3", "A limit of 3 per customer.");
+    final Constraint constraint = Constraint.of(Type.Integer, "LimitPerCustomer", "3", "A limit of 3 per customer.");
     role.permissionOf(permission.name(), repository).enforce(constraint);
     assertEquals("3", role.permissionOf(permission.name(), repository).constraintOf("LimitPerCustomer").value);
   }
