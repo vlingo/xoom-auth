@@ -14,6 +14,8 @@ import java.util.Set;
 import io.vlingo.auth.model.EncodedMember.PermissionMember;
 
 public final class Role {
+  public static final Role NonExisting = new Role(null, null, null);
+
   private static final String RoleGroupPrefix = "role:";
 
   private String description;
@@ -24,6 +26,10 @@ public final class Role {
 
   public static Role with(final TenantId tenantId, final String name, final String description) {
     return new Role(tenantId, name, description);
+  }
+
+  public boolean doesNotExist() {
+    return this.tenantId == null || this.name == null;
   }
 
   public void changeDescription(final String description) {
@@ -62,7 +68,7 @@ public final class Role {
     permissions.add(new PermissionMember(permission));
   }
 
-  public void dettach(final Permission permission) {
+  public void detach(final Permission permission) {
     permissions.remove(new PermissionMember(permission));
   }
 
