@@ -8,15 +8,19 @@
 package io.vlingo.auth.model;
 
 public final class Constraint {
+  public enum Type { String, Integer, Double, Boolean }
+
   public final String description;
   public final String name;
+  public final Type type;
   public final String value;
 
-  public static Constraint of(final String name, final String value, final String description) {
-    return new Constraint(name, value, description);
+  public static Constraint of(final Type type, final String name, final String value, final String description) {
+    return new Constraint(type, name, value, description);
   }
 
-  public Constraint(final String name, final String value, final String description) {
+  public Constraint(final Type type, final String name, final String value, final String description) {
+    this.type = type;
     this.name = name;
     this.value = value;
     this.description = description;

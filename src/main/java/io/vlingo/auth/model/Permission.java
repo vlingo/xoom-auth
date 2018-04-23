@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Permission {
+  public static final Permission NonExisting = new Permission(null, null, null);
+
   private final Set<Constraint> constraints;
   private String description;
   private final String name;
@@ -19,6 +21,10 @@ public class Permission {
 
   public static Permission with(final TenantId tenantId, final String name, final String description) {
     return new Permission(tenantId, name, description);
+  }
+
+  public boolean doesNotExist() {
+    return this.tenantId == null || this.name == null;
   }
 
   public void enforce(final Constraint constraint) {
