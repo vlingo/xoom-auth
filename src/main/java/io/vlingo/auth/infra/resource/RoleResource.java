@@ -160,7 +160,7 @@ public class RoleResource extends ResourceHandler {
     }
   }
 
-  public void role(final String tenantId, final String roleName) {
+  public void queryRole(final String tenantId, final String roleName) {
     final Role role = roleRepository.roleOf(TenantId.fromExisting(tenantId), roleName);
     if (role.doesNotExist()) {
       completes().with(Response.of(NotFound, location(tenantId, roleName)));
@@ -169,7 +169,7 @@ public class RoleResource extends ResourceHandler {
     }
   }
 
-  public void permission(final String tenantId, final String roleName, final String permissionName) {
+  public void queryPermission(final String tenantId, final String roleName, final String permissionName) {
     final TenantId parentTenantId = TenantId.fromExisting(tenantId);
     final Role role = roleRepository.roleOf(parentTenantId, roleName);
     if (role.doesNotExist()) {
@@ -180,13 +180,15 @@ public class RoleResource extends ResourceHandler {
         if (permission.doesNotExist()) {
           completes().with(Response.of(NotFound, "Role has permission but permission does not exist: " + permissionName));
         } else {
-          completes().with(Response.of(Ok, serialized(permission.constraints())));
+          completes().with(Response.of(Ok, serialized(PermissionData.from(permission))));
         }
+      } else {
+        completes().with(Response.of(NotFound, "Role does not have permission: " + permissionName));
       }
     }    
   }
 
-  public void group(final String tenantId, final String roleName, final String groupName) {
+  public void queryGroup(final String tenantId, final String roleName, final String groupName) {
     final TenantId parentTenantId = TenantId.fromExisting(tenantId);
     final Role role = roleRepository.roleOf(parentTenantId, roleName);
     if (role.doesNotExist()) {
@@ -197,6 +199,7 @@ public class RoleResource extends ResourceHandler {
         completes().with(Response.of(NotFound, "Group does not exist: " + groupName));
       } else {
         if (!role.isInRole(group, loader)) {
+          completes().with(Response.of(NotFound, "Group is not in role: " + groupName));
         } else {
           completes().with(Response.of(Ok, serialized(GroupData.from(group))));
         }
@@ -204,7 +207,7 @@ public class RoleResource extends ResourceHandler {
     }
   }
 
-  public void user(final String tenantId, final String roleName, final String username) {
+  public void queryUser(final String tenantId, final String roleName, final String username) {
     final TenantId parentTenantId = TenantId.fromExisting(tenantId);
     final Role role = roleRepository.roleOf(parentTenantId, roleName);
     if (role.doesNotExist()) {
@@ -215,6 +218,7 @@ public class RoleResource extends ResourceHandler {
         completes().with(Response.of(NotFound, "User does not exist or is not active: " + username));
       } else {
         if (!role.isInRole(user, loader)) {
+          completes().with(Response.of(NotFound, "User is not in role: " + username));
         } else {
           completes().with(Response.of(Ok, serialized(MinimalUserData.from(user))));
         }
