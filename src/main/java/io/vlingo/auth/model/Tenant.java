@@ -59,6 +59,10 @@ public final class Tenant {
     return Group.with(tenantId, name, description);
   }
 
+  public Permission provisionPermission(final String name, final String description) {
+    return Permission.with(tenantId, name, description);
+  }
+
   public Role provisionRole(final String name, final String description) {
     return Role.with(tenantId, name, description);
   }
