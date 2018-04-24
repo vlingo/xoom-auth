@@ -7,8 +7,11 @@
 
 package io.vlingo.auth.infra.persistence;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import io.vlingo.auth.model.Role;
 import io.vlingo.auth.model.RoleRepository;
@@ -21,6 +24,18 @@ public class InMemoryRoleRepository extends BaseRepository implements RoleReposi
   public Role roleOf(final TenantId tenantId, final String roleName) {
     final Role role = roles.get(keyFor(tenantId, roleName));
     return role == null ? Role.NonExisting : role;
+  }
+
+  @Override
+  public Collection<Role> rolesOf(TenantId tenantId) {
+    final Set<Role> tenantRoles = new HashSet<>();
+    final String tenantKey = keyFor(tenantId);
+    for (final String key : roles.keySet()) {
+      if (key.startsWith(tenantKey)) {
+        tenantRoles.add(roles.get(key));
+      }
+    }
+    return tenantRoles;
   }
 
   @Override

@@ -7,8 +7,11 @@
 
 package io.vlingo.auth.infra.persistence;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import io.vlingo.auth.model.TenantId;
 import io.vlingo.auth.model.User;
@@ -21,6 +24,18 @@ public class InMemoryUserRepository extends BaseRepository implements UserReposi
   public User userOf(final TenantId tenantId, final String username) {
     final User user = users.get(keyFor(tenantId, username));
     return user == null ? User.NonExisting : user;
+  }
+
+  @Override
+  public Collection<User> usersOf(TenantId tenantId) {
+    final Set<User> tenantUsers = new HashSet<>();
+    final String tenantKey = keyFor(tenantId);
+    for (final String key : users.keySet()) {
+      if (key.startsWith(tenantKey)) {
+        tenantUsers.add(users.get(key));
+      }
+    }
+    return tenantUsers;
   }
 
   @Override

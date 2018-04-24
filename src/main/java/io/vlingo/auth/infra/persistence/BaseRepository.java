@@ -10,6 +10,10 @@ package io.vlingo.auth.infra.persistence;
 import io.vlingo.auth.model.TenantId;
 
 abstract class BaseRepository {
+  protected String keyFor(final TenantId tenantId) {
+    return tenantId.value + ":";
+  }
+
   protected String keyFor(final TenantId tenantId, final String groupName) {
     return tenantId.value + ":" + groupName;
   }

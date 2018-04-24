@@ -7,8 +7,11 @@
 
 package io.vlingo.auth.infra.persistence;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import io.vlingo.auth.model.Group;
 import io.vlingo.auth.model.GroupRepository;
@@ -21,6 +24,18 @@ public class InMemoryGroupRepository extends BaseRepository implements GroupRepo
   public Group groupOf(final TenantId tenantId, final String groupName) {
     final Group group = groups.get(keyFor(tenantId, groupName));
     return group == null ? Group.NonExisting : group;
+  }
+
+  @Override
+  public Collection<Group> groupsOf(final TenantId tenantId) {
+    final Set<Group> tenantGroups = new HashSet<>();
+    final String tenantKey = keyFor(tenantId);
+    for (final String key : groups.keySet()) {
+      if (key.startsWith(tenantKey)) {
+        tenantGroups.add(groups.get(key));
+      }
+    }
+    return tenantGroups;
   }
 
   @Override
