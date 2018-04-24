@@ -8,15 +8,20 @@
 package io.vlingo.auth.infra.resource;
 
 import static io.vlingo.http.resource.serialization.JsonSerialization.deserialized;
+import static io.vlingo.http.resource.serialization.JsonSerialization.deserializedList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Properties;
 
 import org.junit.Test;
+
+import com.google.gson.reflect.TypeToken;
 
 import io.vlingo.http.Response;
 import io.vlingo.http.ResponseHeader;
@@ -119,7 +124,7 @@ public class TenantResourceTest extends ResourceTest {
   }
 
   @Test
-  public void testThatTenantGroupProvisions() {
+  public void testThatTenantProvisionsGroups() {
     final TenantData tenantData = tenantData();
 
     final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
@@ -135,7 +140,23 @@ public class TenantResourceTest extends ResourceTest {
   }
 
   @Test
-  public void testThatTenantRoleProvisions() {
+  public void testThatTenantProvisionsPermissions() {
+    final TenantData tenantData = tenantData();
+
+    final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
+    assertEquals(Response.Created, createdResponse.status);
+    final TenantData createdTenantData = deserialized(createdResponse.entity.content, TenantData.class);
+    
+    final Response permissionProvisionedResponse = postProvisionPermission(createdTenantData.tenantId, "Permission", "A permission description.");
+    assertEquals(Response.Created, permissionProvisionedResponse.status);
+    final PermissionData permissionData = deserialized(permissionProvisionedResponse.entity.content, PermissionData.class);
+    assertEquals(createdTenantData.tenantId, permissionData.tenantId);
+    assertEquals("Permission", permissionData.name);
+    assertEquals("A permission description.", permissionData.description);
+  }
+
+  @Test
+  public void testThatTenantProvisionsRoles() {
     final TenantData tenantData = tenantData();
 
     final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
@@ -151,7 +172,7 @@ public class TenantResourceTest extends ResourceTest {
   }
 
   @Test
-  public void testThatTenantUserRegisters() {
+  public void testThatTenantRegistersUsers() {
     final TenantData tenantData = tenantData();
 
     final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
@@ -174,6 +195,107 @@ public class TenantResourceTest extends ResourceTest {
     assertNotEquals(userRegData.credential.secret, userRegistrateredData.credential.secret);
     assertEquals("VLINGO", userRegistrateredData.credential.type);
     assertTrue(userRegistrateredData.active);
+  }
+
+  @Test
+  public void testThatTenantQueriesTenant() {
+    final TenantData tenantData = tenantData();
+
+    final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
+    final TenantData createdTenantData = deserialized(createdResponse.entity.content, TenantData.class);
+    final String location = createdResponse.headerOf(ResponseHeader.Location).value;
+    final Response getTenantResponse = getTenantRequestResponse(location);
+    assertEquals(Response.Ok, getTenantResponse.status);
+    final TenantData queriedTenantData = deserialized(getTenantResponse.entity.content, TenantData.class);
+    assertEquals(createdTenantData.tenantId, queriedTenantData.tenantId);
+    assertEquals(createdTenantData.name, queriedTenantData.name);
+    assertEquals(createdTenantData.description, queriedTenantData.description);
+  }
+
+  @Test
+  public void testThatTenantQueriesGroups() {
+    final TenantData tenantData = tenantData();
+
+    final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
+    assertEquals(Response.Created, createdResponse.status);
+    final TenantData createdTenantData = deserialized(createdResponse.entity.content, TenantData.class);
+    final String location = createdResponse.headerOf(ResponseHeader.Location).value;
+
+    final Response group1ProvisionedResponse = postProvisionGroup(createdTenantData.tenantId, "Group1", "A group1 description.");
+    assertEquals(Response.Created, group1ProvisionedResponse.status);
+    final Response group2ProvisionedResponse = postProvisionGroup(createdTenantData.tenantId, "Group2", "A group2 description.");
+    assertEquals(Response.Created, group2ProvisionedResponse.status);
+    
+    final Response getTenantGroupsResponse = getTenantGroupsRequestResponse(location);
+    assertEquals(Response.Ok, getTenantGroupsResponse.status);
+    final Type listType = new TypeToken<List<GroupData>>(){}.getType();
+    final List<GroupData> groupData = deserializedList(getTenantGroupsResponse.entity.content, listType);
+    assertEquals(2, groupData.size());
+  }
+
+  @Test
+  public void testThatTenantQueriesPermissions() {
+    final TenantData tenantData = tenantData();
+
+    final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
+    assertEquals(Response.Created, createdResponse.status);
+    final TenantData createdTenantData = deserialized(createdResponse.entity.content, TenantData.class);
+    final String location = createdResponse.headerOf(ResponseHeader.Location).value;
+    
+    final Response permission1ProvisionedResponse = postProvisionPermission(createdTenantData.tenantId, "Permission1", "A permission1 description.");
+    assertEquals(Response.Created, permission1ProvisionedResponse.status);
+    final Response permission2ProvisionedResponse = postProvisionPermission(createdTenantData.tenantId, "Permission2", "A permission2 description.");
+    assertEquals(Response.Created, permission2ProvisionedResponse.status);
+    
+    final Response getTenantPermissionsResponse = getTenantPermissionsRequestResponse(location);
+    assertEquals(Response.Ok, getTenantPermissionsResponse.status);
+    final Type listType = new TypeToken<List<PermissionData>>(){}.getType();
+    final List<PermissionData> permissionData = deserializedList(getTenantPermissionsResponse.entity.content, listType);
+    assertEquals(2, permissionData.size());
+  }
+
+  @Test
+  public void testThatTenantQueriesRoles() {
+    final TenantData tenantData = tenantData();
+
+    final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
+    assertEquals(Response.Created, createdResponse.status);
+    final TenantData createdTenantData = deserialized(createdResponse.entity.content, TenantData.class);
+    final String location = createdResponse.headerOf(ResponseHeader.Location).value;
+    
+    final Response role1ProvisionedResponse = postProvisionRole(createdTenantData.tenantId, "Role1", "A role1 description.");
+    assertEquals(Response.Created, role1ProvisionedResponse.status);
+    final Response role2ProvisionedResponse = postProvisionRole(createdTenantData.tenantId, "Role2", "A role2 description.");
+    assertEquals(Response.Created, role2ProvisionedResponse.status);
+    
+    final Response getTenantRolesResponse = getTenantRolesRequestResponse(location);
+    assertEquals(Response.Ok, getTenantRolesResponse.status);
+    final Type listType = new TypeToken<List<RoleData>>(){}.getType();
+    final List<RoleData> roleData = deserializedList(getTenantRolesResponse.entity.content, listType);
+    assertEquals(2, roleData.size());
+  }
+
+  @Test
+  public void testThatTenantQueriesUsers() {
+    final TenantData tenantData = tenantData();
+
+    final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
+    assertEquals(Response.Created, createdResponse.status);
+    final TenantData createdTenantData = deserialized(createdResponse.entity.content, TenantData.class);
+    final String location = createdResponse.headerOf(ResponseHeader.Location).value;
+    
+    final UserRegistrationData user1RegData = userRegistrationData(createdTenantData.tenantId, 1);
+    final Response registerUser1Response = postRegisterUser(createdTenantData.tenantId, user1RegData);
+    assertEquals(Response.Created, registerUser1Response.status);
+    final UserRegistrationData user2RegData = userRegistrationData(createdTenantData.tenantId, 2);
+    final Response registerUser2Response = postRegisterUser(createdTenantData.tenantId, user2RegData);
+    assertEquals(Response.Created, registerUser2Response.status);
+    
+    final Response getTenantUsersResponse = getTenantUsersRequestResponse(location);
+    assertEquals(Response.Ok, getTenantUsersResponse.status);
+    final Type listType = new TypeToken<List<MinimalUserData>>(){}.getType();
+    final List<MinimalUserData> userData = deserializedList(getTenantUsersResponse.entity.content, listType);
+    assertEquals(2, userData.size());
   }
 
   protected Properties resourceProperties() {
