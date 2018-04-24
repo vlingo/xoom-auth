@@ -29,6 +29,7 @@ public class Permission {
 
   public void enforce(final Constraint constraint) {
     constraints.add(constraint);
+    System.out.println("Permission: " + this);
   }
 
   public void enforce(final Constraint previousConstraint, final Constraint currentConstraint) {
@@ -69,6 +70,27 @@ public class Permission {
 
   public TenantId tenantId() {
     return tenantId;
+  }
+
+  @Override
+  public int hashCode() {
+    return 31 * (tenantId.hashCode() + name.hashCode());
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (other == null || other.getClass() != Permission.class) {
+      return false;
+    }
+
+    final Permission otherPermission = (Permission) other;
+
+    return this.tenantId.equals(otherPermission.tenantId) && this.name.equals(otherPermission.name);
+  }
+
+  @Override
+  public String toString() {
+    return "Permission[tenantId=" + tenantId + " name=" + name + " description=" + description + " constraints=" + constraints + "]";
   }
 
   private Permission(final TenantId tenantId, final String name, final String description) {
