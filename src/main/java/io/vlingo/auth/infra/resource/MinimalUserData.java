@@ -7,6 +7,10 @@
 
 package io.vlingo.auth.infra.resource;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import io.vlingo.auth.model.User;
 
 public final class MinimalUserData {
@@ -25,6 +29,14 @@ public final class MinimalUserData {
             user.username(),
             PersonNameData.of(user.profile().name.given, user.profile().name.second, user.profile().name.family),
             user.isActive());
+  }
+
+  public static Collection<MinimalUserData> from(final Collection<User> users) {
+    final Set<MinimalUserData> userData = new HashSet<>();
+    for (final User user : users) {
+      userData.add(from(user));
+    }
+    return userData;
   }
 
   private MinimalUserData(final String tenantId, final String username, final PersonNameData name, final boolean active) {

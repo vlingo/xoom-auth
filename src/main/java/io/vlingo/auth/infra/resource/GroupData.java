@@ -7,9 +7,13 @@
 
 package io.vlingo.auth.infra.resource;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import io.vlingo.auth.model.Group;
 
-public class GroupData {
+public final class GroupData {
   public final String description;
   public final String name;
   public final String tenantId;
@@ -24,6 +28,14 @@ public class GroupData {
 
   public static GroupData from(final Group group) {
     return new GroupData(group.tenantId().value, group.name(), group.description());
+  }
+
+  public static Collection<GroupData> from(final Collection<Group> groups) {
+    final Set<GroupData> groupData = new HashSet<>();
+    for (final Group group : groups) {
+      groupData.add(from(group));
+    }
+    return groupData;
   }
 
   public GroupData(final String name, final String description) {

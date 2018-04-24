@@ -7,9 +7,13 @@
 
 package io.vlingo.auth.infra.resource;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import io.vlingo.auth.model.Role;
 
-public class RoleData {
+public final class RoleData {
   public final String description;
   public final String name;
   public final String tenantId;
@@ -24,6 +28,14 @@ public class RoleData {
 
   public static RoleData from(final Role role) {
     return new RoleData(role.tenantId().value, role.name(), role.description());
+  }
+
+  public static Collection<RoleData> from(final Collection<Role> roles) {
+    final Set<RoleData> roleData = new HashSet<>();
+    for (final Role role : roles) {
+      roleData.add(from(role));
+    }
+    return roleData;
   }
 
   public RoleData(final String name, final String description) {
