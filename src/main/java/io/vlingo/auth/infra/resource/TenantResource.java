@@ -15,11 +15,15 @@ import static io.vlingo.http.ResponseHeader.headers;
 import static io.vlingo.http.ResponseHeader.of;
 import static io.vlingo.http.resource.serialization.JsonSerialization.serialized;
 
+import java.util.Collection;
+
 import io.vlingo.auth.infra.persistence.RepositoryProvider;
 import io.vlingo.auth.model.Credential;
 import io.vlingo.auth.model.EmailAddress;
 import io.vlingo.auth.model.Group;
 import io.vlingo.auth.model.GroupRepository;
+import io.vlingo.auth.model.Permission;
+import io.vlingo.auth.model.PermissionRepository;
 import io.vlingo.auth.model.PersonName;
 import io.vlingo.auth.model.Phone;
 import io.vlingo.auth.model.Profile;
@@ -36,6 +40,7 @@ import io.vlingo.http.resource.ResourceHandler;
 
 public class TenantResource extends ResourceHandler {
   private final GroupRepository groupRepository = RepositoryProvider.groupRepository();
+  private final PermissionRepository permissionRepository = RepositoryProvider.permissionRepository();
   private final RoleRepository roleRepository = RepositoryProvider.roleRepository();
   private final TenantRepository tenantRepository = RepositoryProvider.tenantRepository();
   private final UserRepository userRepository = RepositoryProvider.userRepository();
@@ -107,6 +112,17 @@ public class TenantResource extends ResourceHandler {
     }
   }
 
+  public void provisionPermission(final String tenantId, final PermissionData permissionData) {
+    final Tenant tenant = tenantRepository.tenantOf(TenantId.fromExisting(tenantId));
+    if (tenant.doesNotExist()) {
+      completes().with(Response.of(NotFound, location(tenantId)));
+    } else {
+      final Permission permission = tenant.provisionPermission(permissionData.name, permissionData.description);
+      permissionRepository.save(permission);
+      completes().with(Response.of(Created, headers(of(Location, location(tenant.tenantId().value, "permissions", permission.name()))), serialized(PermissionData.from(permission))));
+    }
+  }
+
   public void provisionRole(final String tenantId, final RoleData roleData) {
     final Tenant tenant = tenantRepository.tenantOf(TenantId.fromExisting(tenantId));
     if (tenant.doesNotExist()) {
@@ -139,6 +155,26 @@ public class TenantResource extends ResourceHandler {
     } else {
       completes().with(Response.of(Ok, serialized(TenantData.from(tenant))));
     }
+  }
+
+  public void queryGroups(final String tenantId) {
+    final Collection<Group> groups = groupRepository.groupsOf(TenantId.fromExisting(tenantId));
+    completes().with(Response.of(Ok, serialized(GroupData.from(groups))));
+  }
+
+  public void queryPermissions(final String tenantId) {
+    final Collection<Permission> permissions = permissionRepository.permissionsOf(TenantId.fromExisting(tenantId));
+    completes().with(Response.of(Ok, serialized(PermissionData.from(permissions))));
+  }
+
+  public void queryRoles(final String tenantId) {
+    final Collection<Role> roles = roleRepository.rolesOf(TenantId.fromExisting(tenantId));
+    completes().with(Response.of(Ok, serialized(RoleData.from(roles))));
+  }
+
+  public void queryUsers(final String tenantId) {
+    final Collection<User> users = userRepository.usersOf(TenantId.fromExisting(tenantId));
+    completes().with(Response.of(Ok, serialized(MinimalUserData.from(users))));
   }
 
   private String location(final String tenantId) {
