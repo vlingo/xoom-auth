@@ -7,8 +7,11 @@
 
 package io.vlingo.auth.model;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class TestUserRepository implements UserRepository {
   private final Map<String,User> users = new HashMap<>();
@@ -16,6 +19,18 @@ public class TestUserRepository implements UserRepository {
   @Override
   public User userOf(final TenantId tenantId, final String username) {
     return users.get(keyFor(tenantId, username));
+  }
+
+  @Override
+  public Collection<User> usersOf(TenantId tenantId) {
+    final Set<User> tenantUsers = new HashSet<>();
+    final String tenantKey = keyFor(tenantId, "");
+    for (final String key : users.keySet()) {
+      if (key.startsWith(tenantKey)) {
+        tenantUsers.add(users.get(key));
+      }
+    }
+    return tenantUsers;
   }
 
   @Override

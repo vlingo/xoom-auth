@@ -7,7 +7,10 @@
 
 package io.vlingo.auth.model;
 
+import java.util.Collection;
+
 public interface UserRepository {
   User userOf(final TenantId tenantId, final String username);
+  Collection<User> usersOf(TenantId tenantId);
   void save(final User user);
 }

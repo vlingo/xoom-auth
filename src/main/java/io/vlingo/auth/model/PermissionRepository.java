@@ -7,7 +7,10 @@
 
 package io.vlingo.auth.model;
 
+import java.util.Collection;
+
 public interface PermissionRepository {
   Permission permissionOf(final TenantId tenantId, final String permissionName);
+  Collection<Permission> permissionsOf(TenantId tenantId);
   void save(final Permission permission);
 }

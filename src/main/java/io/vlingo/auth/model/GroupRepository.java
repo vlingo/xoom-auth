@@ -7,7 +7,10 @@
 
 package io.vlingo.auth.model;
 
+import java.util.Collection;
+
 public interface GroupRepository {
   Group groupOf(final TenantId tenantId, final String groupName);
+  Collection<Group> groupsOf(final TenantId tenantId);
   void save(final Group group);
 }

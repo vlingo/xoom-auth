@@ -7,7 +7,10 @@
 
 package io.vlingo.auth.model;
 
+import java.util.Collection;
+
 public interface RoleRepository {
   Role roleOf(final TenantId tenantId, final String roleName);
+  Collection<Role> rolesOf(TenantId tenantId);
   void save(final Role role);
 }
