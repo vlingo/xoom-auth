@@ -25,4 +25,25 @@ public final class Constraint {
     this.value = value;
     this.description = description;
   }
+
+  @Override
+  public int hashCode() {
+    return 31 * (type.hashCode() + name.hashCode() + value.hashCode() + description.hashCode());
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (other == null || other.getClass() != Constraint.class) {
+      return false;
+    }
+
+    final Constraint otherConstraint = (Constraint) other;
+
+    return this.type == otherConstraint.type && this.name.equals(otherConstraint.name) && this.value.equals(otherConstraint.value) && this.description.equals(otherConstraint.description);
+  }
+
+  @Override
+  public String toString() {
+    return "Constraint[type=" + type + " name=" + name + " value=" + value +  " description=" + description + "]";
+  }
 }
