@@ -18,6 +18,7 @@ import io.vlingo.http.Response;
 
 public class RoleResourceTest extends ResourceTest {
   private GroupData groupData;
+  private PermissionData permissionData;
   private RoleData roleData;
   private TenantData tenantData;
   private UserRegistrationData userData;
@@ -40,6 +41,8 @@ public class RoleResourceTest extends ResourceTest {
     assertEquals(Response.Ok, putRoleGroupResponse.status);
     final String location = "/tenants/" + tenantData.tenantId + "/roles/" + roleData.name + "/groups/" + groupData.name;
     assertEquals(location, putRoleGroupResponse.entity.content);
+    final Response getRoleGroupResponse = getRoleGroupRequestResponse(roleData, groupData.name);
+    assertEquals(Response.Ok, getRoleGroupResponse.status);
   }
   
   @Test
@@ -50,6 +53,8 @@ public class RoleResourceTest extends ResourceTest {
     assertEquals(Response.Ok, putRoleGroupResponse.status);
     final Response deleteRoleGroupResponse = deleteRoleGroupRequestResponse(roleData, groupData.name);
     assertEquals(Response.Ok, deleteRoleGroupResponse.status);
+    final Response getRoleGroupResponse = getRoleGroupRequestResponse(roleData, groupData.name);
+    assertEquals(Response.NotFound, getRoleGroupResponse.status);
   }
 
   @Test
@@ -60,6 +65,8 @@ public class RoleResourceTest extends ResourceTest {
     assertEquals(Response.Ok, putRoleUserResponse.status);
     final String location = "/tenants/" + tenantData.tenantId + "/roles/" + roleData.name + "/users/" + userData.username;
     assertEquals(location, putRoleUserResponse.entity.content);
+    final Response getRoleUserResponse = getRoleUserRequestResponse(roleData, userData.username);
+    assertEquals(Response.Ok, getRoleUserResponse.status);
   }
   
   @Test
@@ -70,6 +77,31 @@ public class RoleResourceTest extends ResourceTest {
     assertEquals(Response.Ok, putRoleUserResponse.status);
     final Response deleteRoleUserResponse = deleteRoleUserRequestResponse(roleData, userData.username);
     assertEquals(Response.Ok, deleteRoleUserResponse.status);
+    final Response getRoleUserResponse = getRoleUserRequestResponse(roleData, userData.username);
+    assertEquals(Response.NotFound, getRoleUserResponse.status);
+  }
+
+  @Test
+  public void testThatRolePermissionAttaches() {
+    roleWithPermission();
+    
+    final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
+    assertEquals(Response.Ok, putRolePermissionResponse.status);
+    final String location = "/tenants/" + tenantData.tenantId + "/roles/" + roleData.name + "/permissions/" + permissionData.name;
+    assertEquals(location, putRolePermissionResponse.entity.content);
+    final Response getRolePermissionResponse = getRolePermissionRequestResponse(roleData, permissionData.name);
+    assertEquals(Response.Ok, getRolePermissionResponse.status);
+  }
+
+  @Test
+  public void testThatRolePermissionDetaches() {
+    roleWithPermission();
+    final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
+    assertEquals(Response.Ok, putRolePermissionResponse.status);
+    final Response deleteRolePermissionResponse = deleteRolePermissionRequestResponse(roleData, permissionData.name);
+    assertEquals(Response.Ok, deleteRolePermissionResponse.status);
+    final Response getRolePermissionResponse = getRolePermissionRequestResponse(roleData, permissionData.name);
+    assertEquals(Response.NotFound, getRolePermissionResponse.status);
   }
 
   @Test
@@ -99,6 +131,21 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  public void testThatRolePermissionQueries() {
+    roleWithPermission();
+    
+    final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
+    assertEquals(Response.Ok, putRolePermissionResponse.status);
+
+    final Response getRolePermissionResponse = getRolePermissionRequestResponse(roleData, permissionData.name);
+    assertEquals(Response.Ok, getRolePermissionResponse.status);
+    final PermissionData queriedPermission = deserialized(getRolePermissionResponse.entity.content, PermissionData.class);
+    assertEquals(permissionData.tenantId, queriedPermission.tenantId);
+    assertEquals(permissionData.name, queriedPermission.name);
+    assertEquals(permissionData.description, queriedPermission.description);
+  }
+
+  @Test
   public void testThatRoleUserQueries() {
     roleWithUser();
     
@@ -115,7 +162,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   protected Properties resourceProperties() {
-    return TestProperties.roleResourceProperties();
+    return TestProperties.roleResourceProperties(TestProperties.tenantResourceProperties());
   }
 
   private Response patchRoleChangeDescriptionRequestResponse(final RoleData roleData, final String description) {
@@ -130,6 +177,16 @@ public class RoleResourceTest extends ResourceTest {
 
   private Response deleteRoleGroupRequestResponse(final RoleData roleData, final String groupName) {
     final String request = "DELETE /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/groups/" + groupName + " HTTP/1.1\nHost: vlingo.io\n\n";
+    return requestResponse(request);
+  }
+
+  private Response putRolePermissionRequestResponse(final RoleData roleData, final String permissionName) {
+    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/permissions HTTP/1.1\nHost: vlingo.io\nContent-Length: " + permissionName.length() + "\n\n" + permissionName;
+    return requestResponse(request);
+  }
+
+  private Response deleteRolePermissionRequestResponse(RoleData roleData, String permissionName) {
+    final String request = "DELETE /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/permissions/" + permissionName + " HTTP/1.1\nHost: vlingo.io\n\n";
     return requestResponse(request);
   }
 
@@ -155,6 +212,13 @@ public class RoleResourceTest extends ResourceTest {
 
     final Response groupResponse = postProvisionGroup(tenantData.tenantId, "Group", "A group description.");
     groupData = deserialized(groupResponse.entity.content, GroupData.class);
+  }
+
+  private void roleWithPermission() {
+    role();
+
+    final Response permissionProvisionedResponse = postProvisionPermission(tenantData.tenantId, "Permission", "A permission description.");
+    permissionData = deserialized(permissionProvisionedResponse.entity.content, PermissionData.class);
   }
 
   private void roleWithUser() {
