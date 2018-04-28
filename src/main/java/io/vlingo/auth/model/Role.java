@@ -101,14 +101,14 @@ public final class Role {
   }
 
   public boolean isInRole(final Group group, final Loader loader) {
-    if (assigned.isMember(group, loader)) {
+    if (assigned.hasMember(group, loader)) {
       return true;
     }
     return false;
   }
 
   public boolean isInRole(final User user, final Loader loader) {
-    if (assigned.isMember(user, loader)) {
+    if (assigned.hasMember(user, loader)) {
       return true;
     }
     return false;

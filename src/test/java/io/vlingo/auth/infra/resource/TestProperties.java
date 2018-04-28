@@ -11,6 +11,67 @@ import java.util.Properties;
 
 public class TestProperties {
 
+  public static Properties groupResourceProperties(final Properties properties) {
+    
+    properties.setProperty("resource.name.group", "[description, assignGroup, unassignGroup, assignUser, unassignUser, queryGroup, queryInnerGroup, queryPermission, queryRole, queryUser]");
+
+    properties.setProperty("resource.group.handler", "io.vlingo.auth.infra.resource.GroupResource");
+    properties.setProperty("resource.group.pool", "10");
+    properties.setProperty("resource.group.disallowPathParametersWithSlash", "true");
+
+    properties.setProperty("action.group.description.method", "PATCH");
+    properties.setProperty("action.group.description.uri", "/tenants/{tenantId}/groups/{groupName}/description");
+    properties.setProperty("action.group.description.to", "changeDescription(String tenantId, String groupName, body:java.lang.String description)");
+    properties.setProperty("action.group.description.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.group.assignGroup.method", "PUT");
+    properties.setProperty("action.group.assignGroup.uri", "/tenants/{tenantId}/groups/{groupName}/groups");
+    properties.setProperty("action.group.assignGroup.to", "assignGroup(String tenantId, String groupName, body:java.lang.String groupName)");
+    properties.setProperty("action.group.assignGroup.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.group.unassignGroup.method", "DELETE");
+    properties.setProperty("action.group.unassignGroup.uri", "/tenants/{tenantId}/groups/{groupName}/groups/{innerGroupName}");
+    properties.setProperty("action.group.unassignGroup.to", "unassignGroup(String tenantId, String groupName, String innerGroupName)");
+    properties.setProperty("action.group.unassignGroup.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.group.assignUser.method", "PUT");
+    properties.setProperty("action.group.assignUser.uri", "/tenants/{tenantId}/groups/{groupName}/users");
+    properties.setProperty("action.group.assignUser.to", "assignUser(String tenantId, String groupName, body:java.lang.String username)");
+    properties.setProperty("action.group.assignUser.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.group.unassignUser.method", "DELETE");
+    properties.setProperty("action.group.unassignUser.uri", "/tenants/{tenantId}/groups/{groupName}/users/{username}");
+    properties.setProperty("action.group.unassignUser.to", "unassignUser(String tenantId, String groupName, String username)");
+    properties.setProperty("action.group.unassignUser.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.group.queryGroup.method", "GET");
+    properties.setProperty("action.group.queryGroup.uri", "/tenants/{tenantId}/groups/{groupName}");
+    properties.setProperty("action.group.queryGroup.to", "queryGroup(String tenantId, String groupName)");
+    properties.setProperty("action.group.queryGroup.permission", "io.vlingo.auth.GroupQuery");
+
+    properties.setProperty("action.group.queryInnerGroup.method", "GET");
+    properties.setProperty("action.group.queryInnerGroup.uri", "/tenants/{tenantId}/groups/{groupName}/groups/{innerGroupName}");
+    properties.setProperty("action.group.queryInnerGroup.to", "queryInnerGroup(String tenantId, String groupName, String innerGroupName)");
+    properties.setProperty("action.group.queryInnerGroup.permission", "io.vlingo.auth.GroupQuery");
+
+    properties.setProperty("action.group.queryPermission.method", "GET");
+    properties.setProperty("action.group.queryPermission.uri", "/tenants/{tenantId}/groups/{groupName}/permissions/{permissionName}");
+    properties.setProperty("action.group.queryPermission.to", "queryPermission(String tenantId, String groupName, String permissionName)");
+    properties.setProperty("action.group.queryPermission.permission", "io.vlingo.auth.GroupQuery");
+
+    properties.setProperty("action.group.queryRole.method", "GET");
+    properties.setProperty("action.group.queryRole.uri", "/tenants/{tenantId}/groups/{groupName}/roles/{roleName}");
+    properties.setProperty("action.group.queryRole.to", "queryRole(String tenantId, String groupName, String roleName)");
+    properties.setProperty("action.group.queryRole.permission", "io.vlingo.auth.GroupQuery");
+
+    properties.setProperty("action.group.queryUser.method", "GET");
+    properties.setProperty("action.group.queryUser.uri", "/tenants/{tenantId}/groups/{groupName}/users/{username}");
+    properties.setProperty("action.group.queryUser.to", "queryUser(String tenantId, String groupName, String username)");
+    properties.setProperty("action.group.queryUser.permission", "io.vlingo.auth.GroupQuery");
+
+    return properties;
+  }
+
   public static Properties permissionResourceProperties(final Properties properties) {
     properties.setProperty("resource.name.permission", "[enforce, enforceReplacement, forget, description, queryPermission]");
 

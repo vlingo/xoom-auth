@@ -37,7 +37,7 @@ public class GroupTest {
     final Group another = group(tenant, "Another", "Another test group.");
     repository.add(another);
     group.assign(another);
-    assertTrue(group.isMember(another, repository));
+    assertTrue(group.hasMember(another, repository));
   }
 
   @Test
@@ -49,9 +49,9 @@ public class GroupTest {
     final Group another = group(tenant, "Another", "Another test group.");
     repository.add(another);
     group.assign(another);
-    assertTrue(group.isMember(another, repository));
+    assertTrue(group.hasMember(another, repository));
     group.unassign(another);
-    assertFalse(group.isMember(another, repository));
+    assertFalse(group.hasMember(another, repository));
   }
 
   @Test
@@ -62,7 +62,7 @@ public class GroupTest {
     repository.add(group);
     final User user = user(tenant);
     group.assign(user);
-    assertTrue(group.isMember(user, repository));
+    assertTrue(group.hasMember(user, repository));
   }
 
   @Test
@@ -73,9 +73,9 @@ public class GroupTest {
     repository.add(group);
     final User user = user(tenant);
     group.assign(user);
-    assertTrue(group.isMember(user, repository));
+    assertTrue(group.hasMember(user, repository));
     group.unassign(user);
-    assertFalse(group.isMember(user, repository));
+    assertFalse(group.hasMember(user, repository));
   }
 
   @Test
@@ -89,9 +89,9 @@ public class GroupTest {
     group.assign(another);
     final User user = user(tenant);
     another.assign(user);
-    assertTrue(group.isMember(another, repository));
-    assertTrue(group.isMember(user, repository));
-    assertTrue(another.isMember(user, repository));
+    assertTrue(group.hasMember(another, repository));
+    assertTrue(group.hasMember(user, repository));
+    assertTrue(another.hasMember(user, repository));
   }
 
   @Test
@@ -108,12 +108,12 @@ public class GroupTest {
     another.assign(yetAnother);
     final User user = user(tenant);
     yetAnother.assign(user);
-    assertTrue(group.isMember(another, repository));
-    assertTrue(group.isMember(yetAnother, repository));
-    assertTrue(another.isMember(yetAnother, repository));
-    assertTrue(group.isMember(user, repository));
-    assertTrue(another.isMember(user, repository));
-    assertTrue(yetAnother.isMember(user, repository));
+    assertTrue(group.hasMember(another, repository));
+    assertTrue(group.hasMember(yetAnother, repository));
+    assertTrue(another.hasMember(yetAnother, repository));
+    assertTrue(group.hasMember(user, repository));
+    assertTrue(another.hasMember(user, repository));
+    assertTrue(yetAnother.hasMember(user, repository));
   }
 
   @Test

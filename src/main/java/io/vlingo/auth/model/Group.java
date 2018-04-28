@@ -79,11 +79,11 @@ public final class Group {
     }
   }
 
-  public boolean isMember(final Group group, final Loader loader) {
+  public boolean hasMember(final Group group, final Loader loader) {
     return isMember(new GroupMember(group), loader);
   }
 
-  public boolean isMember(final User user, final Loader loader) {
+  public boolean hasMember(final User user, final Loader loader) {
     return isMember(new UserMember(user), loader);
   }
 

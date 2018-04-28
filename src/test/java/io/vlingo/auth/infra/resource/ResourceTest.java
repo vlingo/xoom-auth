@@ -140,6 +140,31 @@ public abstract class ResourceTest {
     return requestResponse(request);
   }
 
+  protected Response getGroupRequestResponse(GroupData groupData) {
+    final String request = "GET /tenants/" + groupData.tenantId + "/groups/" + groupData.name + " HTTP/1.1\nHost: vlingo.io\n\n";
+    return requestResponse(request);
+  }
+
+  protected Response getGroupGroupRequestResponse(GroupData groupData, String groupName) {
+    final String request = "GET /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/groups/" + groupName + " HTTP/1.1\nHost: vlingo.io\n\n";
+    return requestResponse(request);
+  }
+  
+  protected Response getGroupPermissionRequestResponse(GroupData groupData, String permissionName) {
+    final String request = "GET /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/permissions/" + permissionName + " HTTP/1.1\nHost: vlingo.io\n\n";
+    return requestResponse(request);
+  }
+  
+  protected Response getGroupRoleRequestResponse(GroupData groupData, String roleName) {
+    final String request = "GET /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/roles/" + roleName + " HTTP/1.1\nHost: vlingo.io\n\n";
+    return requestResponse(request);
+  }
+
+  protected Response getGroupUserRequestResponse(GroupData groupData, String username) {
+    final String request = "GET /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/users/" + username + " HTTP/1.1\nHost: vlingo.io\n\n";
+    return requestResponse(request);
+  }
+
   protected Response getRoleRequestResponse(String tenantId, String name) {
     final String request = "GET /tenants/" + tenantId + "/roles/" + name + " HTTP/1.1\nHost: vlingo.io\n\n";
     return requestResponse(request);
