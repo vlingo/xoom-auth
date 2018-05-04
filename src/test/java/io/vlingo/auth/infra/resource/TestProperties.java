@@ -259,4 +259,59 @@ public class TestProperties {
 
     return properties;
   }
+
+  public static Properties userResourceProperties(final Properties properties) {
+    properties.setProperty("resource.name.user", "[activate, deactivate, addCredential, removeCredential, replaceCredential, profile, queryUser, queryPermission, queryRole]");
+
+    properties.setProperty("resource.user.handler", "io.vlingo.auth.infra.resource.UserResource");
+    properties.setProperty("resource.user.pool", "5");
+    properties.setProperty("resource.user.disallowPathParametersWithSlash", "true");
+
+    properties.setProperty("action.user.activate.method", "PATCH");
+    properties.setProperty("action.user.activate.uri", "/tenants/{tenantId}/users/{username}/activate");
+    properties.setProperty("action.user.activate.to", "activate(String tenantId, String username)");
+    properties.setProperty("action.user.activate.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.user.deactivate.method", "PATCH");
+    properties.setProperty("action.user.deactivate.uri", "/tenants/{tenantId}/users/{username}/deactivate");
+    properties.setProperty("action.user.deactivate.to", "deactivate(String tenantId, String username)");
+    properties.setProperty("action.user.deactivate.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.user.addCredential.method", "PUT");
+    properties.setProperty("action.user.addCredential.uri", "/tenants/{tenantId}/users/{username}/credentials");
+    properties.setProperty("action.user.addCredential.to", "addCredential(String tenantId, String username, body:io.vlingo.auth.infra.resource.CredentialData credentialData)");
+    properties.setProperty("action.user.addCredential.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.user.removeCredential.method", "DELETE");
+    properties.setProperty("action.user.removeCredential.uri", "/tenants/{tenantId}/users/{username}/credentials/{authority}");
+    properties.setProperty("action.user.removeCredential.to", "removeCredential(String tenantId, String username, String authority)");
+    properties.setProperty("action.user.removeCredential.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.user.replaceCredential.method", "PATCH");
+    properties.setProperty("action.user.replaceCredential.uri", "/tenants/{tenantId}/users/{username}/credentials/{authority}");
+    properties.setProperty("action.user.replaceCredential.to", "replaceCredential(String tenantId, String username, String authority, body:io.vlingo.auth.infra.resource.CredentialData credentialData)");
+    properties.setProperty("action.user.replaceCredential.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.user.profile.method", "PATCH");
+    properties.setProperty("action.user.profile.uri", "/tenants/{tenantId}/users/{username}/profile");
+    properties.setProperty("action.user.profile.to", "profile(String tenantId, String username, body:io.vlingo.auth.infra.resource.ProfileData profileData)");
+    properties.setProperty("action.user.profile.permission", "io.vlingo.auth.Administrator");
+
+    properties.setProperty("action.user.queryUser.method", "GET");
+    properties.setProperty("action.user.queryUser.uri", "/tenants/{tenantId}/users/{username}");
+    properties.setProperty("action.user.queryUser.to", "queryUser(String tenantId, String username)");
+    properties.setProperty("action.user.queryUser.permission", "io.vlingo.auth.UserQuery");
+
+    properties.setProperty("action.user.queryPermission.method", "GET");
+    properties.setProperty("action.user.queryPermission.uri", "/tenants/{tenantId}/users/{username}/permissions/{permissionName}");
+    properties.setProperty("action.user.queryPermission.to", "queryPermission(String tenantId, String username, String permissionName)");
+    properties.setProperty("action.user.queryPermission.permission", "io.vlingo.auth.UserQuery");
+
+    properties.setProperty("action.user.queryRole.method", "GET");
+    properties.setProperty("action.user.queryRole.uri", "/tenants/{tenantId}/users/{username}/roles/{roleName}");
+    properties.setProperty("action.user.queryRole.to", "queryRole(String tenantId, String username, String roleName)");
+    properties.setProperty("action.user.queryRole.permission", "io.vlingo.auth.UserQuery");
+
+    return properties;
+  }
 }

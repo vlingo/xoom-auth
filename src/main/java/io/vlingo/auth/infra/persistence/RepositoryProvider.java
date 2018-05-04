@@ -60,7 +60,7 @@ public class RepositoryProvider {
 
   public static synchronized Loader loader() {
     if (loader == null) {
-      loader = new InMemoryLoader(groupRepository, permissionRepository, roleRepository);
+      loader = new InMemoryLoader(groupRepository(), permissionRepository(), roleRepository());
     }
     return loader;
   }

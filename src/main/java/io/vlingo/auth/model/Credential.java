@@ -10,15 +10,32 @@ package io.vlingo.auth.model;
 public final class Credential implements Comparable<Credential> {
   public static final String VlingoPlatformAuthority = "vlingo-platform";
 
-  public enum Type { VLINGO, OATH }
+  public enum Type { VLINGO, OAUTH }
 
-  public final String authority;
+  public final String authority;  // Credential is an entity and authority is the unique id
   public final String id;
   public final String secret;
   public final Type type;
 
+  public static boolean isOAuthType(final String credentialType) {
+    return Type.OAUTH.name().equals(credentialType);
+  }
+
+  public static boolean isVlingoType(final String credentialType) {
+    return Type.VLINGO.name().equals(credentialType);
+  }
+
+  public static Credential credentialFrom(String authority, String id, String secret, String type) {
+    if (isVlingoType(type)) {
+      return vlingoCredentialFrom(authority, id, secret);
+    } else if (isOAuthType(type)) {
+      return oauthCredentialFrom(authority, id, secret);
+    }
+    throw new IllegalArgumentException("Unknow credential type: " + type);
+  }
+
   public static Credential oauthCredentialFrom(final String authority, final String id, final String secret) {
-    return new Credential(authority, id, secret, Type.OATH);
+    return new Credential(authority, id, secret, Type.OAUTH);
   }
 
   public static Credential vlingoCredentialFrom(final String authority, final String id, final String secret) {
@@ -38,7 +55,7 @@ public final class Credential implements Comparable<Credential> {
   }
 
   public boolean isOauth() {
-    return this.type == Type.OATH;
+    return this.type == Type.OAUTH;
   }
 
   public boolean isVlingo() {
@@ -55,9 +72,7 @@ public final class Credential implements Comparable<Credential> {
       return false;
     }
 
-    final Credential otherCredential = (Credential) other;
-
-    return this.authority.equals(otherCredential.authority) && this.id.equals(otherCredential.id) && this.type == otherCredential.type;
+    return this.authority.equals(((Credential) other).authority);
   }
 
   @Override

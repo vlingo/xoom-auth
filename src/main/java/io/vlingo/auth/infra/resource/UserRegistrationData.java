@@ -30,7 +30,7 @@ public final class UserRegistrationData {
                     PersonNameData.of(user.profile().name.given, user.profile().name.second, user.profile().name.family),
                     user.profile().emailAddress.value,
                     user.profile().phone.value),
-            CredentialData.from(credential.authority, credential.id, "********", credential.type.name()),
+            CredentialData.from(credential),
             user.isActive());
   }
 

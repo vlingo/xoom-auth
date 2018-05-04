@@ -62,9 +62,7 @@ public class TenantResource extends ResourceHandler {
     } else {
       tenant.activate();
       tenantRepository.save(tenant);
-      TenantData data = TenantData.from(tenant);
-      String ser = serialized(data);
-      completes().with(Response.of(Ok, ser));
+      completes().with(Response.of(Ok, serialized(TenantData.from(tenant))));
     }
   }
 

@@ -7,7 +7,11 @@
 
 package io.vlingo.auth.infra.resource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.vlingo.auth.model.Credential;
+import io.vlingo.auth.model.User;
 
 public final class CredentialData {
   public final String authority;
@@ -24,7 +28,15 @@ public final class CredentialData {
   }
 
   public static CredentialData from(final Credential credential) {
-    return new CredentialData(credential.authority, credential.id, credential.secret, credential.type.name());
+    return new CredentialData(credential.authority, credential.id, "********", credential.type.name());
+  }
+
+  public static List<CredentialData> from(final User user) {
+    final List<CredentialData> credentials = new ArrayList<>(user.credentials().size());
+    for (final Credential credential : user.credentials()) {
+      credentials.add(CredentialData.from(credential));
+    }
+    return credentials;
   }
 
   public CredentialData(final String authority, final String id, final String secret, final String type) {

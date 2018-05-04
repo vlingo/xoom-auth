@@ -7,6 +7,8 @@
 
 package io.vlingo.auth.infra.resource;
 
+import io.vlingo.auth.model.User;
+
 public final class ProfileData {
   public final String emailAddress;
   public final PersonNameData name;
@@ -14,6 +16,13 @@ public final class ProfileData {
 
   public static ProfileData from(final PersonNameData name, final String emailAddress, final String phone) {
     return new ProfileData(name, emailAddress, phone);
+  }
+
+  public static ProfileData from(User user) {
+    return ProfileData.from(
+            PersonNameData.of(user.profile().name.given, user.profile().name.second, user.profile().name.family),
+            user.profile().emailAddress.value,
+            user.profile().phone.value);
   }
 
   public ProfileData(final PersonNameData name, final String emailAddress, final String phone) {
