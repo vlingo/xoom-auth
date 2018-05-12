@@ -1,0 +1,31 @@
+{
+    "package": {
+        "name": "vlingo-auth",
+        "repo": "vlingo-auth",
+        "subject": "vlingo-platform",
+        "desc": "The reactive, scalable, and resilient authentication and authorization service for vlingo/platform components, and also suitable for hosted platform services and applications.",
+        "website_url": "https://github.com/vlingo/vlingo-auth",
+        "issue_tracker_url": "https://github.com/vlingo/vlingo-auth/issues",
+        "vcs_url": "https://github.com/vlingo/vlingo-auth.git",
+        "licenses": ["MPL-2.0"],
+        "public_download_numbers": true,
+        "public_stats": true
+    },
+
+    "version": {
+        "name": "master",
+        "gpgSign": false
+    },
+
+    "files": [
+        {
+            "includePattern": "target/(.*).jar",
+            "uploadPattern": "/vlingo-auth/master/$1.jar",
+            "matrixParams": {
+                "override": 1
+            }
+        }
+    ],
+
+    "publish": true
+}
