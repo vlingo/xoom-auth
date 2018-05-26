@@ -5,13 +5,32 @@
 The reactive, scalable, and resilient authentication and authorization service for vlingo/platform components, and also suitable for hosted platform services and applications.
 
 ### Bintray
+
 ```xml
-<dependency>
-  <groupId>io.vlingo</groupId>
-  <artifactId>vlingo-auth</artifactId>
-  <version>0.3.1</version>
-  <type>pom</type>
-</dependency>
+  <repositories>
+    <repository>
+      <id>jcenter</id>
+      <url>https://jcenter.bintray.com/</url>
+    </repository>
+  </repositories>
+  <dependencies>
+    <dependency>
+      <groupId>io.vlingo</groupId>
+      <artifactId>vlingo-auth</artifactId>
+      <version>0.3.4</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+```
+
+```gradle
+dependencies {
+    compile 'io.vlingo:vlingo-auth:0.3.4'
+}
+
+repositories {
+    jcenter()
+}
 ```
 
 License (See LICENSE file for full license)
