@@ -7,7 +7,7 @@
 
 package io.vlingo.auth.infra.resource;
 
-import static io.vlingo.http.resource.serialization.JsonSerialization.deserialized;
+import static io.vlingo.common.serialization.JsonSerialization.deserialized;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Properties;

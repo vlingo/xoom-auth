@@ -7,9 +7,9 @@
 
 package io.vlingo.auth.infra.resource;
 
+import static io.vlingo.common.serialization.JsonSerialization.serialized;
 import static io.vlingo.http.Response.NotFound;
 import static io.vlingo.http.Response.Ok;
-import static io.vlingo.http.resource.serialization.JsonSerialization.serialized;
 
 import io.vlingo.auth.infra.persistence.RepositoryProvider;
 import io.vlingo.auth.model.Group;
