@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.vlingo</groupId>
   <artifactId>vlingo-auth</artifactId>
-  <version>0.3.6</version>
+  <version>0.3.7</version>
   <name>vlingo-auth</name>
   <description>The reactive, scalable, and resilient authentication and authorization service for vlingo/platform components, and also suitable for hosted platform services and applications.</description>
   <url>https://github.com/vlingo/vlingo-auth</url>
@@ -97,7 +97,7 @@
     <dependency>
       <groupId>io.vlingo</groupId>
       <artifactId>vlingo-http</artifactId>
-      <version>0.3.7</version>
+      <version>0.3.8</version>
     </dependency>
     <dependency>
       <groupId>com.lambdaworks</groupId>
