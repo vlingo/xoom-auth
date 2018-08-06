@@ -17,7 +17,7 @@ The reactive, scalable, and resilient authentication and authorization service f
     <dependency>
       <groupId>io.vlingo</groupId>
       <artifactId>vlingo-auth</artifactId>
-      <version>0.4.4</version>
+      <version>0.4.5</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -25,7 +25,7 @@ The reactive, scalable, and resilient authentication and authorization service f
 
 ```gradle
 dependencies {
-    compile 'io.vlingo:vlingo-auth:0.4.4'
+    compile 'io.vlingo:vlingo-auth:0.4.5'
 }
 
 repositories {
