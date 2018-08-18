@@ -29,7 +29,7 @@ public class GroupResourceTest extends ResourceTest {
     group();
     
     final Response patchGroupChangeDescription = patchGroupChangeDescriptionRequestResponse(groupData, "Changed group description.");
-    assertEquals(Response.Ok, patchGroupChangeDescription.status);
+    assertEquals(Response.Status.Ok, patchGroupChangeDescription.status);
     final GroupData changedGroupData = deserialized(patchGroupChangeDescription.entity.content, GroupData.class);
     assertEquals("Changed group description.", changedGroupData.description);
   }
@@ -39,11 +39,11 @@ public class GroupResourceTest extends ResourceTest {
     groupWithGroup("Group1", "Group 1 description.");
     
     final Response putGroupGroupResponse = putGroupGroupRequestResponse(groupData, groupGroupData.name);
-    assertEquals(Response.Ok, putGroupGroupResponse.status);
+    assertEquals(Response.Status.Ok, putGroupGroupResponse.status);
     final String location = "/tenants/" + tenantData.tenantId + "/groups/" + groupData.name + "/groups/" + groupGroupData.name;
     assertEquals(location, putGroupGroupResponse.entity.content);
     final Response getGroupGroupResponse = getGroupGroupRequestResponse(groupData, groupGroupData.name);
-    assertEquals(Response.Ok, getGroupGroupResponse.status);
+    assertEquals(Response.Status.Ok, getGroupGroupResponse.status);
   }
   
   @Test
@@ -51,11 +51,11 @@ public class GroupResourceTest extends ResourceTest {
     groupWithGroup("Group1", "Group 1 description.");
     
     final Response putGroupGroupResponse = putGroupGroupRequestResponse(groupData, groupGroupData.name);
-    assertEquals(Response.Ok, putGroupGroupResponse.status);
+    assertEquals(Response.Status.Ok, putGroupGroupResponse.status);
     final Response deleteGroupGroupResponse = deleteGroupGroupRequestResponse(groupData, groupGroupData.name);
-    assertEquals(Response.Ok, deleteGroupGroupResponse.status);
+    assertEquals(Response.Status.Ok, deleteGroupGroupResponse.status);
     final Response getGroupGroupResponse = getGroupGroupRequestResponse(groupData, groupGroupData.name);
-    assertEquals(Response.NotFound, getGroupGroupResponse.status);
+    assertEquals(Response.Status.NotFound, getGroupGroupResponse.status);
   }
 
   @Test
@@ -63,11 +63,11 @@ public class GroupResourceTest extends ResourceTest {
     groupWithUser();
     
     final Response putGroupUserResponse = putGroupUserRequestResponse(groupData, userData.username);
-    assertEquals(Response.Ok, putGroupUserResponse.status);
+    assertEquals(Response.Status.Ok, putGroupUserResponse.status);
     final String location = "/tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/users/" + userData.username;
     assertEquals(location, putGroupUserResponse.entity.content);
     final Response getGroupUserResponse = getGroupUserRequestResponse(groupData, userData.username);
-    assertEquals(Response.Ok, getGroupUserResponse.status);
+    assertEquals(Response.Status.Ok, getGroupUserResponse.status);
   }
   
   @Test
@@ -75,11 +75,11 @@ public class GroupResourceTest extends ResourceTest {
     groupWithUser();
     
     final Response putGroupUserResponse = putGroupUserRequestResponse(groupData, userData.username);
-    assertEquals(Response.Ok, putGroupUserResponse.status);
+    assertEquals(Response.Status.Ok, putGroupUserResponse.status);
     final Response deleteGroupUserResponse = deleteGroupUserRequestResponse(groupData, userData.username);
-    assertEquals(Response.Ok, deleteGroupUserResponse.status);
+    assertEquals(Response.Status.Ok, deleteGroupUserResponse.status);
     final Response getGroupUserResponse = getGroupUserRequestResponse(groupData, userData.username);
-    assertEquals(Response.NotFound, getGroupUserResponse.status);
+    assertEquals(Response.Status.NotFound, getGroupUserResponse.status);
   }
 
   @Test
@@ -87,11 +87,11 @@ public class GroupResourceTest extends ResourceTest {
     this.groupWithRoleWithPermission();
     
     final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, putRolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, putRolePermissionResponse.status);
     final Response putRoleGroupResponse = putRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.Ok, putRoleGroupResponse.status);
+    assertEquals(Response.Status.Ok, putRoleGroupResponse.status);
     final Response getGroupPermissionResponse = getGroupPermissionRequestResponse(groupData, permissionData.name);
-    assertEquals(Response.Ok, getGroupPermissionResponse.status);
+    assertEquals(Response.Status.Ok, getGroupPermissionResponse.status);
   }
 
   @Test
@@ -99,7 +99,7 @@ public class GroupResourceTest extends ResourceTest {
     group();
     
     final Response getGroupResponse = getGroupRequestResponse(groupData);
-    assertEquals(Response.Ok, getGroupResponse.status);
+    assertEquals(Response.Status.Ok, getGroupResponse.status);
     final GroupData queriedGroup = deserialized(getGroupResponse.entity.content, GroupData.class);
     assertEquals(groupData.tenantId, queriedGroup.tenantId);
     assertEquals(groupData.name, queriedGroup.name);
@@ -111,9 +111,9 @@ public class GroupResourceTest extends ResourceTest {
     groupWithGroup("Group1", "Group 1 description.");
     
     final Response putGroupGroupResponse = putGroupGroupRequestResponse(groupData, groupGroupData.name);
-    assertEquals(Response.Ok, putGroupGroupResponse.status);
+    assertEquals(Response.Status.Ok, putGroupGroupResponse.status);
     final Response getGroupGroupResponse = getGroupGroupRequestResponse(groupData, groupGroupData.name);
-    assertEquals(Response.Ok, getGroupGroupResponse.status);
+    assertEquals(Response.Status.Ok, getGroupGroupResponse.status);
     final GroupData queriedGroup = deserialized(getGroupGroupResponse.entity.content, GroupData.class);
     assertEquals(groupGroupData.tenantId, queriedGroup.tenantId);
     assertEquals(groupGroupData.name, queriedGroup.name);
@@ -125,11 +125,11 @@ public class GroupResourceTest extends ResourceTest {
     this.groupWithRoleWithPermission();
     
     final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, putRolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, putRolePermissionResponse.status);
     final Response putRoleGroupResponse = putRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.Ok, putRoleGroupResponse.status);
+    assertEquals(Response.Status.Ok, putRoleGroupResponse.status);
     final Response getGroupPermissionResponse = getGroupPermissionRequestResponse(groupData, permissionData.name);
-    assertEquals(Response.Ok, getGroupPermissionResponse.status);
+    assertEquals(Response.Status.Ok, getGroupPermissionResponse.status);
     final PermissionData queriedPermission = deserialized(getGroupPermissionResponse.entity.content, PermissionData.class);
     assertEquals(permissionData.tenantId, queriedPermission.tenantId);
     assertEquals(permissionData.name, queriedPermission.name);
@@ -141,11 +141,11 @@ public class GroupResourceTest extends ResourceTest {
     this.groupWithRoleWithPermission();
     
     final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, putRolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, putRolePermissionResponse.status);
     final Response putRoleGroupResponse = putRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.Ok, putRoleGroupResponse.status);
+    assertEquals(Response.Status.Ok, putRoleGroupResponse.status);
     final Response getGroupRoleResponse = getGroupRoleRequestResponse(groupData, roleData.name);
-    assertEquals(Response.Ok, getGroupRoleResponse.status);
+    assertEquals(Response.Status.Ok, getGroupRoleResponse.status);
     final RoleData queriedRole = deserialized(getGroupRoleResponse.entity.content, RoleData.class);
     assertEquals(roleData.tenantId, queriedRole.tenantId);
     assertEquals(roleData.name, queriedRole.name);
@@ -157,9 +157,9 @@ public class GroupResourceTest extends ResourceTest {
     groupWithUser();
     
     final Response putGroupUserResponse = putGroupUserRequestResponse(groupData, userData.username);
-    assertEquals(Response.Ok, putGroupUserResponse.status);
+    assertEquals(Response.Status.Ok, putGroupUserResponse.status);
     final Response getGroupUserResponse = getGroupUserRequestResponse(groupData, userData.username);
-    assertEquals(Response.Ok, getGroupUserResponse.status);
+    assertEquals(Response.Status.Ok, getGroupUserResponse.status);
     final MinimalUserData queriedUser = deserialized(getGroupUserResponse.entity.content, MinimalUserData.class);
     assertEquals(userData.tenantId, queriedUser.tenantId);
     assertEquals(userData.username, queriedUser.username);

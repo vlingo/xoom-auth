@@ -32,22 +32,22 @@ public class UserResourceTest extends ResourceTest {
     user();
 
     final Response patchUserDeactive = patchUserDeactivateRequestResponse(userData);
-    assertEquals(Response.Ok, patchUserDeactive.status);
+    assertEquals(Response.Status.Ok, patchUserDeactive.status);
     final UserData deactivatedUserData = deserialized(patchUserDeactive.entity.content, UserData.class);
     assertFalse(deactivatedUserData.active);
     
     final Response getUserResponse1 = getUserRequestResponse(userData);
-    assertEquals(Response.Ok, getUserResponse1.status);
+    assertEquals(Response.Status.Ok, getUserResponse1.status);
     final UserData getDeactivatedUserData = deserialized(getUserResponse1.entity.content, UserData.class);
     assertFalse(getDeactivatedUserData.active);
     
     final Response patchUserActivate = this.patchUserActivateRequestResponse(userData);
-    assertEquals(Response.Ok, patchUserActivate.status);
+    assertEquals(Response.Status.Ok, patchUserActivate.status);
     final UserData activatedUserData = deserialized(patchUserActivate.entity.content, UserData.class);
     assertTrue(activatedUserData.active);
     
     final Response getUserResponse2 = getUserRequestResponse(userData);
-    assertEquals(Response.Ok, getUserResponse2.status);
+    assertEquals(Response.Status.Ok, getUserResponse2.status);
     final UserData getActivatedUserData = deserialized(getUserResponse2.entity.content, UserData.class);
     assertTrue(getActivatedUserData.active);
   }
@@ -60,14 +60,14 @@ public class UserResourceTest extends ResourceTest {
     
     final CredentialData newCredentialData = CredentialData.from("abc", "username1", "secret1", Credential.Type.OAUTH.name());
     final Response patchUserAddCredential = putUserAddCredentialRequestResponse(userData, newCredentialData);
-    assertEquals(Response.Ok, patchUserAddCredential.status);
+    assertEquals(Response.Status.Ok, patchUserAddCredential.status);
     final UserData newCredentialUserData = deserialized(patchUserAddCredential.entity.content, UserData.class);
     assertEquals(newCredentialData.authority, newCredentialUserData.credentialOf("abc").authority);
     assertEquals(newCredentialData.id, newCredentialUserData.credentialOf("abc").id);
     assertEquals(newCredentialData.type, newCredentialUserData.credentialOf("abc").type);
     
     final Response getUserResponse1 = getUserRequestResponse(userData);
-    assertEquals(Response.Ok, getUserResponse1.status);
+    assertEquals(Response.Status.Ok, getUserResponse1.status);
     final UserData getUserData1 = deserialized(getUserResponse1.entity.content, UserData.class);
     assertEquals(newCredentialData.authority, getUserData1.credentialOf("abc").authority);
     assertEquals(newCredentialData.id, getUserData1.credentialOf("abc").id);
@@ -76,23 +76,23 @@ public class UserResourceTest extends ResourceTest {
     // remove
     
     final Response deleteUserAddCredential = deleteUserCredentialRequestResponse(userData, "abc");
-    assertEquals(Response.Ok, deleteUserAddCredential.status);
+    assertEquals(Response.Status.Ok, deleteUserAddCredential.status);
     final UserData deletedCredentialUserData = deserialized(deleteUserAddCredential.entity.content, UserData.class);
     assertNull(deletedCredentialUserData.credentialOf("abc"));
     
     final Response getUserResponse2 = getUserRequestResponse(userData);
-    assertEquals(Response.Ok, getUserResponse2.status);
+    assertEquals(Response.Status.Ok, getUserResponse2.status);
     final UserData getUserData2 = deserialized(getUserResponse2.entity.content, UserData.class);
     assertNull(getUserData2.credentialOf("abc"));
     
     // replace
     final CredentialData newCredentialDataAgain = CredentialData.from("abc", "username1", "secret1", Credential.Type.OAUTH.name());
     final Response newCredentialUserDataAgain = putUserAddCredentialRequestResponse(userData, newCredentialDataAgain);
-    assertEquals(Response.Ok, newCredentialUserDataAgain.status);
+    assertEquals(Response.Status.Ok, newCredentialUserDataAgain.status);
 
     final CredentialData credentialDataUsedToReplace = CredentialData.from("cba", "username2", "secret2", Credential.Type.OAUTH.name());
     final Response patchUserReplaceCredential = patchUserReplaceCredentialRequestResponse(userData, "abc", credentialDataUsedToReplace);
-    assertEquals(Response.Ok, patchUserReplaceCredential.status);
+    assertEquals(Response.Status.Ok, patchUserReplaceCredential.status);
 
     final UserData patchUserReplaceCredentialUserData = deserialized(patchUserReplaceCredential.entity.content, UserData.class);
     assertEquals(credentialDataUsedToReplace.authority, patchUserReplaceCredentialUserData.credentialOf("cba").authority);
@@ -100,7 +100,7 @@ public class UserResourceTest extends ResourceTest {
     assertEquals(credentialDataUsedToReplace.type, patchUserReplaceCredentialUserData.credentialOf("cba").type);
 
     final Response getUserResponse3 = getUserRequestResponse(userData);
-    assertEquals(Response.Ok, getUserResponse3.status);
+    assertEquals(Response.Status.Ok, getUserResponse3.status);
     final UserData getUserData3 = deserialized(getUserResponse3.entity.content, UserData.class);
     assertEquals(credentialDataUsedToReplace.authority, getUserData3.credentialOf("cba").authority);
     assertEquals(credentialDataUsedToReplace.id, getUserData3.credentialOf("cba").id);
@@ -113,7 +113,7 @@ public class UserResourceTest extends ResourceTest {
 
     final ProfileData newProfileData = ProfileData.from(PersonNameData.of("A", "B", "C"), "a@c.com", "888-888-8888");
     final Response patchUserReplaceProfile = patchUserReplaceProfileRequestResponse(userData, newProfileData);
-    assertEquals(Response.Ok, patchUserReplaceProfile.status);
+    assertEquals(Response.Status.Ok, patchUserReplaceProfile.status);
     final UserData newProfileUserData = deserialized(patchUserReplaceProfile.entity.content, UserData.class);
     assertEquals(newProfileData.name.given, newProfileUserData.profile.name.given);
     assertEquals(newProfileData.name.second, newProfileUserData.profile.name.second);
@@ -122,7 +122,7 @@ public class UserResourceTest extends ResourceTest {
     assertEquals(newProfileData.phone, newProfileUserData.profile.phone);
     
     final Response getUserResponse1 = getUserRequestResponse(userData);
-    assertEquals(Response.Ok, getUserResponse1.status);
+    assertEquals(Response.Status.Ok, getUserResponse1.status);
     final UserData getUserData1 = deserialized(getUserResponse1.entity.content, UserData.class);
     assertEquals(newProfileData.name.given, getUserData1.profile.name.given);
     assertEquals(newProfileData.name.second, getUserData1.profile.name.second);
@@ -136,7 +136,7 @@ public class UserResourceTest extends ResourceTest {
     user();
 
     final Response getUserResponse1 = getUserRequestResponse(userData);
-    assertEquals(Response.Ok, getUserResponse1.status);
+    assertEquals(Response.Status.Ok, getUserResponse1.status);
     final UserData userDataAsQueried = deserialized(getUserResponse1.entity.content, UserData.class);
     assertEquals(userData.tenantId, userDataAsQueried.tenantId);
     assertEquals(userData.username, userDataAsQueried.username);
@@ -157,7 +157,7 @@ public class UserResourceTest extends ResourceTest {
     userWithRolePermission();
 
     final Response getUserHasPermission = getUserHasPermissionRequestResponse(userData, permissionData.name);
-    assertEquals(Response.Ok, getUserHasPermission.status);
+    assertEquals(Response.Status.Ok, getUserHasPermission.status);
     final PermissionData userHasPermissionData = deserialized(getUserHasPermission.entity.content, PermissionData.class);
     assertEquals(permissionData.tenantId, userHasPermissionData.tenantId);
     assertEquals(permissionData.name, userHasPermissionData.name);
@@ -169,7 +169,7 @@ public class UserResourceTest extends ResourceTest {
     userWithRolePermission();
 
     final Response getUserInRoleResponse = getUserInRoleRequestResponse(userData, roleData.name);
-    assertEquals(Response.Ok, getUserInRoleResponse.status);
+    assertEquals(Response.Status.Ok, getUserInRoleResponse.status);
     final RoleData userInRoleData = deserialized(getUserInRoleResponse.entity.content, RoleData.class);
     assertEquals(roleData.tenantId, userInRoleData.tenantId);
     assertEquals(roleData.name, userInRoleData.name);
@@ -254,10 +254,10 @@ public class UserResourceTest extends ResourceTest {
     permissionData = deserialized(permissionProvisionedResponse.entity.content, PermissionData.class);
 
     final Response rolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, rolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, rolePermissionResponse.status);
 
     final Response roleUserResponse = putRoleUserRequestResponse(roleData, userData.username);
-    assertEquals(Response.Ok, roleUserResponse.status);
+    assertEquals(Response.Status.Ok, roleUserResponse.status);
   }
 
   private void user() {

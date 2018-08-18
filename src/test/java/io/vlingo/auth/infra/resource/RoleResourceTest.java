@@ -28,7 +28,7 @@ public class RoleResourceTest extends ResourceTest {
     role();
     
     final Response patchRoleChangeDescription = patchRoleChangeDescriptionRequestResponse(roleData, "Changed role description.");
-    assertEquals(Response.Ok, patchRoleChangeDescription.status);
+    assertEquals(Response.Status.Ok, patchRoleChangeDescription.status);
     final RoleData changedRoleData = deserialized(patchRoleChangeDescription.entity.content, RoleData.class);
     assertEquals("Changed role description.", changedRoleData.description);
   }
@@ -38,11 +38,11 @@ public class RoleResourceTest extends ResourceTest {
     roleWithGroup();
     
     final Response putRoleGroupResponse = putRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.Ok, putRoleGroupResponse.status);
+    assertEquals(Response.Status.Ok, putRoleGroupResponse.status);
     final String location = "/tenants/" + tenantData.tenantId + "/roles/" + roleData.name + "/groups/" + groupData.name;
     assertEquals(location, putRoleGroupResponse.entity.content);
     final Response getRoleGroupResponse = getRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.Ok, getRoleGroupResponse.status);
+    assertEquals(Response.Status.Ok, getRoleGroupResponse.status);
   }
   
   @Test
@@ -50,11 +50,11 @@ public class RoleResourceTest extends ResourceTest {
     roleWithGroup();
     
     final Response putRoleGroupResponse = putRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.Ok, putRoleGroupResponse.status);
+    assertEquals(Response.Status.Ok, putRoleGroupResponse.status);
     final Response deleteRoleGroupResponse = deleteRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.Ok, deleteRoleGroupResponse.status);
+    assertEquals(Response.Status.Ok, deleteRoleGroupResponse.status);
     final Response getRoleGroupResponse = getRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.NotFound, getRoleGroupResponse.status);
+    assertEquals(Response.Status.NotFound, getRoleGroupResponse.status);
   }
 
   @Test
@@ -62,11 +62,11 @@ public class RoleResourceTest extends ResourceTest {
     roleWithUser();
     
     final Response putRoleUserResponse = putRoleUserRequestResponse(roleData, userData.username);
-    assertEquals(Response.Ok, putRoleUserResponse.status);
+    assertEquals(Response.Status.Ok, putRoleUserResponse.status);
     final String location = "/tenants/" + tenantData.tenantId + "/roles/" + roleData.name + "/users/" + userData.username;
     assertEquals(location, putRoleUserResponse.entity.content);
     final Response getRoleUserResponse = getRoleUserRequestResponse(roleData, userData.username);
-    assertEquals(Response.Ok, getRoleUserResponse.status);
+    assertEquals(Response.Status.Ok, getRoleUserResponse.status);
   }
   
   @Test
@@ -74,11 +74,11 @@ public class RoleResourceTest extends ResourceTest {
     roleWithUser();
     
     final Response putRoleUserResponse = putRoleUserRequestResponse(roleData, userData.username);
-    assertEquals(Response.Ok, putRoleUserResponse.status);
+    assertEquals(Response.Status.Ok, putRoleUserResponse.status);
     final Response deleteRoleUserResponse = deleteRoleUserRequestResponse(roleData, userData.username);
-    assertEquals(Response.Ok, deleteRoleUserResponse.status);
+    assertEquals(Response.Status.Ok, deleteRoleUserResponse.status);
     final Response getRoleUserResponse = getRoleUserRequestResponse(roleData, userData.username);
-    assertEquals(Response.NotFound, getRoleUserResponse.status);
+    assertEquals(Response.Status.NotFound, getRoleUserResponse.status);
   }
 
   @Test
@@ -86,22 +86,22 @@ public class RoleResourceTest extends ResourceTest {
     roleWithPermission();
     
     final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, putRolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, putRolePermissionResponse.status);
     final String location = "/tenants/" + tenantData.tenantId + "/roles/" + roleData.name + "/permissions/" + permissionData.name;
     assertEquals(location, putRolePermissionResponse.entity.content);
     final Response getRolePermissionResponse = getRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, getRolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, getRolePermissionResponse.status);
   }
 
   @Test
   public void testThatRolePermissionDetaches() {
     roleWithPermission();
     final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, putRolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, putRolePermissionResponse.status);
     final Response deleteRolePermissionResponse = deleteRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, deleteRolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, deleteRolePermissionResponse.status);
     final Response getRolePermissionResponse = getRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.NotFound, getRolePermissionResponse.status);
+    assertEquals(Response.Status.NotFound, getRolePermissionResponse.status);
   }
 
   @Test
@@ -109,7 +109,7 @@ public class RoleResourceTest extends ResourceTest {
     role();
     
     final Response getRoleResponse = getRoleRequestResponse(roleData.tenantId, roleData.name);
-    assertEquals(Response.Ok, getRoleResponse.status);
+    assertEquals(Response.Status.Ok, getRoleResponse.status);
     final RoleData queriedRole = deserialized(getRoleResponse.entity.content, RoleData.class);
     assertEquals(roleData.tenantId, queriedRole.tenantId);
     assertEquals(roleData.name, queriedRole.name);
@@ -121,9 +121,9 @@ public class RoleResourceTest extends ResourceTest {
     roleWithGroup();
     
     final Response putRoleGroupResponse = putRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.Ok, putRoleGroupResponse.status);
+    assertEquals(Response.Status.Ok, putRoleGroupResponse.status);
     final Response getRoleGroupResponse = getRoleGroupRequestResponse(roleData, groupData.name);
-    assertEquals(Response.Ok, getRoleGroupResponse.status);
+    assertEquals(Response.Status.Ok, getRoleGroupResponse.status);
     final GroupData queriedRole = deserialized(getRoleGroupResponse.entity.content, GroupData.class);
     assertEquals(groupData.tenantId, queriedRole.tenantId);
     assertEquals(groupData.name, queriedRole.name);
@@ -135,10 +135,10 @@ public class RoleResourceTest extends ResourceTest {
     roleWithPermission();
     
     final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, putRolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, putRolePermissionResponse.status);
 
     final Response getRolePermissionResponse = getRolePermissionRequestResponse(roleData, permissionData.name);
-    assertEquals(Response.Ok, getRolePermissionResponse.status);
+    assertEquals(Response.Status.Ok, getRolePermissionResponse.status);
     final PermissionData queriedPermission = deserialized(getRolePermissionResponse.entity.content, PermissionData.class);
     assertEquals(permissionData.tenantId, queriedPermission.tenantId);
     assertEquals(permissionData.name, queriedPermission.name);
@@ -150,9 +150,9 @@ public class RoleResourceTest extends ResourceTest {
     roleWithUser();
     
     final Response putRoleUserResponse = putRoleUserRequestResponse(roleData, userData.username);
-    assertEquals(Response.Ok, putRoleUserResponse.status);
+    assertEquals(Response.Status.Ok, putRoleUserResponse.status);
     final Response getRoleUserResponse = getRoleUserRequestResponse(roleData, userData.username);
-    assertEquals(Response.Ok, getRoleUserResponse.status);
+    assertEquals(Response.Status.Ok, getRoleUserResponse.status);
     final MinimalUserData queriedUser = deserialized(getRoleUserResponse.entity.content, MinimalUserData.class);
     assertEquals(userData.tenantId, queriedUser.tenantId);
     assertEquals(userData.username, queriedUser.username);

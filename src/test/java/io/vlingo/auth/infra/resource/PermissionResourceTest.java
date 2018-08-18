@@ -27,7 +27,7 @@ public class PermissionResourceTest extends ResourceTest {
     permission();
     
     final Response patchPermissionChangeDescription = patchPermissionChangeDescriptionRequestResponse(permissionData, "Changed permission description.");
-    assertEquals(Response.Ok, patchPermissionChangeDescription.status);
+    assertEquals(Response.Status.Ok, patchPermissionChangeDescription.status);
     final PermissionData changedPermissionData = deserialized(patchPermissionChangeDescription.entity.content, PermissionData.class);
     assertEquals("Changed permission description.", changedPermissionData.description);
   }
@@ -38,7 +38,7 @@ public class PermissionResourceTest extends ResourceTest {
     
     final ConstraintData constraintData1 = constraintData(1);
     final Response patchPermissionEnforceConstraint = patchPermissionEnforceConstraintRequestResponse(permissionData, constraintData1);
-    assertEquals(Response.Ok, patchPermissionEnforceConstraint.status);
+    assertEquals(Response.Status.Ok, patchPermissionEnforceConstraint.status);
     final PermissionData changedPermissionData = deserialized(patchPermissionEnforceConstraint.entity.content, PermissionData.class);
     assertEquals(1, changedPermissionData.constraints.size());
     final ConstraintData constraintDataEnforced = changedPermissionData.constraints.iterator().next();
@@ -54,7 +54,7 @@ public class PermissionResourceTest extends ResourceTest {
     
     final ConstraintData constraintData1 = constraintData(1);
     final Response patchPermissionEnforceConstraint = patchPermissionEnforceConstraintRequestResponse(permissionData, constraintData1);
-    assertEquals(Response.Ok, patchPermissionEnforceConstraint.status);
+    assertEquals(Response.Status.Ok, patchPermissionEnforceConstraint.status);
     final ConstraintData constraintData2 = constraintData(2);
     final Response patchPermissionEnforceReplacementConstraint = patchPermissionEnforceConstraintRequestResponse(permissionData, constraintData1, constraintData2);
     final PermissionData changedPermissionData = deserialized(patchPermissionEnforceReplacementConstraint.entity.content, PermissionData.class);
@@ -72,10 +72,10 @@ public class PermissionResourceTest extends ResourceTest {
     
     final ConstraintData constraintData1 = constraintData(1);
     final Response patchPermissionEnforceConstraint1 = patchPermissionEnforceConstraintRequestResponse(permissionData, constraintData1);
-    assertEquals(Response.Ok, patchPermissionEnforceConstraint1.status);
+    assertEquals(Response.Status.Ok, patchPermissionEnforceConstraint1.status);
     final ConstraintData constraintData2 = constraintData(2);
     final Response patchPermissionEnforceConstraint2 = patchPermissionEnforceConstraintRequestResponse(permissionData, constraintData2);
-    assertEquals(Response.Ok, patchPermissionEnforceConstraint2.status);
+    assertEquals(Response.Status.Ok, patchPermissionEnforceConstraint2.status);
     final PermissionData changedPermissionData = deserialized(patchPermissionEnforceConstraint2.entity.content, PermissionData.class);
     assertEquals(2, changedPermissionData.constraints.size());
     final Response patchPermissionForgetConstraint = patchPermissionForgetConstraintRequestResponse(permissionData, constraintData1);
