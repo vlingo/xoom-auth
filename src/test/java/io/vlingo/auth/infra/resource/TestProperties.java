@@ -177,10 +177,11 @@ public class TestProperties {
 
     properties.setProperty("server.http.port", "8080");
     properties.setProperty("server.dispatcher.pool", "10");
-    properties.setProperty("server.buffer.pool.size", "2000");
-    properties.setProperty("server.message.buffer.size", "65535");
+    properties.setProperty("server.buffer.pool.size", "200");
+    properties.setProperty("server.message.buffer.size", "10240");
     properties.setProperty("server.probe.interval", "10");
     properties.setProperty("server.probe.timeout", "10");
+    properties.setProperty("server.processor.pool.size", "10");
     properties.setProperty("server.request.missing.content.timeout", "100");
 
     properties.setProperty("resource.name.tenant", "[subscribe, activate, deactivate, description, name, provisionGroup, provisionPermission, provisionRole, registerUser, queryTenant, queryGroups, queryPermissions, queryRoles, queryUsers]");
