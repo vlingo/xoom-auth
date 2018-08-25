@@ -29,7 +29,6 @@ public class Permission {
 
   public void enforce(final Constraint constraint) {
     constraints.add(constraint);
-    System.out.println("Permission: " + this);
   }
 
   public void enforce(final Constraint previousConstraint, final Constraint currentConstraint) {
