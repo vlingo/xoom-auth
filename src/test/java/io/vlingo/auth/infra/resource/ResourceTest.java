@@ -11,6 +11,7 @@ import static io.vlingo.common.serialization.JsonSerialization.serialized;
 
 import java.nio.ByteBuffer;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,24 +32,33 @@ import io.vlingo.wire.node.AddressType;
 import io.vlingo.wire.node.Host;
 
 public abstract class ResourceTest {
+  private static final AtomicInteger baseServerPort = new AtomicInteger(19090);
+
   private final ByteBuffer buffer = ByteBufferAllocator.allocate(65535);
 
   protected ResponseChannelConsumer consumer;
   protected ClientRequestResponseChannel client;
   protected Progress progress;
+  protected Properties properties;
   protected Server server;
+  protected int serverPort;
   protected World world;
 
   @Before
   public void setUp() throws Exception {
     world = World.start("resource-test");
+
+    serverPort = baseServerPort.getAndIncrement();
+
+    properties = resourceProperties();
+    properties.setProperty("server.http.port", "" + serverPort);
     
-    server = Server.startWith(world.stage(), resourceProperties());
+    server = Server.startWith(world.stage(), properties);
     Thread.sleep(10); // delay for server startup
 
     consumer = world.actorFor(Definition.has(TestResponseChannelConsumer.class, Definition.parameters(progress)), ResponseChannelConsumer.class);
 
-    client = new ClientRequestResponseChannel(Address.from(Host.of("localhost"), 8080, AddressType.NONE), consumer, 100, 10240, world.defaultLogger());
+    client = new ClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240, world.defaultLogger());
   }
 
   @After
