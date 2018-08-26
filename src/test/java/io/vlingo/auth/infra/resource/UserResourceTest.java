@@ -177,12 +177,6 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Override
-  public void tearDown() {
-    super.tearDown();
-    try { Thread.sleep(2000); } catch (Exception e) { } // delay for closing channels and selectors
-  }
-
-  @Override
   protected Properties resourceProperties() {
     return TestProperties.userResourceProperties(
             TestProperties.groupResourceProperties(
