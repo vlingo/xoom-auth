@@ -1,6 +1,6 @@
 # vlingo-auth
 
-[![Javadocs](http://javadoc.io/badge/io.vlingo/vlingo-auth.svg?color=brightgreen)](http://javadoc.io/doc/io.vlingo/vlingo-auth)[![Build Status](https://travis-ci.org/vlingo/vlingo-auth.svg?branch=master)](https://travis-ci.org/vlingo/vlingo-auth) [ ![Download](https://api.bintray.com/packages/vlingo/vlingo-platform-java/vlingo-auth/images/download.svg) ](https://bintray.com/vlingo/vlingo-platform-java/vlingo-auth/_latestVersion)
+[![Javadocs](http://javadoc.io/badge/io.vlingo/vlingo-auth.svg?color=brightgreen)](http://javadoc.io/doc/io.vlingo/vlingo-auth) [![Build Status](https://travis-ci.org/vlingo/vlingo-auth.svg?branch=master)](https://travis-ci.org/vlingo/vlingo-auth) [ ![Download](https://api.bintray.com/packages/vlingo/vlingo-platform-java/vlingo-auth/images/download.svg) ](https://bintray.com/vlingo/vlingo-platform-java/vlingo-auth/_latestVersion)
 
 The reactive, scalable, and resilient authentication and authorization service for vlingo/platform components, and also suitable for hosted platform services and applications.
 
