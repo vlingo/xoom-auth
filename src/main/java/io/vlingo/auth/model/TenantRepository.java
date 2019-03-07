@@ -7,7 +7,11 @@
 
 package io.vlingo.auth.model;
 
+import java.util.Collection;
+
 public interface TenantRepository {
+  Collection<Tenant> allTenants();
+  Tenant tenantOf(final String name);
   Tenant tenantOf(final TenantId tenantId);
   void save(final Tenant tenant);
 }

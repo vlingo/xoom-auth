@@ -7,6 +7,8 @@
 
 package io.vlingo.auth.infra.persistence;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,21 @@ import io.vlingo.auth.model.TenantRepository;
 
 public class InMemoryTenantRepository extends BaseRepository implements TenantRepository {
   private final Map<String, Tenant> tenants = new HashMap<>();
+
+  @Override
+  public Collection<Tenant> allTenants() {
+    return Collections.unmodifiableCollection(tenants.values());
+  }
+
+  @Override
+  public Tenant tenantOf(final String name) {
+    for (final Tenant tenant : tenants.values()) {
+      if (tenant.name().equals(name)) {
+        return tenant;
+      }
+    }
+    return null;
+  }
 
   @Override
   public Tenant tenantOf(final TenantId tenantId) {

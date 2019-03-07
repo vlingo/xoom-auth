@@ -7,6 +7,9 @@
 
 package io.vlingo.auth.infra.resource;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import io.vlingo.auth.model.Tenant;
 
 public final class TenantData {
@@ -25,6 +28,14 @@ public final class TenantData {
 
   public static TenantData from(final Tenant tenant) {
     return new TenantData(tenant.tenantId().value, tenant.name(), tenant.description(), tenant.isActive());
+  }
+
+  public static Collection<TenantData> from(final Collection<Tenant> tenants) {
+    final Collection<TenantData> data = new ArrayList<>(tenants.size());
+    for (final Tenant tenant : tenants) {
+      data.add(from(tenant));
+    }
+    return data;
   }
 
   public TenantData(final String name, final String description, final boolean active) {

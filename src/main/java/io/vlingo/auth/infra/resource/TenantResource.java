@@ -146,6 +146,15 @@ public class TenantResource extends ResourceHandler {
     }
   }
 
+  public void queryTenants() {
+    final Collection<Tenant> tenants = tenantRepository.allTenants();
+    if (tenants.isEmpty()) {
+      completes().with(Response.of(Ok));
+    } else {
+      completes().with(Response.of(Ok, serialized(TenantData.from(tenants))));
+    }
+  }
+
   public void queryTenant(final String tenantId) {
     final Tenant tenant = tenantRepository.tenantOf(TenantId.fromExisting(tenantId));
     if (tenant.doesNotExist()) {
