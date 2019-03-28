@@ -134,7 +134,7 @@ public class AuthenticatorTest {
     final UserRepository repository = new TestUserRepository();
     repository.save(user);
 
-    final Authenticator authenticator = new Authenticator(hasher, repository, Duration.ofMillis(10));
+    final Authenticator authenticator = new Authenticator(hasher, repository, Duration.ofMillis(20));
 
     final String userToken = authenticator.authenticUserToken(tenant.tenantId(), user.username(), secret);
     assertNotNull(userToken);
