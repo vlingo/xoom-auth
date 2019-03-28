@@ -8,10 +8,13 @@
 package io.vlingo.auth.infra.resource;
 
 import static io.vlingo.common.serialization.JsonSerialization.serialized;
+import static io.vlingo.http.Response.Status.Created;
 import static io.vlingo.http.Response.Status.NotFound;
 import static io.vlingo.http.Response.Status.Ok;
+import static io.vlingo.http.Response.Status.Unauthorized;
 
 import io.vlingo.auth.infra.persistence.RepositoryProvider;
+import io.vlingo.auth.model.Authenticator;
 import io.vlingo.auth.model.Credential;
 import io.vlingo.auth.model.EmailAddress;
 import io.vlingo.auth.model.Loader;
@@ -25,6 +28,7 @@ import io.vlingo.auth.model.RoleRepository;
 import io.vlingo.auth.model.TenantId;
 import io.vlingo.auth.model.User;
 import io.vlingo.auth.model.UserRepository;
+import io.vlingo.auth.model.crypto.Hasher;
 import io.vlingo.http.Response;
 import io.vlingo.http.resource.ResourceHandler;
 
@@ -33,6 +37,16 @@ public class UserResource extends ResourceHandler {
   private final RoleRepository roleRepository = RepositoryProvider.roleRepository();
   private final UserRepository userRepository = RepositoryProvider.userRepository();
   private final Loader loader = RepositoryProvider.loader();
+  private final Authenticator authenticator = new Authenticator(Hasher.defaultHasher(), userRepository);
+
+  public void authenticate(final String tenantId, final String username, final String password) {
+    final String userToken = authenticator.authenticUserToken(TenantId.fromExisting(tenantId), username, password);
+    if (userToken != null) {
+      completes().with(Response.of(Created, userToken));
+    } else {
+      completes().with(Response.of(Unauthorized));
+    }
+  }
 
   public void activate(final String tenantId, final String username) {
     final User user = userRepository.userOf(TenantId.fromExisting(tenantId), username);
