@@ -9,7 +9,11 @@ package io.vlingo.auth.model;
 
 import static io.vlingo.auth.model.ModelFixtures.tenant;
 import static io.vlingo.auth.model.ModelFixtures.user;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.time.Duration;
 
 import org.junit.Test;
 
@@ -28,9 +32,9 @@ public class AuthenticatorTest {
     final User user = user(tenant, hasher.hash(secret));
     final UserRepository repository = new TestUserRepository();
     repository.save(user);
-    
+
     final Authenticator authenticator = new Authenticator(hasher, repository);
-    
+
     assertTrue(authenticator.authenticate(tenant.tenantId(), user.username(), secret));
   }
 
@@ -42,9 +46,9 @@ public class AuthenticatorTest {
     final User user = user(tenant, hasher.hash(secret));
     final UserRepository repository = new TestUserRepository();
     repository.save(user);
-    
+
     final Authenticator authenticator = new Authenticator(hasher, repository);
-    
+
     assertTrue(authenticator.authenticate(tenant.tenantId(), user.username(), secret));
   }
 
@@ -56,9 +60,87 @@ public class AuthenticatorTest {
     final User user = user(tenant, hasher.hash(secret));
     final UserRepository repository = new TestUserRepository();
     repository.save(user);
-    
+
     final Authenticator authenticator = new Authenticator(hasher, repository);
-    
+
     assertTrue(authenticator.authenticate(tenant.tenantId(), user.username(), secret));
+  }
+
+  @Test
+  public void testThatUserTokenValidates() {
+    final Hasher hasher = new Argon2Hasher(2, 65535, 1);
+    final Tenant tenant = tenant();
+    final String secret = "asecret-argon2-secret";
+    final User user = user(tenant, hasher.hash(secret));
+    final UserRepository repository = new TestUserRepository();
+    repository.save(user);
+
+    final Authenticator authenticator = new Authenticator(hasher, repository, Duration.ofMillis(10));
+
+    final String userToken = authenticator.authenticUserToken(tenant.tenantId(), user.username(), secret);
+    assertNotNull(userToken);
+
+    assertTrue(authenticator.isValid(userToken));
+  }
+
+  @Test
+  public void testThatUserTokenExpires() {
+    final Hasher hasher = new Argon2Hasher(2, 65535, 1);
+    final Tenant tenant = tenant();
+    final String secret = "asecret-argon2-secret";
+    final User user = user(tenant, hasher.hash(secret));
+    final UserRepository repository = new TestUserRepository();
+    repository.save(user);
+
+    final Authenticator authenticator = new Authenticator(hasher, repository, Duration.ofMillis(1));
+
+    final String userToken = authenticator.authenticUserToken(tenant.tenantId(), user.username(), secret);
+    assertNotNull(userToken);
+
+    try { Thread.sleep(5); } catch (Exception e) { }
+
+    assertFalse(authenticator.isValid(userToken));
+  }
+
+  @Test
+  public void testThatUserTokenRenews() {
+    final Hasher hasher = new Argon2Hasher(2, 65535, 1);
+    final Tenant tenant = tenant();
+    final String secret = "asecret-argon2-secret";
+    final User user = user(tenant, hasher.hash(secret));
+    final UserRepository repository = new TestUserRepository();
+    repository.save(user);
+
+    final Authenticator authenticator = new Authenticator(hasher, repository, Duration.ofMillis(10));
+
+    final String userToken = authenticator.authenticUserToken(tenant.tenantId(), user.username(), secret);
+    assertNotNull(userToken);
+
+    try { Thread.sleep(5); } catch (Exception e) { }
+
+    authenticator.renew(userToken);
+
+    try { Thread.sleep(5); } catch (Exception e) { }
+
+    assertTrue(authenticator.isValid(userToken));
+  }
+
+  @Test
+  public void testThatUserTokenRemainsValid() {
+    final Hasher hasher = new Argon2Hasher(2, 65535, 1);
+    final Tenant tenant = tenant();
+    final String secret = "asecret-argon2-secret";
+    final User user = user(tenant, hasher.hash(secret));
+    final UserRepository repository = new TestUserRepository();
+    repository.save(user);
+
+    final Authenticator authenticator = new Authenticator(hasher, repository, Duration.ofMillis(10));
+
+    final String userToken = authenticator.authenticUserToken(tenant.tenantId(), user.username(), secret);
+    assertNotNull(userToken);
+
+    try { Thread.sleep(7); } catch (Exception e) { }
+
+    assertTrue(authenticator.isValid(userToken));
   }
 }
