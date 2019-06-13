@@ -24,6 +24,7 @@ import io.vlingo.auth.model.Tenant;
 import io.vlingo.http.Response;
 import io.vlingo.http.resource.Server;
 import io.vlingo.wire.channel.ResponseChannelConsumer;
+import io.vlingo.wire.fdx.bidirectional.BasicClientRequestResponseChannel;
 import io.vlingo.wire.fdx.bidirectional.ClientRequestResponseChannel;
 import io.vlingo.wire.message.ByteBufferAllocator;
 import io.vlingo.wire.message.Converters;
@@ -52,13 +53,13 @@ public abstract class ResourceTest {
 
     properties = resourceProperties();
     properties.setProperty("server.http.port", "" + serverPort);
-    
+
     server = Server.startWith(world.stage(), properties);
     Thread.sleep(10); // delay for server startup
 
     consumer = world.actorFor(ResponseChannelConsumer.class, Definition.has(TestResponseChannelConsumer.class, Definition.parameters(progress)));
 
-    client = new ClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240, world.defaultLogger());
+    client = new BasicClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240, world.defaultLogger());
   }
 
   @After
@@ -159,12 +160,12 @@ public abstract class ResourceTest {
     final String request = "GET /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/groups/" + groupName + " HTTP/1.1\nHost: vlingo.io\n\n";
     return requestResponse(request);
   }
-  
+
   protected Response getGroupPermissionRequestResponse(GroupData groupData, String permissionName) {
     final String request = "GET /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/permissions/" + permissionName + " HTTP/1.1\nHost: vlingo.io\n\n";
     return requestResponse(request);
   }
-  
+
   protected Response getGroupRoleRequestResponse(GroupData groupData, String roleName) {
     final String request = "GET /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/roles/" + roleName + " HTTP/1.1\nHost: vlingo.io\n\n";
     return requestResponse(request);
@@ -217,13 +218,13 @@ public abstract class ResourceTest {
     final String request = postSubscribeRequest(serialized(tenantToSubscribe));
     return requestResponse(request);
   }
-  
+
   protected Response postRegisterUser(String tenantId, UserRegistrationData userRegData) {
     final String body = serialized(userRegData);
     final String request = "POST /tenants/" + tenantId + "/users HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
-  
+
   protected Response requestResponse(final String request) {
     progress.untilConsumed = TestUntil.happenings(1);
     client.requestWith(toByteBuffer(request));
