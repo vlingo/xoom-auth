@@ -1,0 +1,9 @@
+{
+  "name": "A newly created permission",
+  "description": "This is something new",
+  "constraint": {
+    "name": "A newly created constraint",
+    "type": "Integer",
+    "value": "42"
+  }
+}

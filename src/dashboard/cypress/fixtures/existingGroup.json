@@ -1,0 +1,8 @@
+{
+  "name": "Members Group",
+  "description": "Group with a member.",
+  "innerGroups": [],
+  "groupMembers": [
+    1
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Permission 1",
+  "description": "First permission",
+  "id": 1,
+  "constraint":
+    {
+      "name": "Constraint 1",
+      "type": "string",
+      "value": "1"
+    }
+}

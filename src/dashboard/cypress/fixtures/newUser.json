@@ -1,0 +1,13 @@
+{
+  "email": "newuser@user.com",
+  "familyName": "New Family",
+  "givenName": "New",
+  "userName": "newuser@user.com",
+  "phone": "234 6778",
+  "credential":
+  {
+    "id": "new cred",
+    "authority": "vlingo",
+    "secret": "09786"
+  }
+}

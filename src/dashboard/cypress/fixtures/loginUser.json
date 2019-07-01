@@ -1,0 +1,14 @@
+{
+  "email": "maria@mustermail.de",
+  "familyName": "Mustermann",
+  "givenName": "Maria",
+  "userName": "maria@mustermail.de",
+  "phone": "7351 7874916",
+  "id": 2,
+  "credential":
+    {
+      "id": "one",
+      "authority": "vlingo",
+      "secret": "123"
+    }
+}
