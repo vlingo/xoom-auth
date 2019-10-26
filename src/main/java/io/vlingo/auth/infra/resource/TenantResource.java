@@ -34,7 +34,7 @@ import io.vlingo.auth.model.TenantId;
 import io.vlingo.auth.model.TenantRepository;
 import io.vlingo.auth.model.User;
 import io.vlingo.auth.model.UserRepository;
-import io.vlingo.auth.model.crypto.Hasher;
+import io.vlingo.auth.model.crypto.AuthHasher;
 import io.vlingo.http.Response;
 import io.vlingo.http.resource.ResourceHandler;
 
@@ -134,13 +134,20 @@ public class TenantResource extends ResourceHandler {
 
   public void registerUser(final String tenantId, final UserRegistrationData userData) {
     final Tenant tenant = tenantRepository.tenantOf(TenantId.fromExisting(tenantId));
+    System.out.println("registerUser 1");
     if (tenant.doesNotExist()) {
+      System.out.println("registerUser failed");
       completes().with(Response.of(NotFound, location(tenantId)));
     } else {
+      System.out.println("registerUser profile");
       final Profile profile = Profile.with(PersonName.of(userData.profile.name.given, userData.profile.name.second, userData.profile.name.family), EmailAddress.of(userData.profile.emailAddress), Phone.of(userData.profile.phone));
-      final String cryptoSecret = Hasher.defaultHasher().hash(userData.credential.secret);
+      System.out.println("registerUser crypto");
+      final String cryptoSecret = AuthHasher.defaultHasher().hash(userData.credential.secret);
+      System.out.println("registerUser credential");
       final Credential credential = Credential.vlingoCredentialFrom(userData.credential.authority, userData.credential.id, cryptoSecret);
+      System.out.println("registerUser register");
       final User user = tenant.registerUser(userData.username, profile, credential, userData.active);
+      System.out.println("registerUser save");
       userRepository.save(user);
       completes().with(Response.of(Created, headers(of(Location, location(tenant.tenantId().value, "users", user.username()))), serialized(UserRegistrationData.from(user))));
     }

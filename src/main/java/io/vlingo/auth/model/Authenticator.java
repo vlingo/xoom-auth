@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.vlingo.auth.model.crypto.Hasher;
+import io.vlingo.common.crypto.Hasher;
 
 public class Authenticator {
   private static final Duration DefaultExpiresWithin = Duration.ofMinutes(5);

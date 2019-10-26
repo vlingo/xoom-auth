@@ -18,7 +18,6 @@ import org.junit.Before;
 
 import io.vlingo.actors.Definition;
 import io.vlingo.actors.World;
-import io.vlingo.actors.testkit.TestUntil;
 import io.vlingo.auth.infra.resource.TestResponseChannelConsumer.Progress;
 import io.vlingo.auth.model.Tenant;
 import io.vlingo.http.Response;
@@ -72,7 +71,7 @@ public abstract class ResourceTest {
   }
 
   protected ResourceTest() {
-    progress = new Progress();
+    progress = new Progress(0);
   }
 
   protected abstract Properties resourceProperties();
@@ -226,12 +225,18 @@ public abstract class ResourceTest {
   }
 
   protected Response requestResponse(final String request) {
-    progress.untilConsumed = TestUntil.happenings(1);
+    progress.resetTimes(1);
+
     client.requestWith(toByteBuffer(request));
-    while (progress.untilConsumed.remaining() > 0) {
+
+    while (progress.remaining() > 0) {
       client.probeChannel();
     }
-    progress.untilConsumed.completes();
-    return progress.responses.poll();
+
+    progress.completes();
+
+    final Response response = progress.responses().poll();
+
+    return response;
   }
 }

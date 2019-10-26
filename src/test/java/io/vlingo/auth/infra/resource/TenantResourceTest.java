@@ -34,13 +34,13 @@ public class TenantResourceTest extends ResourceTest {
 
     final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
     final TenantData createdTenantData = deserialized(createdResponse.entity.content(), TenantData.class);
-    assertEquals(1, progress.consumeCount.get());
+    assertEquals(1, progress.consumeCount());
     assertNotNull(createdResponse.headers.headerOf(ResponseHeader.Location));
     assertEquals(tenantData.withTenantId(createdTenantData.tenantId), createdTenantData);
 
     final String location = createdResponse.headerOf(ResponseHeader.Location).value;
     final Response getTenantResponse = getTenantRequestResponse(location);
-    assertEquals(2, progress.consumeCount.get());
+    assertEquals(2, progress.consumeCount());
     assertEquals(Response.Status.Ok, getTenantResponse.status);
     assertNotNull(getTenantResponse.entity);
     assertNotNull(getTenantResponse.entity.content());

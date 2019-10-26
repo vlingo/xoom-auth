@@ -36,39 +36,8 @@ public final class Properties {
     return new Properties(properties);
   }
 
-  public final int cryptoArgon2MaxDuration() {
-    final int maxDuration = getInteger("crypto.argon2.max.duration", 1000);
-    return maxDuration;
-  }
-
-  public final int cryptoArgon2MemoryCost() {
-    final int memoryCost = getInteger("crypto.argon2.memory.cost", 65536);
-    return memoryCost;
-  }
-
-  public final int cryptoArgon2Parallelism() {
-    final int parallelism = getInteger("crypto.argon2.parallelism", 1);
-    return parallelism;
-  }
-
-  public final int cryptoScrypt_N_costFactor() {
-    final int N = getInteger("crypto.scrypt.N.cost.factor", 16384);
-    return N;
-  }
-
-  public final int cryptoScrypt_r_Blocksize() {
-    final int r = getInteger("crypto.scrypt.r.blocksize", 8);
-    return r;
-  }
-
-  public final int cryptoScrypt_p_parallelization() {
-    final int p = getInteger("crypto.scrypt.p.parallelization", 1);
-    return p;
-  }
-
-  public final String cryptoType() {
-    final String type = getString("crypto.type", "argon2");
-    return type;
+  public java.util.Properties properties() {
+    return properties;
   }
 
   public final Boolean getBoolean(final String key, final Boolean defaultValue) {

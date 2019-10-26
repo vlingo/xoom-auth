@@ -218,7 +218,6 @@ public class UserResourceTest extends ResourceTest {
   private Response patchUserReplaceCredentialRequestResponse(UserRegistrationData userData, String authority, CredentialData credentialData) {
     final String body = serialized(credentialData);
     final String request = "PATCH /tenants/" + userData.tenantId + "/users/" + userData.username + "/credentials/" + authority + " HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
-    System.out.println(request);
     return requestResponse(request);
   }
 

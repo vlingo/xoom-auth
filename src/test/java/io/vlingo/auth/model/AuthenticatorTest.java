@@ -17,10 +17,10 @@ import java.time.Duration;
 
 import org.junit.Test;
 
-import io.vlingo.auth.model.crypto.Argon2Hasher;
-import io.vlingo.auth.model.crypto.BCryptHasher;
-import io.vlingo.auth.model.crypto.Hasher;
-import io.vlingo.auth.model.crypto.SCryptHasher;
+import io.vlingo.common.crypto.Argon2Hasher;
+import io.vlingo.common.crypto.BCryptHasher;
+import io.vlingo.common.crypto.Hasher;
+import io.vlingo.common.crypto.SCryptHasher;
 
 public class AuthenticatorTest {
 
