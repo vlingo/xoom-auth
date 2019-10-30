@@ -28,7 +28,7 @@ import io.vlingo.auth.model.RoleRepository;
 import io.vlingo.auth.model.TenantId;
 import io.vlingo.auth.model.User;
 import io.vlingo.auth.model.UserRepository;
-import io.vlingo.auth.model.crypto.Hasher;
+import io.vlingo.auth.model.crypto.AuthHasher;
 import io.vlingo.http.Response;
 import io.vlingo.http.resource.ResourceHandler;
 
@@ -37,7 +37,7 @@ public class UserResource extends ResourceHandler {
   private final RoleRepository roleRepository = RepositoryProvider.roleRepository();
   private final UserRepository userRepository = RepositoryProvider.userRepository();
   private final Loader loader = RepositoryProvider.loader();
-  private final Authenticator authenticator = new Authenticator(Hasher.defaultHasher(), userRepository);
+  private final Authenticator authenticator = new Authenticator(AuthHasher.defaultHasher(), userRepository);
 
   public void authenticate(final String tenantId, final String username, final String password) {
     final String userToken = authenticator.authenticUserToken(TenantId.fromExisting(tenantId), username, password);

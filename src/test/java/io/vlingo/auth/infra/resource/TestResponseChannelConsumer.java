@@ -21,7 +21,7 @@ import io.vlingo.wire.message.ConsumerByteBuffer;
 public class TestResponseChannelConsumer extends Actor implements ResponseChannelConsumer {
   private ResponseParser parser;
   private final Progress progress;
-  
+
   public TestResponseChannelConsumer(final Progress progress) {
     this.progress = progress;
   }
@@ -36,15 +36,53 @@ public class TestResponseChannelConsumer extends Actor implements ResponseChanne
     buffer.release();
     while (parser.hasFullResponse()) {
       final Response response = parser.fullResponse();
-      progress.responses.add(response);
-      if (progress.untilConsumed != null) progress.untilConsumed.happened();
-      progress.consumeCount.incrementAndGet();
+      synchronized (progress) {
+        progress.responses.add(response);
+        progress.consumeCount.incrementAndGet();
+        if (progress.untilConsumed != null) {
+          progress.untilConsumed.happened();
+        }
+      }
     }
   }
-  
+
   public static class Progress {
-    public TestUntil untilConsumed;
-    public Queue<Response> responses = new ConcurrentLinkedQueue<>();
-    public AtomicInteger consumeCount = new AtomicInteger(0);
+    private TestUntil untilConsumed;
+    private Queue<Response> responses = new ConcurrentLinkedQueue<>();
+    private AtomicInteger consumeCount = new AtomicInteger(0);
+
+    public Progress(final int times) {
+      untilConsumed = TestUntil.happenings(times);
+    }
+
+    public void completes() {
+      synchronized (this) {
+        untilConsumed.completes();
+      }
+    }
+
+    public int consumeCount() {
+      synchronized (this) {
+        return consumeCount.get();
+      }
+    }
+
+    public int remaining() {
+      synchronized (this) {
+        return untilConsumed.remaining();
+      }
+    }
+
+    public void resetTimes(final int times) {
+      synchronized (this) {
+        untilConsumed = TestUntil.happenings(times);
+      }
+    }
+
+    public Queue<Response> responses() {
+      synchronized (this) {
+        return responses;
+      }
+    }
   }
 }
