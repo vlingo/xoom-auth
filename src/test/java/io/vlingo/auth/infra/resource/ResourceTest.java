@@ -19,6 +19,7 @@ import org.junit.Before;
 import io.vlingo.actors.Definition;
 import io.vlingo.actors.World;
 import io.vlingo.auth.infra.resource.TestResponseChannelConsumer.Progress;
+import io.vlingo.auth.infra.resource.TestResponseChannelConsumer.TestResponseChannelConsumerInstantiator;
 import io.vlingo.auth.model.Tenant;
 import io.vlingo.http.Response;
 import io.vlingo.http.resource.Server;
@@ -56,7 +57,7 @@ public abstract class ResourceTest {
     server = Server.startWith(world.stage(), properties);
     Thread.sleep(10); // delay for server startup
 
-    consumer = world.actorFor(ResponseChannelConsumer.class, Definition.has(TestResponseChannelConsumer.class, Definition.parameters(progress)));
+    consumer = world.actorFor(ResponseChannelConsumer.class, Definition.has(TestResponseChannelConsumer.class, new TestResponseChannelConsumerInstantiator(progress)));
 
     client = new BasicClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240, world.defaultLogger());
   }

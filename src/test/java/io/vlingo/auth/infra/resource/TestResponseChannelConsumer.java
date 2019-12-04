@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.vlingo.actors.Actor;
+import io.vlingo.actors.ActorInstantiator;
 import io.vlingo.actors.testkit.TestUntil;
 import io.vlingo.http.Response;
 import io.vlingo.http.ResponseParser;
@@ -83,6 +84,24 @@ public class TestResponseChannelConsumer extends Actor implements ResponseChanne
       synchronized (this) {
         return responses;
       }
+    }
+  }
+
+  public static class TestResponseChannelConsumerInstantiator implements ActorInstantiator<TestResponseChannelConsumer> {
+    private final Progress progress;
+
+    public TestResponseChannelConsumerInstantiator(final Progress progress) {
+      this.progress = progress;
+    }
+
+    @Override
+    public TestResponseChannelConsumer instantiate() {
+      return new TestResponseChannelConsumer(progress);
+    }
+
+    @Override
+    public Class<TestResponseChannelConsumer> type() {
+      return TestResponseChannelConsumer.class;
     }
   }
 }
