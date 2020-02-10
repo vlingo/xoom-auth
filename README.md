@@ -17,7 +17,7 @@ The vlingo/PLATFORM authentication and authorization service used by platform co
     <dependency>
       <groupId>io.vlingo</groupId>
       <artifactId>vlingo-auth</artifactId>
-      <version>1.1.0</version>
+      <version>1.2.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -25,7 +25,7 @@ The vlingo/PLATFORM authentication and authorization service used by platform co
 
 ```gradle
 dependencies {
-    compile 'io.vlingo:vlingo-auth:1.1.0'
+    compile 'io.vlingo:vlingo-auth:1.2.0'
 }
 
 repositories {
