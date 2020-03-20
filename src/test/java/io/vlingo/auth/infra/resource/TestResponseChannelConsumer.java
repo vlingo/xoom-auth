@@ -88,6 +88,8 @@ public class TestResponseChannelConsumer extends Actor implements ResponseChanne
   }
 
   public static class TestResponseChannelConsumerInstantiator implements ActorInstantiator<TestResponseChannelConsumer> {
+    private static final long serialVersionUID = -8571428261776998164L;
+
     private final Progress progress;
 
     public TestResponseChannelConsumerInstantiator(final Progress progress) {
