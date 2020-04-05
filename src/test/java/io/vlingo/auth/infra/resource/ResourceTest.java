@@ -7,15 +7,6 @@
 
 package io.vlingo.auth.infra.resource;
 
-import static io.vlingo.common.serialization.JsonSerialization.serialized;
-
-import java.nio.ByteBuffer;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.junit.After;
-import org.junit.Before;
-
 import io.vlingo.actors.Definition;
 import io.vlingo.actors.World;
 import io.vlingo.auth.infra.resource.TestResponseChannelConsumer.Progress;
@@ -24,13 +15,21 @@ import io.vlingo.auth.model.Tenant;
 import io.vlingo.http.Response;
 import io.vlingo.http.resource.Server;
 import io.vlingo.wire.channel.ResponseChannelConsumer;
-import io.vlingo.wire.fdx.bidirectional.BasicClientRequestResponseChannel;
 import io.vlingo.wire.fdx.bidirectional.ClientRequestResponseChannel;
+import io.vlingo.wire.fdx.bidirectional.netty.client.NettyClientRequestResponseChannel;
 import io.vlingo.wire.message.ByteBufferAllocator;
 import io.vlingo.wire.message.Converters;
 import io.vlingo.wire.node.Address;
 import io.vlingo.wire.node.AddressType;
 import io.vlingo.wire.node.Host;
+import org.junit.After;
+import org.junit.Before;
+
+import java.nio.ByteBuffer;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static io.vlingo.common.serialization.JsonSerialization.serialized;
 
 public abstract class ResourceTest {
   private static final AtomicInteger baseServerPort = new AtomicInteger(19090);
@@ -59,7 +58,7 @@ public abstract class ResourceTest {
 
     consumer = world.actorFor(ResponseChannelConsumer.class, Definition.has(TestResponseChannelConsumer.class, new TestResponseChannelConsumerInstantiator(progress)));
 
-    client = new BasicClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240, world.defaultLogger());
+    client = new NettyClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240);
   }
 
   @After
