@@ -37,7 +37,7 @@ public class TestResponseChannelConsumer extends Actor implements ResponseChanne
     buffer.release();
     while (parser.hasFullResponse()) {
       final Response response = parser.fullResponse();
-      synchronized (progress) {
+      synchronized (this) {
         progress.responses.add(response);
         progress.consumeCount.incrementAndGet();
         if (progress.untilConsumed != null) {
