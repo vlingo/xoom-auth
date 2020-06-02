@@ -2,7 +2,9 @@
 
 [![Javadocs](http://javadoc.io/badge/io.vlingo/vlingo-auth.svg?color=brightgreen)](http://javadoc.io/doc/io.vlingo/vlingo-auth) [![Build Status](https://travis-ci.org/vlingo/vlingo-auth.svg?branch=master)](https://travis-ci.org/vlingo/vlingo-auth) [ ![Download](https://api.bintray.com/packages/vlingo/vlingo-platform-java/vlingo-auth/images/download.svg) ](https://bintray.com/vlingo/vlingo-platform-java/vlingo-auth/_latestVersion) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/vlingo-platform-java/community)
 
-The vlingo/PLATFORM authentication and authorization service used by platform components, and also suitable for hosted platform services and applications.
+The VLINGO/PLATFORM authentication and authorization service used by platform components, and also suitable for hosted platform services and applications.
+
+Docs: https://docs.vlingo.io/vlingo-auth
 
 ### Bintray
 
@@ -17,7 +19,7 @@ The vlingo/PLATFORM authentication and authorization service used by platform co
     <dependency>
       <groupId>io.vlingo</groupId>
       <artifactId>vlingo-auth</artifactId>
-      <version>1.2.9</version>
+      <version>1.3.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -25,7 +27,7 @@ The vlingo/PLATFORM authentication and authorization service used by platform co
 
 ```gradle
 dependencies {
-    compile 'io.vlingo:vlingo-auth:1.2.9'
+    compile 'io.vlingo:vlingo-auth:1.3.0'
 }
 
 repositories {
