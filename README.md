@@ -1,6 +1,6 @@
 # vlingo-auth
 
-[![Javadocs](http://javadoc.io/badge/io.vlingo/vlingo-auth.svg?color=brightgreen)](http://javadoc.io/doc/io.vlingo/vlingo-auth) [![Build Status](https://travis-ci.org/vlingo/vlingo-auth.svg?branch=master)](https://travis-ci.org/vlingo/vlingo-auth) [ ![Download](https://api.bintray.com/packages/vlingo/vlingo-platform-java/vlingo-auth/images/download.svg) ](https://bintray.com/vlingo/vlingo-platform-java/vlingo-auth/_latestVersion) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/vlingo-platform-java/community)
+[![Javadocs](http://javadoc.io/badge/io.vlingo/vlingo-auth.svg?color=brightgreen)](http://javadoc.io/doc/io.vlingo/vlingo-auth) [![Build](https://github.com/vlingo/vlingo-auth/workflows/Build/badge.svg)](https://github.com/vlingo/vlingo-auth/actions?query=workflow%3ABuild) [ ![Download](https://api.bintray.com/packages/vlingo/vlingo-platform-java/vlingo-auth/images/download.svg) ](https://bintray.com/vlingo/vlingo-platform-java/vlingo-auth/_latestVersion) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/vlingo-platform-java/community)
 
 The VLINGO/PLATFORM authentication and authorization service used by platform components, and also suitable for hosted platform services and applications.
 
