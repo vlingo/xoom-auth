@@ -17,6 +17,8 @@
     "dompurify": "^2.2.6",
     "marked": "^2.0.0",
     "polka": "next",
+    "prettier": "^2.2.1",
+    "prettier-plugin-svelte": "^2.1.6",
     "sirv": "^1.0.7"
   },
   "devDependencies": {
