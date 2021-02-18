@@ -1,7 +1,7 @@
 <script>
-	//
+	import { Row } from 'svelte-materialify/src';
 </script>
 
-<div>
+<Row>
 	<!--  -->
-</div>
+</Row>
