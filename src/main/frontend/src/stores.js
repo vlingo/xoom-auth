@@ -15,19 +15,6 @@ export function createLocalStore(key, initialValue) {
 	};
 }
 
-export function isMobileStore() {
-	const { subscribe, set } = writable(false);
-	return {
-		subscribe,
-		set,
-		check: () => {
-			import('svelte-materialify/src/utils/breakpoints').then(({ default: breakpoints }) => {
-				set(window.matchMedia(breakpoints['md-and-down']).matches);
-			});
-		},
-	};
-};
 
-export const isLoggedIn = writable(false)
+export const isLoggedIn = writable(true)
 export const theme = createLocalStore('theme', 'light')
-export const isMobile = isMobileStore();
