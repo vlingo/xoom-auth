@@ -6,7 +6,7 @@
 		{ name: 'oAuth', value: 'oauth' },
 	];
 
-	const loginData = {
+	const data = {
 		username: '',
 		email: '',
 		givenName: '',
@@ -26,40 +26,40 @@
 <form class="s-col" id="register-and-login-form" on:submit|preventDefault={register}>
 	<Row class="flex-column lg:flex-row">
 		<Col>
-			<TextField bind:value={loginData.username} autofocus required>Username</TextField>
+			<TextField bind:value={data.username} autofocus required>Username</TextField>
 		</Col>
 		<Col>
-			<TextField bind:value={loginData.email} required>Email Address</TextField>
-		</Col>
-	</Row>
-	<Row class="flex-column lg:flex-row">
-		<Col>
-			<TextField bind:value={loginData.givenName} required>Given Name</TextField>
-		</Col>
-		<Col>
-			<TextField bind:value={loginData.secondName} required>Second Name</TextField>
+			<TextField bind:value={data.email} required>Email Address</TextField>
 		</Col>
 	</Row>
 	<Row class="flex-column lg:flex-row">
 		<Col>
-			<TextField bind:value={loginData.familyName} required>Family Name</TextField>
+			<TextField bind:value={data.givenName} required>Given Name</TextField>
 		</Col>
 		<Col>
-			<TextField bind:value={loginData.phone} required>Phone</TextField>
+			<TextField bind:value={data.secondName} required>Second Name</TextField>
+		</Col>
+	</Row>
+	<Row class="flex-column lg:flex-row">
+		<Col>
+			<TextField bind:value={data.familyName} required>Family Name</TextField>
+		</Col>
+		<Col>
+			<TextField bind:value={data.phone} required>Phone</TextField>
 		</Col>
 	</Row>
 	<Divider class="mt-5 mb-5" />
 	<Row class="flex-column lg:flex-row">
 		<Col class="md:max-width-initial" style="max-width:150px">
-			<Select bind:value={loginData.authority} items={authorities} required>Authority</Select>
+			<Select bind:value={data.authority} items={authorities} required>Authority</Select>
 		</Col>
 		<Col>
-			<TextField bind:value={loginData.id} required>ID</TextField>
+			<TextField bind:value={data.id} required>ID</TextField>
 		</Col>
 	</Row>
 	<Row>
 		<Col>
-			<TextField bind:value={loginData.secret} required>Secret</TextField>
+			<TextField bind:value={data.secret} required>Secret</TextField>
 		</Col>
 	</Row>
 </form>
