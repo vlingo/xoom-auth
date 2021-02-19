@@ -8,9 +8,18 @@
 		MaterialApp,
 		Menu,
 	} from 'svelte-materialify/src';
-	import { mdiMenu, mdiDotsVertical, mdiCodeTags, mdiInformation } from '@mdi/js';
+	import {
+		mdiMenu,
+		mdiDotsVertical,
+		mdiCodeTags,
+		mdiInformation,
+		mdiWeatherNight,
+		mdiWeatherSunny,
+	} from '@mdi/js';
 	import { theme, isLoggedIn } from '../stores';
 	import SiteNavigation from '../components/SiteNavigation.svelte';
+
+	const toggleTheme = () => ($theme = $theme === 'light' ? 'dark' : 'light');
 
 	export let segment;
 	let sidenav = process.browser && window.innerWidth > 768;
@@ -31,6 +40,9 @@
 			</div>
 			<span slot="title">Title</span>
 			<div style="flex-grow:1" />
+			<Button aria-label="Toggle Theme" depressed fab on:click={toggleTheme} size="small">
+				<Icon path={$theme === 'light' ? mdiWeatherNight : mdiWeatherSunny} />
+			</Button>
 			<Menu right>
 				<div slot="activator">
 					<Button depressed fab size="small">
