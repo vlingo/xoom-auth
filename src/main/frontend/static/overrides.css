@@ -15,8 +15,13 @@ html {
 	height: 100%;
 }
 
-.s-navigation-drawer a {
+.s-navigation-drawer a,
+.s-list-item__content a {
 	text-decoration: none;
+}
+
+.s-list-item__content a {
+	color: inherit;
 }
 
 .theme--light .s-navigation-drawer a {
