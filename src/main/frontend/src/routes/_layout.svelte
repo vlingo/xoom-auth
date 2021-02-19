@@ -1,5 +1,5 @@
 <script>
-	import { MaterialApp } from 'svelte-materialify/src';
+	import { Container, MaterialApp } from 'svelte-materialify/src';
 	import { isMobile, theme } from '../stores';
 
 	$: bgTheme = $theme === 'light' ? '#ffffff' : '#212121';
@@ -7,8 +7,10 @@
 
 <svelte:window on:resize={isMobile.check} />
 
-<div style="height: 100%; background-color: {bgTheme}">
+<div style="background-color: {bgTheme}">
 	<MaterialApp theme={$theme}>
-		<!--  -->
+		<Container class="ma-0">
+			<slot />
+		</Container>
 	</MaterialApp>
 </div>

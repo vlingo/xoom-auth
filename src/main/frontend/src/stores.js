@@ -28,5 +28,6 @@ export function isMobileStore() {
 	};
 };
 
+export const isLoggedIn = writable(false)
 export const theme = createLocalStore('theme', 'light')
 export const isMobile = isMobileStore();
