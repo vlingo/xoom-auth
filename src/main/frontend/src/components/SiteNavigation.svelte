@@ -1,5 +1,4 @@
 <script>
-	export let mobile;
 	export let sidenav;
 	import { NavigationDrawer, List, Overlay } from 'svelte-materialify/src/';
 	import NavItem from './NavItem.svelte';
@@ -8,11 +7,16 @@
 	export let segment;
 </script>
 
-<NavigationDrawer active={!mobile || sidenav} style="height:100vh;" fixed clipped borderless>
-	<List nav dense>
+<NavigationDrawer active={sidenav} borderless class="h-screen show-after-200ms" clipped fixed>
+	<List dense nav>
 		{#each routes as item}
-			<NavItem {item} {segment}/>
+			<NavItem {item} {segment} />
 		{/each}
 	</List>
 </NavigationDrawer>
-<Overlay index="3" active={mobile && sidenav} on:click={() => (sidenav = false)} fadeOptions={{ duration: 250 }} />
+<Overlay
+	class="md:d-none"
+	index="3"
+	active={sidenav}
+	on:click={() => (sidenav = false)}
+	fadeOptions={{ duration: 250 }} />
