@@ -45,7 +45,7 @@ html {
 }
 
 .m-0 {
-	margin: 0;
+	margin: 0 !important;
 }
 
 @media (min-width: 400px) {
