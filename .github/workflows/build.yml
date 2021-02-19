@@ -2,9 +2,13 @@ name: Build
 
 on:
   push:
+    paths:
+      - "!src/main/frontend/**"
   pull_request:
+    paths:
+      - "!src/main/frontend/**"
   schedule:
-    - cron: '15 3 * * *'
+    - cron: "15 3 * * *"
 
 jobs:
   build:
@@ -51,8 +55,8 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: ci-cd
           SLACK_USERNAME: Bob the Builder
-          SLACK_ICON: 'https://vlingo.io/wp-content/uploads/cropped-vlingo-favicon-180x180.png'
-          SLACK_FOOTER: '${{ github.repository }}:${{ steps.version.outputs.vlingo_version }}'
+          SLACK_ICON: "https://vlingo.io/wp-content/uploads/cropped-vlingo-favicon-180x180.png"
+          SLACK_FOOTER: "${{ github.repository }}:${{ steps.version.outputs.vlingo_version }}"
 
   deploy-github:
     name: Deploy to GitHub
@@ -60,7 +64,6 @@ jobs:
     needs: build
     if: (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && github.repository_owner == 'vlingo'
     steps:
-
       - uses: actions/checkout@v2
 
       - name: Set up JDK 1.8
@@ -90,11 +93,9 @@ jobs:
           SLACK_COLOR: "${{ job.status == 'success' && 'good' || 'danger' }}"
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: ci-cd
-          SLACK_USERNAME: Suzi the Publisher
-          SLACK_ICON: 'https://vlingo.io/wp-content/uploads/cropped-vlingo-favicon-180x180.png'
-          SLACK_FOOTER: '${{ github.repository }}'
-          SLACK_TITLE: 'GitHub Deployment'
-          SLACK_MESSAGE: ':rocket: ${{ needs.build.outputs.vlingo_version }}'
+          SLACK_USERNAME: Bob the Builder
+          SLACK_ICON: "https://vlingo.io/wp-content/uploads/cropped-vlingo-favicon-180x180.png"
+          SLACK_FOOTER: "${{ github.repository }}"
 
   deploy-central:
     name: Deploy to Maven Central
@@ -102,7 +103,6 @@ jobs:
     needs: build
     if: (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && github.repository_owner == 'vlingo'
     steps:
-
       - uses: actions/checkout@v2
 
       - name: Set up JDK 1.8
@@ -137,7 +137,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: ci-cd
           SLACK_USERNAME: Suzi the Publisher
-          SLACK_ICON: 'https://vlingo.io/wp-content/uploads/cropped-vlingo-favicon-180x180.png'
-          SLACK_FOOTER: '${{ github.repository }}'
-          SLACK_TITLE: 'Sonatype Deployment'
-          SLACK_MESSAGE: ':rocket: ${{ needs.build.outputs.vlingo_version }}'
+          SLACK_ICON: "https://vlingo.io/wp-content/uploads/cropped-vlingo-favicon-180x180.png"
+          SLACK_FOOTER: "${{ github.repository }}"
+          SLACK_TITLE: "Sonatype Deployment"
+          SLACK_MESSAGE: ":rocket: ${{ needs.build.outputs.vlingo_version }}"
