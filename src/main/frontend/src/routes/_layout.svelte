@@ -18,7 +18,7 @@
 
 <MaterialApp theme={$theme}>
 	{#if $isLoggedIn}
-		<AppBar>
+		<AppBar fixed style="width:100%">
 			<div slot="icon">
 				<Button
 					aria-label="Open Menu"
@@ -54,7 +54,21 @@
 
 		<SiteNavigation {segment} bind:sidenav />
 	{/if}
-	<Container>
+
+	<Container class="main">
 		<slot />
 	</Container>
 </MaterialApp>
+
+<style lang="scss" global>
+	.main {
+		padding-top: 5rem;
+	}
+
+	// medium screens and up
+	@media (min-width: 768px) {
+		.s-navigation-drawer.active ~ .main {
+			padding: 5rem 7rem 0 13rem !important;
+		}
+	}
+</style>

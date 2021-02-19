@@ -7,7 +7,7 @@
 	export let segment;
 </script>
 
-<NavigationDrawer active={sidenav} borderless class="h-screen show-after-200ms" clipped fixed>
+<NavigationDrawer active={sidenav} borderless class="h-screen" clipped fixed>
 	<List dense nav>
 		{#each routes as item}
 			<NavItem {item} {segment} />
