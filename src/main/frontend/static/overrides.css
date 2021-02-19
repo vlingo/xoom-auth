@@ -15,9 +15,16 @@ html {
 	height: 100%;
 }
 
-a {
+.s-navigation-drawer a {
 	text-decoration: none;
+}
+
+.theme--light .s-navigation-drawer a {
 	color: #00753b !important;
+}
+
+.theme--dark .s-navigation-drawer a {
+	color: #00ce68 !important;
 }
 
 .main {
