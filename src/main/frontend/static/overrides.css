@@ -1,22 +1,10 @@
-a {
-	text-decoration: none;
-	color: #00753b !important;
-}
 html {
 	scroll-behavior: smooth;
 }
+
 .outlined textarea {
 	font-family: Courier New, Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
 		Bitstream Vera Sans Mono, monospace;
-}
-
-body {
-	margin: 0;
-	font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell,
-		Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-	font-size: 14px;
-	line-height: 1.5;
-	color: #333;
 }
 
 .m-1 {
@@ -27,21 +15,13 @@ body {
 	height: 100%;
 }
 
-/* a {
-	color: inherit;
-} */
+a {
+	text-decoration: none;
+	color: #00753b !important;
+}
 
-.folder-inset1 {
-	margin-left: 3rem;
-}
-.folder-inset2 {
-	margin-left: 6rem;
-}
-.folder-inset3 {
-	margin-left: 9rem;
-}
-.folder-inset4 {
-	margin-left: 12rem;
+.main {
+	padding-top: 5rem;
 }
 
 .h-full {
@@ -49,11 +29,11 @@ body {
 }
 
 .h-screen {
-	height: 100vh !important;
+	height: 100vh;
 }
 
 .m-0 {
-	margin: 0 !important;
+	margin: 0;
 }
 
 @media (min-width: 400px) {
@@ -65,7 +45,7 @@ body {
 /* medium screens and up */
 @media (min-width: 768px) {
 	.md\:flex-row {
-		flex-direction: row !important;
+		flex-direction: row;
 	}
 
 	.md\:max-width-initial {
@@ -80,13 +60,13 @@ body {
 /* large screens and up */
 @media (min-width: 1024px) {
 	.lg\:flex-row {
-		flex-direction: row !important;
+		flex-direction: row;
 	}
 }
 
 /* medium screens and down */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
 	.md-and-down\:d-none {
-		display: none !important;
+		display: none;
 	}
-}
+} */
