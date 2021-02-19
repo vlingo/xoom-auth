@@ -22,7 +22,6 @@
 			<div slot="icon">
 				<Button
 					aria-label="Open Menu"
-					class="h-screen"
 					depressed
 					fab
 					size="small"
