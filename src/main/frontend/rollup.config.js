@@ -2,7 +2,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import commonjs from '@rollup/plugin-commonjs';
 import svelte from 'rollup-plugin-svelte';
-import sveltePreprocess from "svelte-preprocess";
+import sveltePreprocess from 'svelte-preprocess';
 import babel from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 import config from 'sapper/config/rollup.js';
@@ -19,8 +19,8 @@ const onwarn = (warning, onwarn) =>
 
 const preprocess = sveltePreprocess({
 	scss: {
-	  includePaths: ["theme"],
-	}
+		includePaths: ['theme'],
+	},
 });
 
 export default {
@@ -30,40 +30,50 @@ export default {
 		plugins: [
 			replace({
 				'process.browser': true,
-				'process.env.NODE_ENV': JSON.stringify(mode)
+				'process.env.NODE_ENV': JSON.stringify(mode),
 			}),
 			svelte({
 				preprocess,
-				dev,
-				hydratable: true,
-				emitCss: true
+				compilerOptions: {
+					dev,
+					hydratable: true,
+				},
+				emitCss: true,
 			}),
 			resolve({
 				browser: true,
-				dedupe: ['svelte']
+				dedupe: ['svelte'],
 			}),
 			commonjs(),
 
-			legacy && babel({
+			legacy &&
+			babel({
 				extensions: ['.js', '.mjs', '.html', '.svelte'],
 				babelHelpers: 'runtime',
 				exclude: ['node_modules/@babel/**'],
 				presets: [
-					['@babel/preset-env', {
-						targets: '> 0.25%, not dead'
-					}]
+					[
+						'@babel/preset-env',
+						{
+							targets: '> 0.25%, not dead',
+						},
+					],
 				],
 				plugins: [
 					'@babel/plugin-syntax-dynamic-import',
-					['@babel/plugin-transform-runtime', {
-						useESModules: true
-					}]
-				]
+					[
+						'@babel/plugin-transform-runtime',
+						{
+							useESModules: true,
+						},
+					],
+				],
 			}),
 
-			!dev && terser({
-				module: true
-			})
+			!dev &&
+			terser({
+				module: true,
+			}),
 		],
 
 		preserveEntrySignatures: false,
@@ -76,18 +86,20 @@ export default {
 		plugins: [
 			replace({
 				'process.browser': false,
-				'process.env.NODE_ENV': JSON.stringify(mode)
+				'process.env.NODE_ENV': JSON.stringify(mode),
 			}),
 			svelte({
 				preprocess,
-				generate: 'ssr',
-				hydratable: true,
-				dev
+				compilerOptions: {
+					generate: 'ssr',
+					hydratable: true,
+					dev
+				}
 			}),
 			resolve({
-				dedupe: ['svelte']
+				dedupe: ['svelte'],
 			}),
-			commonjs()
+			commonjs(),
 		],
 		external: Object.keys(pkg.dependencies).concat(require('module').builtinModules),
 
@@ -102,13 +114,13 @@ export default {
 			resolve(),
 			replace({
 				'process.browser': true,
-				'process.env.NODE_ENV': JSON.stringify(mode)
+				'process.env.NODE_ENV': JSON.stringify(mode),
 			}),
 			commonjs(),
-			!dev && terser()
+			!dev && terser(),
 		],
 
 		preserveEntrySignatures: false,
 		onwarn,
-	}
+	},
 };
