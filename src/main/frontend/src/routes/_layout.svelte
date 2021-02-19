@@ -73,14 +73,10 @@
 </MaterialApp>
 
 <style lang="scss" global>
-	.main {
-		padding-top: 5rem;
-	}
-
 	// medium screens and up
 	@media (min-width: 768px) {
 		.s-navigation-drawer.active ~ .main {
-			padding: 5rem 7rem 0 13rem !important;
+			padding: 5rem 7rem 0 13rem;
 		}
 	}
 </style>
