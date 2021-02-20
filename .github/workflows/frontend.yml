@@ -8,12 +8,11 @@ on:
       - "src/main/frontend/**"
 
 jobs:
-  defaults:
-    run:
-      working-directory: src/main/frontend
-
-  preview-frontend:
+  frontend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/main/frontend
     steps:
       - uses: actions/checkout@v2
 
@@ -23,10 +22,15 @@ jobs:
           node-version: "14.x"
 
       - name: Install dependencies
-        run: npm Install
+        run: npm install
 
-      - uses: actions/vercel-deployment@0.5.1
-        with:
-          vercelToken: ${{ secrets.VERCEL_TOKEN }}
-          vercelOrgId: ${{ secrets.VERCEL_ORG_ID }}
-          vercelProjectId: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Test Sapper Build
+        run: npm run build
+
+      # - name: Vercel Deployment
+      #   uses: xmflsct/action-vercel-deployment@v0.5.3
+      #   with:
+      #     vercelToken: ${{ secrets.VERCEL_TOKEN }}
+      #     vercelOrgId: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercelProjectId: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     githubToken: ${{ secrets.PAT }}
