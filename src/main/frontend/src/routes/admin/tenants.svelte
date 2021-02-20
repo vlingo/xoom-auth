@@ -1,8 +1,6 @@
 <script>
 	import { mdiCheckboxBlank, mdiCheckboxMarked } from '@mdi/js';
-	import { Icon } from 'svelte-materialify/src';
-
-	import { Table } from 'svelte-materialify/src';
+	import { Icon, Table } from 'svelte-materialify/src';
 
 	let data = [
 		{
@@ -42,7 +40,7 @@
 <div class="mt-5">
 	<Table class="p-5 s-card">
 		<thead>
-			<tr>
+			<tr style="font-weight:bold">
 				<td>Name</td>
 				<td>Description</td>
 				<td class="text-center">Active</td>
@@ -60,25 +58,4 @@
 			{/each}
 		</tbody>
 	</Table>
-	<!-- <table style="width:100%">
-		<thead>
-			<tr>
-				<td>Name</td>
-				<td>Description</td>
-				<td class="text-center">Active</td>
-			</tr>
-		</thead>
-
-		<tbody>
-			{#each data as tenant}
-				<tr>
-					<td>{tenant.name}</td>
-					<td>{tenant.description}</td>
-					<td class="text-center">
-						<Icon path={tenant.active ? mdiCheckboxMarked : mdiCheckboxBlank} />
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table> -->
 </div>
