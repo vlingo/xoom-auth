@@ -28,8 +28,10 @@ html {
 	color: #00753b !important;
 }
 
-.theme--dark .s-navigation-drawer a {
+.theme--dark .s-navigation-drawer a,
+.theme--dark .primary-text {
 	color: #00ce68 !important;
+	caret-color: #00ce68 !important;
 }
 
 .main {
