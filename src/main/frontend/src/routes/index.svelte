@@ -37,10 +37,9 @@
 				{#if register}
 					<Button depressed on:click={() => (register = false)}>Cancel</Button>
 				{:else}
-					<!-- svelte-ignore a11y-invalid-attribute -->
-					<a class="d-block" href="#" on:click={() => (register = true)}>
+					<button class="d-block" href="#" on:click={() => (register = true)}>
 						Don't have an account yet? Register here
-					</a>
+					</button>
 				{/if}
 				<Button
 					class="ml-auto primary-color"
