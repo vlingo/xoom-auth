@@ -1,0 +1,32 @@
+name: Frontend
+on:
+  push:
+    paths:
+      - "src/main/frontend/**"
+  pull_request:
+    paths:
+      - "src/main/frontend/**"
+
+jobs:
+  defaults:
+    run:
+      working-directory: src/main/frontend
+
+  preview-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Install dependencies
+        run: npm Install
+
+      - uses: actions/vercel-deployment@0.5.1
+        with:
+          vercelToken: ${{ secrets.VERCEL_TOKEN }}
+          vercelOrgId: ${{ secrets.VERCEL_ORG_ID }}
+          vercelProjectId: ${{ secrets.VERCEL_PROJECT_ID }}
