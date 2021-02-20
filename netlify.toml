@@ -1,0 +1,4 @@
+[build]
+base = "src/main/frontend/"
+command = "npm run build-prod && npm run start"
+publish = "__sapper__/build/"
