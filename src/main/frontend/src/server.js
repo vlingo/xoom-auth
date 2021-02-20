@@ -8,14 +8,12 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
 
-polka() // You can also use Express
-	.use('/api', createProxyMiddleware({ target: "http://localhost:9019", changeOrigin: true }))
+const server = polka(); // You can also use Express
+
+server
+	.use('/api', createProxyMiddleware({ target: 'http://localhost:9019', changeOrigin: true }))
 	.use(json())
-	.use(
-		compression({ threshold: 0 }),
-		sirv('static', { dev }),
-		sapper.middleware()
-	)
-	.listen(PORT, err => {
-		if (err) console.log('error', err);
-	});
+	.use(compression({ threshold: 0 }), sirv('static', { dev }), sapper.middleware())
+	.listen(PORT, (err) => err && console.log('error', err));
+
+module.exports = server;
