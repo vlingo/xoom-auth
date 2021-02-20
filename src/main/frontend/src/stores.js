@@ -18,3 +18,7 @@ export function createLocalStore(key, initialValue) {
 
 export const isLoggedIn = writable(true);
 export const theme = createLocalStore('theme', 'light');
+
+export function logoout() {
+	isLoggedIn.set(false);
+}

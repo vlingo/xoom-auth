@@ -1,8 +1,10 @@
 <script>
 	export let sidenav;
-	import { NavigationDrawer, List, Overlay } from 'svelte-materialify/src/';
+	import { NavigationDrawer, List, Overlay, ListItem, Icon } from 'svelte-materialify/src/';
 	import NavItem from './NavItem.svelte';
 	import routes from '../util/routes';
+	import { mdiExitToApp } from '@mdi/js';
+	import { logoout } from '../stores';
 
 	export let segment;
 </script>
@@ -12,6 +14,12 @@
 		{#each routes as item}
 			<NavItem {item} {segment} />
 		{/each}
+		<ListItem class="mt-auto" dense on:click={logoout}>
+			<span slot="prepend">
+				<Icon path={mdiExitToApp} />
+			</span>
+			Logout
+		</ListItem>
 	</List>
 </NavigationDrawer>
 <Overlay
