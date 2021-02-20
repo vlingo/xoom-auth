@@ -1,4 +1,11 @@
-[build]
+# [build]
+# base = "src/main/frontend/"
+# command = "npm run build-prod && npm run start"
+# publish = "__sapper__/build/"
+
+[dev]
+autoLaunch = true
 base = "src/main/frontend/"
-command = "npm run build-prod && npm run start"
-publish = "__sapper__/build/"
+command = "npm run dev"
+port = 3000
+publish = "__sapper__/dev/"
