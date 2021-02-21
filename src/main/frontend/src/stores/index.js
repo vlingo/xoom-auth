@@ -22,3 +22,21 @@ export const theme = createLocalStore('theme', 'light');
 export function logoout() {
 	isLoggedIn.set(false);
 }
+
+/* --------------------------- TENANTS SUBSRIPTION -------------------------- */
+export const tenants = writable([]);
+
+export function addTenant(tenant) {
+	tenants.update((existingTenants) => [...existingTenants, tenant]);
+	return fetch('/api/tenants', {
+		method: 'post',
+		body: JSON.stringify(tenant),
+	});
+}
+
+export function removeTenant(index) {
+	tenants.update((existingTenants) => {
+		existingTenants.splice(index, 1);
+		return existingTenants;
+	});
+}

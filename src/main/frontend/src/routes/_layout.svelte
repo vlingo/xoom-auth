@@ -1,3 +1,12 @@
+<script context="module">
+	export async function preload(page, session) {
+		const fetchTenants = await this.fetch(`/api/tenants`);
+		const tenants = await fetchTenants.json();
+
+		return { tenants };
+	}
+</script>
+
 <script>
 	import {
 		AppBar,
@@ -16,12 +25,18 @@
 		mdiWeatherNight,
 		mdiWeatherSunny,
 	} from '@mdi/js';
-	import { theme, isLoggedIn } from '../stores';
+	import { theme, isLoggedIn, tenants as tenantsStore } from '../stores/index.js';
 	import SiteNavigation from '../components/SiteNavigation.svelte';
 
 	const toggleTheme = () => ($theme = $theme === 'light' ? 'dark' : 'light');
 
 	export let segment;
+
+	// Data
+	export let tenants;
+
+	tenantsStore.set(tenants);
+
 	let sidenav = process.browser && window.innerWidth > 768;
 </script>
 

@@ -4,7 +4,7 @@
 	import NavItem from './NavItem.svelte';
 	import routes from '../util/routes';
 	import { mdiExitToApp } from '@mdi/js';
-	import { logoout } from '../stores';
+	import { logoout } from '../stores/index.js';
 
 	export let segment;
 </script>
