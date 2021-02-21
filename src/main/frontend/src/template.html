@@ -7,7 +7,6 @@
 		<style>
 			#preloading {
 				align-items: center;
-				animation: x 100ms linear both;
 				background-color: #fff;
 				display: flex;
 				flex-direction: column;
@@ -20,13 +19,9 @@
 				z-index: 10;
 			}
 			@keyframes x {
-				0% {
+				100% {
 					display: none;
 					opacity: 0;
-				}
-				100% {
-					display: initial;
-					opacity: initial;
 				}
 			}
 		</style>
@@ -65,6 +60,11 @@
 		<!-- <link rel="stylesheet" href="overrides.css" /> -->
 		<script>
 			window.addEventListener('load', function () {
+				var preloadingEL = document.getElementById('preloading');
+				if ('animate' in preloadingEL) {
+					preloadingEL.style.animation = 'x 200ms linear both';
+					preloadingEL.style.animationDelay = '200ms';
+				}
 				document.getElementById('preloading').remove();
 			});
 		</script>
