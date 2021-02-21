@@ -36,6 +36,9 @@ html {
 
 .main {
 	padding-top: 5rem;
+	transition-property: padding-left, padding-right;
+	will-change: padding-left, padding-right;
+	transition-duration: 0.2s;
 }
 
 .h-full {
