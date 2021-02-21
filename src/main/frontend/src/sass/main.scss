@@ -36,9 +36,6 @@ html {
 
 .main {
 	padding-top: 5rem;
-	transition-property: padding-left, padding-right;
-	will-change: padding-left, padding-right;
-	transition-duration: 0.2s;
 }
 
 .h-full {
@@ -78,6 +75,19 @@ html {
 @media (min-width: 1024px) {
 	.lg\:flex-row {
 		flex-direction: row;
+	}
+}
+
+// medium screens and up
+@media (min-width: 768px) {
+	.main {
+		transition-duration: 0.2s;
+		transition-property: padding-left, padding-right;
+		will-change: padding-left, padding-right;
+	}
+
+	.s-navigation-drawer.active ~ .main {
+		padding: 5rem 7rem 0 13rem;
 	}
 }
 

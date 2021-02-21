@@ -72,13 +72,4 @@
 	</Container>
 </MaterialApp>
 
-<style lang="scss" global>
-	@import '../sass/main.scss';
-
-	// medium screens and up
-	@media (min-width: 768px) {
-		.s-navigation-drawer.active ~ .main {
-			padding: 5rem 7rem 0 13rem;
-		}
-	}
-</style>
+<style lang="scss" src="../sass/main.scss" global></style>
