@@ -155,47 +155,51 @@
 	</div>
 </Dialog>
 
-<Table class="p-5 mt-5 s-card">
-	<thead>
-		<tr style="font-weight:bold">
-			<td>Name</td>
-			<td>Description</td>
-			<td class="text-center">Active</td>
-			<td class="text-center">Action</td>
-		</tr>
-	</thead>
-	<tbody>
-		{#each $tenants as tenant, index}
-			<tr>
-				<td>{tenant.name}</td>
-				<td>{tenant.description}</td>
-				<td class="text-center">
-					<Icon path={tenant.active ? mdiCheckboxMarked : mdiCheckboxBlank} />
-				</td>
-				<td class="text-center">
-					<Button
-						fab
-						depressed
-						on:click={() => openUpdateDialog(index)}
-						rounded
-						size="x-small"
-						text>
-						<Icon path={mdiPencil} />
-					</Button>
-					<Button
-						fab
-						depressed
-						on:click={() => openDeleteDialog(index)}
-						rounded
-						size="x-small"
-						text>
-						<Icon path={mdiDelete} />
-					</Button>
-				</td>
+{#if $tenants.length}
+	<Table class="p-5 mt-5 s-card">
+		<thead>
+			<tr style="font-weight:bold">
+				<td>Name</td>
+				<td>Description</td>
+				<td class="text-center">Active</td>
+				<td class="text-center">Action</td>
 			</tr>
-		{/each}
-	</tbody>
-</Table>
+		</thead>
+		<tbody>
+			{#each $tenants as tenant, index}
+				<tr>
+					<td>{tenant.name}</td>
+					<td>{tenant.description}</td>
+					<td class="text-center">
+						<Icon path={tenant.active ? mdiCheckboxMarked : mdiCheckboxBlank} />
+					</td>
+					<td class="text-center">
+						<Button
+							fab
+							depressed
+							on:click={() => openUpdateDialog(index)}
+							rounded
+							size="x-small"
+							text>
+							<Icon path={mdiPencil} />
+						</Button>
+						<Button
+							fab
+							depressed
+							on:click={() => openDeleteDialog(index)}
+							rounded
+							size="x-small"
+							text>
+							<Icon path={mdiDelete} />
+						</Button>
+					</td>
+				</tr>
+			{/each}
+		</tbody>
+	</Table>
+{:else}
+	<div style="padding-top: 2em">No data available</div>
+{/if}
 
 <Button
 	class="primary-color"
