@@ -27,24 +27,30 @@ export function logoout() {
 export const tenants = writable([]);
 
 export function addTenant(tenant) {
-	tenants.update((existingTenants) => [...existingTenants, tenant]);
 	return fetch('/api/tenants', {
 		method: 'post',
 		body: JSON.stringify(tenant),
+	}).then((response) => {
+		if (response.status === 200) {
+			tenants.update((existingTenants) => [...existingTenants, tenant]);
+		}
+		return response;
 	});
 }
 
 export function updateTenant(index, tenant) {
-	tenants.update((existingTenants) => {
-		existingTenants[index] = tenant;
-		return existingTenants;
-	});
 	return fetch(`/api/tenants/${index}`, {
-		headers: {
-			'Content-Type': 'application/json',
-		},
+		headers: { 'Content-Type': 'application/json' },
 		method: 'PATCH',
 		body: JSON.stringify(tenant),
+	}).then((response) => {
+		if (response.status === 200) {
+			tenants.update((existingTenants) => {
+				existingTenants[index] = tenant;
+				return existingTenants;
+			});
+		}
+		return response;
 	});
 }
 
