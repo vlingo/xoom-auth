@@ -75,7 +75,7 @@
 
 	function openDeleteDialog(index) {
 		indexToUpdateOrDelete = index;
-		tenant = $tenants[index];
+		tenant = { ...$tenants[index] };
 		dialogState.remove = true;
 	}
 
@@ -91,7 +91,7 @@
 		tenant = { ...initialTenant };
 	}
 
-	$: if (dialogState.createOrUpdate == false) {
+	$: if (dialogState.createOrUpdate == false && !dialogState.remove) {
 		updateMode = false;
 		resetTenant();
 	}
