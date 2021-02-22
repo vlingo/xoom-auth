@@ -79,6 +79,10 @@ html {
 	border-color: #424040;
 }
 
+.s-btn.disabled:not(.flat):not(.text):not(.outlined) {
+	background-color: var(--theme-buttons-disabled) !important;
+}
+
 @media (min-width: 400px) {
 	body {
 		font-size: 16px;
