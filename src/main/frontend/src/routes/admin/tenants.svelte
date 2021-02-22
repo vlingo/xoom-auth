@@ -125,7 +125,7 @@
 		</Row>
 		<Divider />
 		<div class="mt-3 d-flex">
-			<Button class="ml-auto primary-color" type="submit">
+			<Button class="ml-auto primary-color" disabled={loading.createOrUpdate} type="submit">
 				{#if updateMode}
 					{loading.createOrUpdate ? 'updating...' : 'update'}
 				{:else}
@@ -145,7 +145,11 @@
 	</div>
 	<Divider />
 	<div class="mt-3 d-flex">
-		<Button class="ml-auto red white-text" depressed on:click={_removeTenant}>
+		<Button
+			class="ml-auto red white-text"
+			depressed
+			disabled={loading.remove}
+			on:click={_removeTenant}>
 			{loading.remove ? 'deleting...' : 'delete'}
 		</Button>
 	</div>
