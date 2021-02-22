@@ -34,6 +34,20 @@ export function addTenant(tenant) {
 	});
 }
 
+export function updateTenant(index, tenant) {
+	tenants.update((existingTenants) => {
+		existingTenants[index] = tenant;
+		return existingTenants;
+	});
+	return fetch(`/api/tenants/${index}`, {
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		method: 'PATCH',
+		body: JSON.stringify(tenant),
+	});
+}
+
 export function removeTenant(index) {
 	tenants.update((existingTenants) => {
 		existingTenants.splice(index, 1);

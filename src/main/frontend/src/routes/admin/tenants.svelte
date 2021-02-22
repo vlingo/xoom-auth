@@ -11,7 +11,7 @@
 		Table,
 		TextField,
 	} from 'svelte-materialify/src';
-	import { tenants, addTenant } from '../../stores/index.js';
+	import { tenants, addTenant, updateTenant } from '../../stores/index.js';
 
 	let initialTenant = {
 		name: '',
@@ -20,35 +20,57 @@
 	};
 
 	let loading = {
-		create: false,
+		createOrUpdate: false,
 	};
 
-	let dialogActive = false;
+	let dialogState = {
+		createOrUpdate: false,
+	};
+
+	let indexToUpdateOrDelete = 0;
 	let updateMode = false;
 
 	let tenant = { ...initialTenant };
 
 	function _addTenant() {
-		loading.create = true;
+		loading.createOrUpdate = true;
 		addTenant(tenant)
 			.then(({ status }) => status === 200 && resetTenant())
 			.finally(() => {
-				loading.create = false;
-				dialogActive = false;
+				loading.createOrUpdate = false;
+				dialogState.createOrUpdate = false;
+			});
+	}
+
+	function _updateTenant() {
+		loading.createOrUpdate = true;
+		updateTenant(indexToUpdateOrDelete, tenant)
+			.then(({ status }) => status === 200 && resetTenant())
+			.finally(() => {
+				loading.createOrUpdate = false;
+				dialogState.createOrUpdate = false;
 			});
 	}
 
 	function openUpdateDialog(index) {
 		updateMode = true;
 		tenant = $tenants[index];
-		dialogActive = true;
+		dialogState.createOrUpdate = true;
+	}
+
+	function handleFormPost() {
+		if (updateMode) {
+			_updateTenant();
+		} else {
+			_addTenant();
+		}
 	}
 
 	function resetTenant() {
 		tenant = { ...initialTenant };
 	}
 
-	$: if (dialogActive == false) updateMode = false;
+	$: if (dialogState.createOrUpdate == false) updateMode = false;
 </script>
 
 <svelte:head>
@@ -57,9 +79,9 @@
 
 <h6>Tenants Subscribtion</h6>
 
-<!-- DIALOG CREATE TENANT SUBSCRIBTION -->
-<Dialog class="pa-4" bind:active={dialogActive}>
-	<form on:submit|preventDefault={_addTenant} class="s-card d-flex flex-column">
+<!-- DIALOG CREATE/UPDATE TENANT SUBSCRIBTION -->
+<Dialog class="pa-4" bind:active={dialogState.createOrUpdate}>
+	<form on:submit|preventDefault={handleFormPost} class="s-card d-flex flex-column">
 		<h6 class="mb-2">{updateMode ? 'Update' : ''} Tenant Subscribtion</h6>
 		<Divider />
 		<Row class="mt-4">
@@ -80,7 +102,11 @@
 		<Divider />
 		<div class="mt-3 d-flex">
 			<Button class="ml-auto primary-color" type="submit">
-				{loading.create ? 'subscribing...' : 'subscribe'}
+				{#if updateMode}
+					{loading.createOrUpdate ? 'updating...' : 'update'}
+				{:else}
+					{loading.createOrUpdate ? 'subscribing...' : 'subscribe'}
+				{/if}
 			</Button>
 		</div>
 	</form>
@@ -124,7 +150,7 @@
 <Button
 	class="primary-color"
 	fab
-	on:click={() => (dialogActive = true)}
+	on:click={() => (dialogState.createOrUpdate = true)}
 	style="position: fixed; margin: 1em; right: 0; bottom: 0;">
 	<Icon path={mdiPlus} float />
 </Button>

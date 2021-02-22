@@ -11,4 +11,9 @@ export default [
 		url: '/api/tenants',
 		handler: controllers.Tenants.create,
 	},
+	{
+		method: 'PATCH',
+		url: '/api/tenants/:id',
+		handler: controllers.Tenants.update,
+	},
 ];

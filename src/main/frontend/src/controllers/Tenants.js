@@ -28,15 +28,16 @@ let data = [
 
 export async function get(req, res, next) {
 	res.end(JSON.stringify(data));
-	next();
 }
 
 export async function create(req, res, next) {
 	res.end('OK');
-	next();
+}
+
+export async function update(req, res, next) {
+	res.end('OK');
 }
 
 export function remove(req, res, next) {
 	res.end('OK');
-	next();
 }
