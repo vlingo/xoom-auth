@@ -91,7 +91,10 @@
 		tenant = { ...initialTenant };
 	}
 
-	$: if (dialogState.createOrUpdate == false) updateMode = false;
+	$: if (dialogState.createOrUpdate == false) {
+		updateMode = false;
+		resetTenant();
+	}
 </script>
 
 <svelte:head>
