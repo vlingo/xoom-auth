@@ -67,6 +67,11 @@
 			});
 	}
 
+	function openCreateDialog() {
+		updateMode = false;
+		dialogState.createOrUpdate = true;
+	}
+
 	function openUpdateDialog(index) {
 		updateMode = true;
 		tenant = $tenants[index];
@@ -204,7 +209,7 @@
 <Button
 	class="primary-color"
 	fab
-	on:click={() => (dialogState.createOrUpdate = true)}
+	on:click={openCreateDialog}
 	style="position: fixed; margin: 1em; right: 0; bottom: 0;">
 	<Icon path={mdiPlus} float />
 </Button>
