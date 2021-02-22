@@ -16,4 +16,9 @@ export default [
 		url: '/api/tenants/:id',
 		handler: controllers.Tenants.update,
 	},
+	{
+		method: 'delete',
+		url: '/api/tenants/:id',
+		handler: controllers.Tenants.remove,
+	},
 ];

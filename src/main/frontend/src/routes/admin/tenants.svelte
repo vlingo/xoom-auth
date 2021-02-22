@@ -11,7 +11,7 @@
 		Table,
 		TextField,
 	} from 'svelte-materialify/src';
-	import { tenants, addTenant, updateTenant } from '../../stores/index.js';
+	import { tenants, addTenant, updateTenant, removeTenant } from '../../stores/index.js';
 
 	let initialTenant = {
 		name: '',
@@ -21,10 +21,12 @@
 
 	let loading = {
 		createOrUpdate: false,
+		remove: false,
 	};
 
 	let dialogState = {
 		createOrUpdate: false,
+		remove: false,
 	};
 
 	let indexToUpdateOrDelete = 0;
@@ -52,10 +54,29 @@
 			});
 	}
 
+	function _removeTenant() {
+		loading.remove = true;
+		removeTenant(indexToUpdateOrDelete)
+			.then(({ status }) => {
+				if (status === 200) {
+					dialogState.remove = false;
+				}
+			})
+			.finally(() => {
+				loading.remove = false;
+			});
+	}
+
 	function openUpdateDialog(index) {
 		updateMode = true;
 		tenant = $tenants[index];
 		dialogState.createOrUpdate = true;
+	}
+
+	function openDeleteDialog(index) {
+		indexToUpdateOrDelete = index;
+		tenant = $tenants[index];
+		dialogState.remove = true;
 	}
 
 	function handleFormPost() {
@@ -112,6 +133,21 @@
 	</form>
 </Dialog>
 
+<!-- DIALOG REMOVE TENANT SUBSCRIBTION -->
+<Dialog class="pa-4" bind:active={dialogState.remove}>
+	<h6 class="mb-2">Delete Tenant Subscribtion</h6>
+	<Divider />
+	<div class="mt-4 mb-4">
+		Are you sure want to delete <b>{tenant.name}</b> from tenants?
+	</div>
+	<Divider />
+	<div class="mt-3 d-flex">
+		<Button class="ml-auto red white-text" depressed on:click={_removeTenant}>
+			{loading.remove ? 'deleting...' : 'delete'}
+		</Button>
+	</div>
+</Dialog>
+
 <Table class="p-5 mt-5 s-card">
 	<thead>
 		<tr style="font-weight:bold">
@@ -138,7 +174,12 @@
 						size="x-small">
 						<Icon path={mdiPencil} />
 					</Button>
-					<Button fab depressed rounded size="x-small">
+					<Button
+						fab
+						depressed
+						on:click={() => openDeleteDialog(index)}
+						rounded
+						size="x-small">
 						<Icon path={mdiDelete} />
 					</Button>
 				</td>

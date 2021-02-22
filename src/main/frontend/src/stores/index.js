@@ -55,8 +55,13 @@ export function updateTenant(index, tenant) {
 }
 
 export function removeTenant(index) {
-	tenants.update((existingTenants) => {
-		existingTenants.splice(index, 1);
-		return existingTenants;
+	return fetch(`/api/tenants/${index}`, {
+		method: 'delete',
+	}).then((response) => {
+		tenants.update((existingTenants) => {
+			existingTenants.splice(index, 1);
+			return existingTenants;
+		});
+		return response;
 	});
 }
