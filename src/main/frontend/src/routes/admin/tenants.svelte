@@ -178,7 +178,8 @@
 						depressed
 						on:click={() => openUpdateDialog(index)}
 						rounded
-						size="x-small">
+						size="x-small"
+						text>
 						<Icon path={mdiPencil} />
 					</Button>
 					<Button
@@ -186,7 +187,8 @@
 						depressed
 						on:click={() => openDeleteDialog(index)}
 						rounded
-						size="x-small">
+						size="x-small"
+						text>
 						<Icon path={mdiDelete} />
 					</Button>
 				</td>
