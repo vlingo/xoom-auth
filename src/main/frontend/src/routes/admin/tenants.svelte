@@ -210,6 +210,7 @@
 	class="primary-color"
 	fab
 	on:click={openCreateDialog}
-	style="position: fixed; margin: 1em; right: 0; bottom: 0;">
-	<Icon path={mdiPlus} float />
+	style="position: fixed; margin: 1em; right: 0; bottom: 0;"
+	float>
+	<Icon path={mdiPlus} />
 </Button>
