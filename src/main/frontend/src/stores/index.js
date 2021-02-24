@@ -108,3 +108,46 @@ export function removeUser(index) {
 		return response;
 	});
 }
+
+/* --------------------------------- GROUPS --------------------------------- */
+export const groups = writable([]);
+
+export function addGroup(group) {
+	return fetch('/api/tenants/groups', {
+		method: 'post',
+		body: JSON.stringify(group),
+	}).then((response) => {
+		if (response.status === 200) {
+			groups.update((existingGroups) => [...existingGroups, group]);
+		}
+		return response;
+	});
+}
+
+export function updateGroup(index, group) {
+	return fetch(`/api/tenants/groups/${index}`, {
+		headers: { 'Content-Type': 'application/json' },
+		method: 'PATCH',
+		body: JSON.stringify(group),
+	}).then((response) => {
+		if (response.status === 200) {
+			groups.update((existingGroups) => {
+				existingGroups[index] = group;
+				return existingGroups;
+			});
+		}
+		return response;
+	});
+}
+
+export function removeGroup(index) {
+	return fetch(`/api/tenants/groups/${index}`, {
+		method: 'delete',
+	}).then((response) => {
+		groups.update((existingGroups) => {
+			existingGroups.splice(index, 1);
+			return existingGroups;
+		});
+		return response;
+	});
+}

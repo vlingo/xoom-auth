@@ -6,7 +6,10 @@
 		const fetchUsers = await this.fetch('/api/tenants/users');
 		const users = await fetchUsers.json();
 
-		return { tenants, users };
+		const fetchGroups = await this.fetch('/api/tenants/groups');
+		const groups = await fetchGroups.json();
+
+		return { tenants, users, groups };
 	}
 </script>
 
@@ -33,6 +36,7 @@
 		isLoggedIn,
 		tenants as tenantsStore,
 		users as usersStore,
+		groups as groupsStore,
 	} from '../stores/index.js';
 	import SiteNavigation from '../components/SiteNavigation.svelte';
 
@@ -43,9 +47,11 @@
 	// Data
 	export let tenants;
 	export let users;
+	export let groups;
 
 	tenantsStore.set(tenants);
 	usersStore.set(users);
+	groupsStore.set(groups);
 
 	let sidenav = process.browser && window.innerWidth > 768;
 </script>

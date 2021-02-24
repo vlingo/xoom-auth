@@ -24,7 +24,6 @@ export default [
 	},
 
 	/* ------------------------------ USERS ROUTES ------------------------------ */
-
 	{
 		method: 'get',
 		url: '/api/tenants/users',
@@ -44,5 +43,27 @@ export default [
 		method: 'delete',
 		url: '/api/tenants/users/:id',
 		handler: controllers.Users.remove,
+	},
+
+	/* ------------------------------ GROUPS ROUTES ----------------------------- */
+	{
+		method: 'get',
+		url: '/api/tenants/groups',
+		handler: controllers.Groups.get,
+	},
+	{
+		method: 'post',
+		url: '/api/tenants/groups',
+		handler: controllers.Groups.create,
+	},
+	{
+		method: 'PATCH',
+		url: '/api/tenants/groups/:id',
+		handler: controllers.Groups.update,
+	},
+	{
+		method: 'delete',
+		url: '/api/tenants/groups/:id',
+		handler: controllers.Groups.remove,
 	},
 ];
