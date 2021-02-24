@@ -175,8 +175,8 @@
 				<tr>
 					<td>{tenant.name}</td>
 					<td>{tenant.description}</td>
-					<td class="text-center">
-						<Icon path={tenant.active ? mdiCheckboxMarked : mdiCheckboxBlank} />
+					<td class="justify-center d-flex">
+						<Checkbox class="m-0" bind:checked={tenant.active} />
 					</td>
 					<td class="text-center table-row-actions">
 						<Button
