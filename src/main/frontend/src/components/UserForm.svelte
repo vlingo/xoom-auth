@@ -45,8 +45,9 @@
 		<TextField bind:value={user.phone} required>Phone</TextField>
 	</Col>
 </Row>
-<Divider class="mt-5 mb-5" />
-<Row class="flex-column lg:flex-row">
+<Divider class="mt-5 mb-3" />
+<h6>Credential</h6>
+<Row class="mt-5 flex-column lg:flex-row">
 	<Col class="md:max-width-initial" style="max-width:150px">
 		<Select bind:value={user.credential.authority} items={authorities} required>
 			Authority
