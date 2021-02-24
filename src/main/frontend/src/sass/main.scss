@@ -71,6 +71,10 @@ html {
 	border-width: 1px;
 }
 
+.s-table > thead > tr > td {
+	padding: 15px 16px !important;
+}
+
 .theme--light .s-table {
 	border-color: #cecece;
 }

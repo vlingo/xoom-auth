@@ -3,7 +3,10 @@
 		const fetchTenants = await this.fetch(`/api/tenants`);
 		const tenants = await fetchTenants.json();
 
-		return { tenants };
+		const fetchUsers = await this.fetch('/api/users');
+		const users = await fetchUsers.json();
+
+		return { tenants, users };
 	}
 </script>
 
@@ -25,7 +28,12 @@
 		mdiWeatherNight,
 		mdiWeatherSunny,
 	} from '@mdi/js';
-	import { theme, isLoggedIn, tenants as tenantsStore } from '../stores/index.js';
+	import {
+		theme,
+		isLoggedIn,
+		tenants as tenantsStore,
+		users as usersStore,
+	} from '../stores/index.js';
 	import SiteNavigation from '../components/SiteNavigation.svelte';
 
 	const toggleTheme = () => ($theme = $theme === 'light' ? 'dark' : 'light');
@@ -34,8 +42,10 @@
 
 	// Data
 	export let tenants;
+	export let users;
 
 	tenantsStore.set(tenants);
+	usersStore.set(users);
 
 	let sidenav = process.browser && window.innerWidth > 768;
 </script>

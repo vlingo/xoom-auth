@@ -65,3 +65,46 @@ export function removeTenant(index) {
 		return response;
 	});
 }
+
+/* ---------------------------------- USERS --------------------------------- */
+export const users = writable([]);
+
+export function addUser(tenant) {
+	return fetch('/api/users', {
+		method: 'post',
+		body: JSON.stringify(tenant),
+	}).then((response) => {
+		if (response.status === 200) {
+			users.update((existingUsers) => [...existingUsers, tenant]);
+		}
+		return response;
+	});
+}
+
+export function updateUser(index, tenant) {
+	return fetch(`/api/users/${index}`, {
+		headers: { 'Content-Type': 'application/json' },
+		method: 'PATCH',
+		body: JSON.stringify(tenant),
+	}).then((response) => {
+		if (response.status === 200) {
+			users.update((existingUsers) => {
+				existingUsers[index] = tenant;
+				return existingUsers;
+			});
+		}
+		return response;
+	});
+}
+
+export function removeUser(index) {
+	return fetch(`/api/users/${index}`, {
+		method: 'delete',
+	}).then((response) => {
+		users.update((existingUsers) => {
+			existingUsers.splice(index, 1);
+			return existingUsers;
+		});
+		return response;
+	});
+}

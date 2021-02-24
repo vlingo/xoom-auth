@@ -21,4 +21,27 @@ export default [
 		url: '/api/tenants/:id',
 		handler: controllers.Tenants.remove,
 	},
+
+	/* ------------------------------ USERS ROUTES ------------------------------ */
+
+	{
+		method: 'get',
+		url: '/api/users',
+		handler: controllers.Users.get,
+	},
+	{
+		method: 'post',
+		url: '/api/users',
+		handler: controllers.Users.create,
+	},
+	{
+		method: 'PATCH',
+		url: '/api/users/:id',
+		handler: controllers.Users.update,
+	},
+	{
+		method: 'delete',
+		url: '/api/users/:id',
+		handler: controllers.Users.remove,
+	},
 ];
