@@ -168,7 +168,7 @@
 				<td>Name</td>
 				<td>Description</td>
 				<td class="text-center">Active</td>
-				<td class="text-center">Action</td>
+				<td class="text-center">Actions</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -179,7 +179,7 @@
 					<td class="text-center">
 						<Icon path={tenant.active ? mdiCheckboxMarked : mdiCheckboxBlank} />
 					</td>
-					<td class="text-center">
+					<td class="text-center table-row-actions">
 						<Button
 							fab
 							depressed

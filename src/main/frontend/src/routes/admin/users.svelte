@@ -167,7 +167,7 @@
 				<td>Second Name</td>
 				<td>Family Name</td>
 				<td>Phone</td>
-				<td class="text-center">Action</td>
+				<td class="text-center">Actions</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -179,7 +179,7 @@
 					<td>{user.secondName}</td>
 					<td>{user.familyName}</td>
 					<td>{user.phone}</td>
-					<td class="text-center">
+					<td class="text-center table-row-actions">
 						<Button
 							fab
 							depressed
