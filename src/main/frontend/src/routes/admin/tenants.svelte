@@ -111,7 +111,7 @@
 
 <!-- DIALOG CREATE/UPDATE TENANT SUBSCRIBTION -->
 <Dialog class="pa-4" bind:active={dialogState.createOrUpdate}>
-	<form on:submit|preventDefault={handleFormPost} class="s-card d-flex flex-column">
+	<form on:submit|preventDefault={handleFormPost} class="d-flex flex-column">
 		<h6 class="mb-2">{updateMode ? 'Update' : ''} Tenant Subscribtion</h6>
 		<Divider />
 		<Row class="mt-4">
