@@ -12,7 +12,7 @@
 		Table,
 		TextField,
 	} from 'svelte-materialify/src';
-	import { tenants, addTenant, updateTenant, removeTenant } from '../../stores/index.js';
+	import { tenants, create, update, remove } from '../../stores/tenantsSubscription.js';
 
 	let initialTenant = {
 		name: '',
@@ -35,9 +35,9 @@
 
 	let tenant = { ...initialTenant };
 
-	function _addTenant() {
+	function _create() {
 		loading.createOrUpdate = true;
-		addTenant(tenant)
+		create(tenant)
 			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
@@ -45,9 +45,9 @@
 			});
 	}
 
-	function _updateTenant() {
+	function _update() {
 		loading.createOrUpdate = true;
-		updateTenant(indexToUpdateOrDelete, tenant)
+		update(indexToUpdateOrDelete, tenant)
 			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
@@ -55,9 +55,9 @@
 			});
 	}
 
-	function _removeTenant() {
+	function _remove() {
 		loading.remove = true;
-		removeTenant(indexToUpdateOrDelete)
+		remove(indexToUpdateOrDelete)
 			.then(({ status }) => {
 				if (status === 200) {
 					dialogState.remove = false;
@@ -88,9 +88,9 @@
 
 	function handleFormPost() {
 		if (updateMode) {
-			_updateTenant();
+			_update();
 		} else {
-			_addTenant();
+			_create();
 		}
 	}
 
@@ -154,7 +154,7 @@
 			class="ml-auto red white-text"
 			depressed
 			disabled={loading.remove}
-			on:click={_removeTenant}>
+			on:click={_remove}>
 			{loading.remove ? 'deleting...' : 'delete'}
 		</Button>
 	</div>

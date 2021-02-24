@@ -11,7 +11,7 @@
 		Table,
 		TextField,
 	} from 'svelte-materialify/src';
-	import { groups, addGroup, updateGroup, removeGroup } from '../../stores/index.js';
+	import { groups, create, update, remove } from '../../stores/groups.js';
 
 	let initialGroup = {
 		name: '',
@@ -33,9 +33,9 @@
 
 	let group = { ...initialGroup };
 
-	function _addGroup() {
+	function _create() {
 		loading.createOrUpdate = true;
-		addGroup(group)
+		create(group)
 			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
@@ -43,9 +43,9 @@
 			});
 	}
 
-	function _updateGroup() {
+	function _update() {
 		loading.createOrUpdate = true;
-		updateGroup(indexToUpdateOrDelete, group)
+		update(indexToUpdateOrDelete, group)
 			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
@@ -53,9 +53,9 @@
 			});
 	}
 
-	function _removeGroup() {
+	function _remove() {
 		loading.remove = true;
-		removeGroup(indexToUpdateOrDelete)
+		remove(indexToUpdateOrDelete)
 			.then(({ status }) => {
 				if (status === 200) {
 					dialogState.remove = false;
@@ -86,9 +86,9 @@
 
 	function handleFormPost() {
 		if (updateMode) {
-			_updateGroup();
+			_update();
 		} else {
-			_addGroup();
+			_create();
 		}
 	}
 
@@ -147,7 +147,7 @@
 			class="ml-auto red white-text"
 			depressed
 			disabled={loading.remove}
-			on:click={_removeGroup}>
+			on:click={_remove}>
 			{loading.remove ? 'deleting...' : 'delete'}
 		</Button>
 	</div>

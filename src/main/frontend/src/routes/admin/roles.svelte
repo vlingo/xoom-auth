@@ -11,7 +11,7 @@
 		Table,
 		TextField,
 	} from 'svelte-materialify/src';
-	import { roles, addRole, updateRole, removeRole } from '../../stores/index.js';
+	import { roles, create, update, remove } from '../../stores/roles.js';
 
 	let initialRole = {
 		name: '',
@@ -33,9 +33,9 @@
 
 	let role = { ...initialRole };
 
-	function _addRole() {
+	function _create() {
 		loading.createOrUpdate = true;
-		addRole(role)
+		create(role)
 			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
@@ -43,9 +43,9 @@
 			});
 	}
 
-	function _updateRole() {
+	function _update() {
 		loading.createOrUpdate = true;
-		updateRole(indexToUpdateOrDelete, role)
+		update(indexToUpdateOrDelete, role)
 			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
@@ -53,9 +53,9 @@
 			});
 	}
 
-	function _removeRole() {
+	function _remove() {
 		loading.remove = true;
-		removeRole(indexToUpdateOrDelete)
+		remove(indexToUpdateOrDelete)
 			.then(({ status }) => {
 				if (status === 200) {
 					dialogState.remove = false;
@@ -86,9 +86,9 @@
 
 	function handleFormPost() {
 		if (updateMode) {
-			_updateRole();
+			_update();
 		} else {
-			_addRole();
+			_create();
 		}
 	}
 
@@ -147,7 +147,7 @@
 			class="ml-auto red white-text"
 			depressed
 			disabled={loading.remove}
-			on:click={_removeRole}>
+			on:click={_remove}>
 			{loading.remove ? 'deleting...' : 'delete'}
 		</Button>
 	</div>

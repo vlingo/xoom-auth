@@ -3,7 +3,7 @@
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
 	import { Button, Checkbox, Dialog, Divider, Icon, Table } from 'svelte-materialify/src';
 	import UserForm from '../../components/UserForm.svelte';
-	import { users, addUser, updateUser, removeUser } from '../../stores/index.js';
+	import { users, create, update, remove } from '../../stores/users.js';
 
 	let initialUser = {
 		username: '',
@@ -35,9 +35,9 @@
 
 	let user = { ...initialUser };
 
-	function _addUser() {
+	function _create() {
 		loading.createOrUpdate = true;
-		addUser(user)
+		create(user)
 			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
@@ -45,9 +45,9 @@
 			});
 	}
 
-	function _updateUser() {
+	function _update() {
 		loading.createOrUpdate = true;
-		updateUser(indexToUpdateOrDelete, user)
+		update(indexToUpdateOrDelete, user)
 			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
@@ -55,9 +55,9 @@
 			});
 	}
 
-	function _removeUser() {
+	function _remove() {
 		loading.remove = true;
-		removeUser(indexToUpdateOrDelete)
+		remove(indexToUpdateOrDelete)
 			.then(({ status }) => {
 				if (status === 200) {
 					dialogState.remove = false;
@@ -88,9 +88,9 @@
 
 	function handleFormPost() {
 		if (updateMode) {
-			_updateUser();
+			_update();
 		} else {
-			_addUser();
+			_create();
 		}
 	}
 
@@ -140,7 +140,7 @@
 			class="ml-auto red white-text"
 			depressed
 			disabled={loading.remove}
-			on:click={_removeUser}>
+			on:click={_remove}>
 			{loading.remove ? 'deleting...' : 'delete'}
 		</Button>
 	</div>
