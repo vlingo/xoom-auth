@@ -6,6 +6,7 @@ let data = [
 		secondName: '',
 		familyName: 'Doe',
 		phone: '480-555-1212',
+		active: true,
 		credential: {
 			authority: 'vlingo',
 			id: 'zoe.doe@tenant1.com',
@@ -19,6 +20,7 @@ let data = [
 		secondName: '',
 		familyName: 'Cook',
 		phone: '480-555-1212',
+		active: false,
 		credential: {
 			authority: 'vlingo',
 			id: 'john.cook@tenant1.com',
@@ -32,6 +34,7 @@ let data = [
 		secondName: '',
 		familyName: 'Jones',
 		phone: '480-555-1212',
+		active: true,
 		credential: {
 			authority: 'vlingo',
 			id: 'sjones@tenant1.com',
@@ -45,6 +48,7 @@ let data = [
 		secondName: '',
 		familyName: 'Smith',
 		phone: '480-555-1212',
+		active: false,
 		credential: {
 			authority: 'vlingo',
 			id: 'gwens@tenant1.com',
@@ -58,6 +62,7 @@ let data = [
 		secondName: '',
 		familyName: 'Plank',
 		phone: '480-555-1212',
+		active: true,
 		credential: {
 			authority: 'vlingo',
 			id: 'henry.plank@tenant1.com',

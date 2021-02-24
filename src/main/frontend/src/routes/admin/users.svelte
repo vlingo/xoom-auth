@@ -1,18 +1,7 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiCheckboxBlank, mdiCheckboxMarked, mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import {
-		Button,
-		Checkbox,
-		Col,
-		Dialog,
-		Divider,
-		Icon,
-		Row,
-		Select,
-		Table,
-		TextField,
-	} from 'svelte-materialify/src';
+	import { Button, Checkbox, Dialog, Divider, Icon, Table } from 'svelte-materialify/src';
 	import UserForm from '../../components/UserForm.svelte';
 	import { users, addUser, updateUser, removeUser } from '../../stores/index.js';
 
@@ -23,6 +12,7 @@
 		secondName: '',
 		familyName: '',
 		phone: '',
+		active: false,
 		credential: {
 			authority: 'vlingo',
 			id: '',
@@ -163,7 +153,8 @@
 				<td>Username</td>
 				<td>Name</td>
 				<td>Email</td>
-				<td>Phone</td>
+				<!-- <td>Phone</td> -->
+				<td class="text-center">Active</td>
 				<td class="text-center">Actions</td>
 			</tr>
 		</thead>
@@ -173,7 +164,10 @@
 					<td>{user.username}</td>
 					<td>{user.givenName} {user.secondName} {user.familyName}</td>
 					<td>{user.email}</td>
-					<td>{user.phone}</td>
+					<!-- <td>{user.phone}</td> -->
+					<td class="justify-center d-flex">
+						<Checkbox class="m-0" bind:checked={user.active} />
+					</td>
 					<td class="text-center table-row-actions">
 						<Button
 							fab
