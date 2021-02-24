@@ -14,12 +14,12 @@ import {
 } from '@mdi/js';
 
 export default [
-	{
-		text: 'Dashboard',
-		icon: mdiViewDashboardOutline,
-		openIcon: mdiViewDashboard,
-		href: '/admin',
-	},
+	// {
+	// 	text: 'Dashboard',
+	// 	icon: mdiViewDashboardOutline,
+	// 	openIcon: mdiViewDashboard,
+	// 	href: '/admin',
+	// },
 	{
 		text: 'Tenants Subscription',
 		icon: mdiMailboxOutline,
