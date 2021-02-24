@@ -8,7 +8,7 @@
 
 <script>
 	import Title from '../../components/title.svelte';
-	import { mdiCheckboxBlank, mdiCheckboxMarked, mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
+	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
 	import {
 		Button,
 		Checkbox,
