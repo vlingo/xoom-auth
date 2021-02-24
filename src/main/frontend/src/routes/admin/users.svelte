@@ -162,10 +162,8 @@
 		<thead>
 			<tr style="font-weight:bold">
 				<td>Username</td>
+				<td>Name</td>
 				<td>Email</td>
-				<td>Given Name</td>
-				<td>Second Name</td>
-				<td>Family Name</td>
 				<td>Phone</td>
 				<td class="text-center">Actions</td>
 			</tr>
@@ -174,10 +172,8 @@
 			{#each $users as user, index}
 				<tr>
 					<td>{user.username}</td>
+					<td>{user.givenName} {user.secondName} {user.familyName}</td>
 					<td>{user.email}</td>
-					<td>{user.givenName}</td>
-					<td>{user.secondName}</td>
-					<td>{user.familyName}</td>
 					<td>{user.phone}</td>
 					<td class="text-center table-row-actions">
 						<Button
