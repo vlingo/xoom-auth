@@ -1,3 +1,11 @@
+<script context="module">
+	export async function preload(/* page, session */) {
+		const fetchGroups = await this.fetch('/api/tenants/groups');
+		const groups = await fetchGroups.json();
+		return { groups };
+	}
+</script>
+
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
@@ -11,7 +19,10 @@
 		Table,
 		TextField,
 	} from 'svelte-materialify/src';
-	import { groups, create, update, remove } from '../../stores/groups.js';
+	import { groups as groupsStore, create, update, remove } from '../../stores/groups.js';
+
+	export let groups;
+	$groupsStore = groups;
 
 	let initialGroup = {
 		name: '',
@@ -74,13 +85,13 @@
 	function openUpdateDialog(index) {
 		updateMode = true;
 		indexToUpdateOrDelete = index;
-		group = $groups[index];
+		group = $groupsStore[index];
 		dialogState.createOrUpdate = true;
 	}
 
 	function openDeleteDialog(index) {
 		indexToUpdateOrDelete = index;
-		group = { ...$groups[index] };
+		group = { ...$groupsStore[index] };
 		dialogState.remove = true;
 	}
 
@@ -153,7 +164,7 @@
 	</div>
 </Dialog>
 
-{#if $groups.length}
+{#if $groupsStore.length}
 	<Table class="p-5 mt-5 s-card">
 		<thead>
 			<tr style="font-weight:bold">
@@ -163,7 +174,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each $groups as group, index}
+			{#each $groupsStore as group, index}
 				<tr>
 					<td>{group.name}</td>
 					<td>{group.description}</td>

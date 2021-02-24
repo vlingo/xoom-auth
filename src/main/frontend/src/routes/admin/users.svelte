@@ -1,9 +1,20 @@
+<script context="module">
+	export async function preload(/* page, session */) {
+		const fetchUsers = await this.fetch('/api/tenants/users');
+		const users = await fetchUsers.json();
+		return { users };
+	}
+</script>
+
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
 	import { Button, Checkbox, Dialog, Divider, Icon, Table } from 'svelte-materialify/src';
 	import UserForm from '../../components/UserForm.svelte';
-	import { users, create, update, remove } from '../../stores/users.js';
+	import { users as usersStore, create, update, remove } from '../../stores/users.js';
+
+	export let users;
+	$usersStore = users;
 
 	let initialUser = {
 		username: '',

@@ -1,3 +1,11 @@
+<script context="module">
+	export async function preload(/* page, session */) {
+		const fetchTenantsSubscribtiono = await this.fetch('/api/tenants/tenants');
+		const tenants = await fetchTenantsSubscribtiono.json();
+		return { tenants };
+	}
+</script>
+
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiCheckboxBlank, mdiCheckboxMarked, mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
@@ -12,7 +20,15 @@
 		Table,
 		TextField,
 	} from 'svelte-materialify/src';
-	import { tenants, create, update, remove } from '../../stores/tenantsSubscription.js';
+	import {
+		tenants as tenantsStore,
+		create,
+		update,
+		remove,
+	} from '../../stores/tenantsSubscription.js';
+
+	export let tenants;
+	$tenantsStore = tenants;
 
 	let initialTenant = {
 		name: '',
@@ -76,13 +92,13 @@
 	function openUpdateDialog(index) {
 		updateMode = true;
 		indexToUpdateOrDelete = index;
-		tenant = $tenants[index];
+		tenant = $tenantsStore[index];
 		dialogState.createOrUpdate = true;
 	}
 
 	function openDeleteDialog(index) {
 		indexToUpdateOrDelete = index;
-		tenant = { ...$tenants[index] };
+		tenant = { ...$tenantsStore[index] };
 		dialogState.remove = true;
 	}
 
@@ -160,7 +176,7 @@
 	</div>
 </Dialog>
 
-{#if $tenants.length}
+{#if $tenantsStore.length}
 	<Table class="p-5 mt-5 s-card">
 		<thead>
 			<tr style="font-weight:bold">
@@ -171,7 +187,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each $tenants as tenant, index}
+			{#each $tenantsStore as tenant, index}
 				<tr>
 					<td>{tenant.name}</td>
 					<td>{tenant.description}</td>

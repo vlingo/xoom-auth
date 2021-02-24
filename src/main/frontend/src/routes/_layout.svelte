@@ -1,21 +1,3 @@
-<script context="module">
-	export async function preload(/* page, session */) {
-		const fetchTenants = await this.fetch(`/api/tenants`);
-		const tenants = await fetchTenants.json();
-
-		const fetchUsers = await this.fetch('/api/tenants/users');
-		const users = await fetchUsers.json();
-
-		const fetchGroups = await this.fetch('/api/tenants/groups');
-		const groups = await fetchGroups.json();
-
-		const fetchRoles = await this.fetch('/api/tenants/roles');
-		const roles = await fetchRoles.json();
-
-		return { tenants, users, groups, roles };
-	}
-</script>
-
 <script>
 	import {
 		AppBar,
@@ -34,15 +16,7 @@
 		mdiWeatherNight,
 		mdiWeatherSunny,
 	} from '@mdi/js';
-	import {
-		theme,
-		isLoggedIn,
-		tenants as tenantsStore,
-		users as usersStore,
-		groups as groupsStore,
-		roles as rolesStore,
-		title,
-	} from '../stores/index.js';
+	import { theme, isLoggedIn, title } from '../stores/index.js';
 	import { stores } from '@sapper/app';
 
 	import SiteNavigation from '../components/SiteNavigation.svelte';
@@ -51,18 +25,6 @@
 
 	export let segment;
 	const { page } = stores();
-
-	// Get data from preload
-	export let tenants;
-	export let users;
-	export let groups;
-	export let roles;
-
-	// Set data to their store
-	tenantsStore.set(tenants);
-	usersStore.set(users);
-	groupsStore.set(groups);
-	rolesStore.set(roles);
 
 	$: isLoginPage = $page.path === '/';
 

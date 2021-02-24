@@ -1,3 +1,11 @@
+<script context="module">
+	export async function preload(/* page, session */) {
+		const fetchRoles = await this.fetch('/api/tenants/roles');
+		const roles = await fetchRoles.json();
+		return { roles };
+	}
+</script>
+
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
@@ -11,7 +19,10 @@
 		Table,
 		TextField,
 	} from 'svelte-materialify/src';
-	import { roles, create, update, remove } from '../../stores/roles.js';
+	import { roles as rolesStore, create, update, remove } from '../../stores/roles.js';
+
+	export let roles;
+	$rolesStore = roles;
 
 	let initialRole = {
 		name: '',
@@ -74,13 +85,13 @@
 	function openUpdateDialog(index) {
 		updateMode = true;
 		indexToUpdateOrDelete = index;
-		role = $roles[index];
+		role = $rolesStore[index];
 		dialogState.createOrUpdate = true;
 	}
 
 	function openDeleteDialog(index) {
 		indexToUpdateOrDelete = index;
-		role = { ...$roles[index] };
+		role = { ...$rolesStore[index] };
 		dialogState.remove = true;
 	}
 
@@ -153,7 +164,7 @@
 	</div>
 </Dialog>
 
-{#if $roles.length}
+{#if $rolesStore.length}
 	<Table class="p-5 mt-5 s-card">
 		<thead>
 			<tr style="font-weight:bold">
@@ -163,7 +174,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each $roles as role, index}
+			{#each $rolesStore as role, index}
 				<tr>
 					<td>{role.name}</td>
 					<td>{role.description}</td>
