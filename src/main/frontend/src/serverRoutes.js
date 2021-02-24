@@ -27,22 +27,22 @@ export default [
 
 	{
 		method: 'get',
-		url: '/api/users',
+		url: '/api/tenants/users',
 		handler: controllers.Users.get,
 	},
 	{
 		method: 'post',
-		url: '/api/users',
+		url: '/api/tenants/users',
 		handler: controllers.Users.create,
 	},
 	{
 		method: 'PATCH',
-		url: '/api/users/:id',
+		url: '/api/tenants/users/:id',
 		handler: controllers.Users.update,
 	},
 	{
 		method: 'delete',
-		url: '/api/users/:id',
+		url: '/api/tenants/users/:id',
 		handler: controllers.Users.remove,
 	},
 ];

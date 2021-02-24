@@ -3,7 +3,7 @@
 		const fetchTenants = await this.fetch(`/api/tenants`);
 		const tenants = await fetchTenants.json();
 
-		const fetchUsers = await this.fetch('/api/users');
+		const fetchUsers = await this.fetch('/api/tenants/users');
 		const users = await fetchUsers.json();
 
 		return { tenants, users };
