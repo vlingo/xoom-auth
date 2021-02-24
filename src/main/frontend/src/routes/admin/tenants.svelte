@@ -1,6 +1,6 @@
 <script context="module">
 	export async function preload(/* page, session */) {
-		const fetchTenantsSubscribtiono = await this.fetch('/api/tenants/tenants');
+		const fetchTenantsSubscribtiono = await this.fetch('/api/tenants');
 		const tenants = await fetchTenantsSubscribtiono.json();
 		return { tenants };
 	}

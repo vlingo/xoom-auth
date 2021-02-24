@@ -87,13 +87,13 @@
 	function openUpdateDialog(index) {
 		updateMode = true;
 		indexToUpdateOrDelete = index;
-		user = $users[index];
+		user = $usersStore[index];
 		dialogState.createOrUpdate = true;
 	}
 
 	function openDeleteDialog(index) {
 		indexToUpdateOrDelete = index;
-		user = { ...$users[index] };
+		user = { ...$usersStore[index] };
 		dialogState.remove = true;
 	}
 
@@ -157,7 +157,7 @@
 	</div>
 </Dialog>
 
-{#if $users.length}
+{#if $usersStore.length}
 	<Table class="p-5 mt-5 s-card">
 		<thead>
 			<tr style="font-weight:bold">
@@ -170,7 +170,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each $users as user, index}
+			{#each $usersStore as user, index}
 				<tr>
 					<td>{user.username}</td>
 					<td>{user.givenName} {user.secondName} {user.familyName}</td>
