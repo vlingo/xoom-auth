@@ -1,7 +1,7 @@
 let data = [
 	{
 		name: 'Group1',
-		description: 'Description of group1',
+		description: 'Description of Group1',
 	},
 	{
 		name: 'Group2',
