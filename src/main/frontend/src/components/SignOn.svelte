@@ -1,5 +1,9 @@
 <script>
-	import { Col, Row, TextField } from 'svelte-materialify/src';
+	import { Col, TextField } from 'svelte-materialify/src';
+	import { login } from '../stores/index.js';
+
+	/**  @type {HTMLFormElement} */
+	let form;
 
 	const loginData = {
 		tenantId: '',
@@ -8,12 +12,16 @@
 		secret: '',
 	};
 
-	function login() {
-		console.log(loginData);
+	function _login() {
+		if (form.checkValidity()) {
+			login();
+		} else {
+			alert('Login failed');
+		}
 	}
 </script>
 
-<form class="" id="register-and-login-form" on:submit|preventDefault={login}>
+<form bind:this={form} id="register-and-login-form" on:submit|preventDefault={_login}>
 	<Col>
 		<TextField autofocus bind:value={loginData.tenantId} required>Tenant ID</TextField>
 	</Col>
@@ -21,6 +29,6 @@
 		<TextField bind:value={loginData.username} required>Username</TextField>
 	</Col>
 	<Col>
-		<TextField bind:value={loginData.secret} required>Secret</TextField>
+		<TextField bind:value={loginData.secret} type="password" required>Secret</TextField>
 	</Col>
 </form>

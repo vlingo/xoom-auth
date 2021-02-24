@@ -16,12 +16,19 @@ export function createLocalStore(key, initialValue) {
 	};
 }
 
-export const isLoggedIn = writable(true);
 export const theme = createLocalStore('theme', 'light');
+
+/* ----------------------------- AUTHENTICATION ----------------------------- */
+export const isLoggedIn = writable(true);
 
 export function logoout() {
 	isLoggedIn.set(false);
 	location.assign('/');
+}
+
+export function login() {
+	isLoggedIn.set(true);
+	location.assign('/admin');
 }
 
 /* --------------------------- TENANTS SUBSRIPTION -------------------------- */
