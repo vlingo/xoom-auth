@@ -131,7 +131,7 @@
 				{#if updateMode}
 					{loading.createOrUpdate ? 'updating...' : 'update'}
 				{:else}
-					{loading.createOrUpdate ? 'subscribing...' : 'subscribe'}
+					{loading.createOrUpdate ? 'registering user...' : 'register'}
 				{/if}
 			</Button>
 		</div>
