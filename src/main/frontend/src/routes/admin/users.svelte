@@ -1,4 +1,5 @@
 <script>
+	import Title from '../../components/title.svelte';
 	import { mdiCheckboxBlank, mdiCheckboxMarked, mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
 	import {
 		Button,
@@ -113,9 +114,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Users - Vlingo Authentication</title>
-</svelte:head>
+<Title title="Users" />
 
 <h6>Users</h6>
 

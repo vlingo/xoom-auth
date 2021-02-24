@@ -16,7 +16,9 @@ export function createLocalStore(key, initialValue) {
 	};
 }
 
+/* ---------------------------------- MISC ---------------------------------- */
 export const theme = createLocalStore('theme', 'light');
+export const title = writable('');
 
 /* ----------------------------- AUTHENTICATION ----------------------------- */
 export const isLoggedIn = writable(true);

@@ -41,6 +41,7 @@
 		users as usersStore,
 		groups as groupsStore,
 		roles as rolesStore,
+		title,
 	} from '../stores/index.js';
 	import { stores } from '@sapper/app';
 
@@ -81,7 +82,7 @@
 					<Icon path={mdiMenu} />
 				</Button>
 			</div>
-			<span slot="title">Title</span>
+			<span slot="title">{$title}</span>
 			<div style="flex-grow:1" />
 			<Button aria-label="Toggle Theme" depressed fab on:click={toggleTheme} size="small">
 				<Icon path={$theme === 'light' ? mdiWeatherNight : mdiWeatherSunny} />

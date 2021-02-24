@@ -1,4 +1,5 @@
 <script>
+	import Title from '../components/title.svelte';
 	import { Button, Card, CardActions, Divider, Row } from 'svelte-materialify/src';
 	import RegisterUser from '../components/RegisterUser.svelte';
 	import SignOn from '../components/SignOn.svelte';
@@ -8,9 +9,7 @@
 	let register = false;
 </script>
 
-<svelte:head>
-	<title>{caption} - Vlingo Authentication</title>
-</svelte:head>
+<Title title={caption} />
 
 <Row class="justify-center flex-column align-center">
 	<Card class="login-register-card" outlined style="width: 100%; max-width: 500px">

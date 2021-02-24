@@ -1,9 +1,7 @@
 <script>
-	//
+	import Title from '../../components/title.svelte';
 </script>
 
-<svelte:head>
-	<title>Permissions - Vlingo Authentication</title>
-</svelte:head>
+<Title title="Permissions" />
 
 <h6>Permissions</h6>

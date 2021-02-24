@@ -1,4 +1,5 @@
 <script>
+	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
 	import {
 		Button,
@@ -101,9 +102,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Roles - Vlingo Authentication</title>
-</svelte:head>
+<Title title="Roles" />
 
 <h6>Roles</h6>
 
