@@ -1,5 +1,5 @@
 <script context="module">
-	export async function preload(page, session) {
+	export async function preload(/* page, session */) {
 		const fetchTenants = await this.fetch(`/api/tenants`);
 		const tenants = await fetchTenants.json();
 
@@ -9,7 +9,10 @@
 		const fetchGroups = await this.fetch('/api/tenants/groups');
 		const groups = await fetchGroups.json();
 
-		return { tenants, users, groups };
+		const fetchRoles = await this.fetch('/api/tenants/roles');
+		const roles = await fetchRoles.json();
+
+		return { tenants, users, groups, roles };
 	}
 </script>
 
@@ -37,6 +40,7 @@
 		tenants as tenantsStore,
 		users as usersStore,
 		groups as groupsStore,
+		roles as rolesStore,
 	} from '../stores/index.js';
 	import { stores } from '@sapper/app';
 
@@ -47,14 +51,17 @@
 	export let segment;
 	const { page } = stores();
 
-	// Data
+	// Get data from preload
 	export let tenants;
 	export let users;
 	export let groups;
+	export let roles;
 
+	// Set data to their store
 	tenantsStore.set(tenants);
 	usersStore.set(users);
 	groupsStore.set(groups);
+	rolesStore.set(roles);
 
 	$: isLoginPage = $page.path === '/';
 

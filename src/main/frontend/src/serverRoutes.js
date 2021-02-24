@@ -66,4 +66,26 @@ export default [
 		url: '/api/tenants/groups/:id',
 		handler: controllers.Groups.remove,
 	},
+
+	/* ------------------------------ ROLES ROUTES ------------------------------ */
+	{
+		method: 'get',
+		url: '/api/tenants/roles',
+		handler: controllers.Roles.get,
+	},
+	{
+		method: 'post',
+		url: '/api/tenants/roles',
+		handler: controllers.Roles.create,
+	},
+	{
+		method: 'PATCH',
+		url: '/api/tenants/roles/:id',
+		handler: controllers.Roles.update,
+	},
+	{
+		method: 'delete',
+		url: '/api/tenants/roles/:id',
+		handler: controllers.Roles.remove,
+	},
 ];
