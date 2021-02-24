@@ -47,7 +47,7 @@
 	function _addUser() {
 		loading.createOrUpdate = true;
 		addUser(user)
-			.then(({ status }) => status === 200 && resetUser())
+			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
 				dialogState.createOrUpdate = false;
@@ -57,7 +57,7 @@
 	function _updateUser() {
 		loading.createOrUpdate = true;
 		updateUser(indexToUpdateOrDelete, user)
-			.then(({ status }) => status === 200 && resetUser())
+			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
 				dialogState.createOrUpdate = false;
@@ -103,13 +103,13 @@
 		}
 	}
 
-	function resetUser() {
+	function reset() {
 		user = { ...initialUser };
 	}
 
 	$: if (dialogState.createOrUpdate == false && !dialogState.remove) {
 		updateMode = false;
-		resetUser();
+		reset();
 	}
 </script>
 

@@ -37,7 +37,7 @@
 	function _addTenant() {
 		loading.createOrUpdate = true;
 		addTenant(tenant)
-			.then(({ status }) => status === 200 && resetTenant())
+			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
 				dialogState.createOrUpdate = false;
@@ -47,7 +47,7 @@
 	function _updateTenant() {
 		loading.createOrUpdate = true;
 		updateTenant(indexToUpdateOrDelete, tenant)
-			.then(({ status }) => status === 200 && resetTenant())
+			.then(({ status }) => status === 200 && reset())
 			.finally(() => {
 				loading.createOrUpdate = false;
 				dialogState.createOrUpdate = false;
@@ -93,13 +93,13 @@
 		}
 	}
 
-	function resetTenant() {
+	function reset() {
 		tenant = { ...initialTenant };
 	}
 
 	$: if (dialogState.createOrUpdate == false && !dialogState.remove) {
 		updateMode = false;
-		resetTenant();
+		reset();
 	}
 </script>
 
