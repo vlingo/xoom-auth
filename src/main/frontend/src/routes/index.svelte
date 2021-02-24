@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<title>{caption} - Vlingo Auth</title>
+	<title>{caption} - Vlingo Authentication</title>
 </svelte:head>
 
 <Row class="justify-center flex-column align-center">
