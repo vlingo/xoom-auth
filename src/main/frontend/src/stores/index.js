@@ -21,6 +21,7 @@ export const theme = createLocalStore('theme', 'light');
 
 export function logoout() {
 	isLoggedIn.set(false);
+	location.assign('/');
 }
 
 /* --------------------------- TENANTS SUBSRIPTION -------------------------- */
