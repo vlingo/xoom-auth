@@ -1,7 +1,7 @@
-import * as Tenants from './Tenants';
+import * as TenantSubscription from './TenantSubscription';
 import * as Users from './Users';
 
 export default {
-	Tenants,
+	TenantSubscription,
 	Users,
 };

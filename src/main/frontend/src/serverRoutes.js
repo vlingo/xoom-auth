@@ -1,25 +1,26 @@
 import controllers from './controllers';
 
 export default [
+	/* ----------------------- TENANT SUBSCRIPTION ROUTES ----------------------- */
 	{
 		method: 'get',
 		url: '/api/tenants',
-		handler: controllers.Tenants.get,
+		handler: controllers.TenantSubscription.get,
 	},
 	{
 		method: 'post',
 		url: '/api/tenants',
-		handler: controllers.Tenants.create,
+		handler: controllers.TenantSubscription.create,
 	},
 	{
 		method: 'PATCH',
 		url: '/api/tenants/:id',
-		handler: controllers.Tenants.update,
+		handler: controllers.TenantSubscription.update,
 	},
 	{
 		method: 'delete',
 		url: '/api/tenants/:id',
-		handler: controllers.Tenants.remove,
+		handler: controllers.TenantSubscription.remove,
 	},
 
 	/* ------------------------------ USERS ROUTES ------------------------------ */
