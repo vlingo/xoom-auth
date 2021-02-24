@@ -34,7 +34,7 @@
 		<TextField bind:value={user.givenName} required>Given Name</TextField>
 	</Col>
 	<Col>
-		<TextField bind:value={user.secondName} required>Second Name</TextField>
+		<TextField bind:value={user.secondName}>Second Name</TextField>
 	</Col>
 </Row>
 <Row class="flex-column lg:flex-row">
