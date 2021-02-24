@@ -74,6 +74,7 @@
 
 	function openUpdateDialog(index) {
 		updateMode = true;
+		indexToUpdateOrDelete = index;
 		tenant = $tenants[index];
 		dialogState.createOrUpdate = true;
 	}

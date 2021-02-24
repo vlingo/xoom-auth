@@ -84,6 +84,7 @@
 
 	function openUpdateDialog(index) {
 		updateMode = true;
+		indexToUpdateOrDelete = index;
 		user = $users[index];
 		dialogState.createOrUpdate = true;
 	}
