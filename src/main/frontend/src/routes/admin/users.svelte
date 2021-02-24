@@ -122,7 +122,7 @@
 <!-- DIALOG CREATE/UPDATE USER -->
 <Dialog class="pa-4" bind:active={dialogState.createOrUpdate}>
 	<form on:submit|preventDefault={handleFormPost} class="s-card d-flex flex-column">
-		<h6 class="mb-2">{updateMode ? 'Update' : 'Add'} User</h6>
+		<h6 class="mb-2">{updateMode ? 'Update' : 'Register'} User</h6>
 		<Divider class="mb-4" />
 		<UserForm bind:user />
 		<Divider />
