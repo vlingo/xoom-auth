@@ -70,27 +70,27 @@ export function removeTenant(index) {
 /* ---------------------------------- USERS --------------------------------- */
 export const users = writable([]);
 
-export function addUser(tenant) {
+export function addUser(user) {
 	return fetch('/api/tenants/users', {
 		method: 'post',
-		body: JSON.stringify(tenant),
+		body: JSON.stringify(user),
 	}).then((response) => {
 		if (response.status === 200) {
-			users.update((existingUsers) => [...existingUsers, tenant]);
+			users.update((existingUsers) => [...existingUsers, user]);
 		}
 		return response;
 	});
 }
 
-export function updateUser(index, tenant) {
+export function updateUser(index, user) {
 	return fetch(`/api/tenants/users/${index}`, {
 		headers: { 'Content-Type': 'application/json' },
 		method: 'PATCH',
-		body: JSON.stringify(tenant),
+		body: JSON.stringify(user),
 	}).then((response) => {
 		if (response.status === 200) {
 			users.update((existingUsers) => {
-				existingUsers[index] = tenant;
+				existingUsers[index] = user;
 				return existingUsers;
 			});
 		}
