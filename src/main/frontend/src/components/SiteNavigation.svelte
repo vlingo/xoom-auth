@@ -22,9 +22,4 @@
 		</ListItem>
 	</List>
 </NavigationDrawer>
-<Overlay
-	class="md:d-none"
-	index="3"
-	active={sidenav}
-	on:click={() => (sidenav = false)}
-	fadeOptions={{ duration: 250 }} />
+<Overlay class="md:d-none" index="3" active={sidenav} on:click={() => (sidenav = false)} />
