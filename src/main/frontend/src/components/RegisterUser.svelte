@@ -9,7 +9,7 @@
 		familyName: '',
 		phone: '',
 		credential: {
-			authority: authorities[0].value,
+			authority: 'vlingo',
 			id: '',
 			secret: '',
 		},
