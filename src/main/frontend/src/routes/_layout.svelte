@@ -38,11 +38,14 @@
 		users as usersStore,
 		groups as groupsStore,
 	} from '../stores/index.js';
+	import { stores } from '@sapper/app';
+
 	import SiteNavigation from '../components/SiteNavigation.svelte';
 
 	const toggleTheme = () => ($theme = $theme === 'light' ? 'dark' : 'light');
 
 	export let segment;
+	const { page } = stores();
 
 	// Data
 	export let tenants;
@@ -53,11 +56,13 @@
 	usersStore.set(users);
 	groupsStore.set(groups);
 
-	let sidenav = process.browser && window.innerWidth > 768;
+	$: isLoginPage = $page.path === '/';
+
+	let sidenav = process.browser && window.innerWidth > 768 && !isLoginPage;
 </script>
 
 <MaterialApp theme={$theme}>
-	{#if $isLoggedIn}
+	{#if $isLoggedIn && !isLoginPage}
 		<AppBar fixed style="width:100%">
 			<div slot="icon">
 				<Button
