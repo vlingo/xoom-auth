@@ -30,7 +30,7 @@
 				{/if}
 			</Row>
 
-			<Divider class="mb-2" />
+			<!-- <Divider class="mb-2" /> -->
 
 			<CardActions>
 				{#if register}

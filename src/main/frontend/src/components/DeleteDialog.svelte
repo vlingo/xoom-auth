@@ -11,11 +11,9 @@
 
 <Dialog class="pa-4" bind:active>
 	<h6 class="mb-2">{title}</h6>
-	<Divider />
 	<div class="mt-4 mb-4">
 		<slot />
 	</div>
-	<Divider />
 	<div class="mt-3 d-flex">
 		<Button depressed on:click={() => (active = false)}>cancel</Button>
 		<Button
