@@ -1,7 +1,6 @@
 import { writable } from 'svelte/store';
 
 export const permissions = writable([]);
-export const names = writable([]);
 
 export function create(permission) {
 	return fetch('/api/tenants/permissions', {
@@ -40,14 +39,5 @@ export function remove(index) {
 			return existingPermissions;
 		});
 		return response;
-	});
-}
-
-export async function fetchNames() {
-	fetch('/api/tenants/permissions/names').then(async (response) => {
-		if (response.status === 200) {
-			const data = await response.json();
-			names.set(data);
-		}
 	});
 }

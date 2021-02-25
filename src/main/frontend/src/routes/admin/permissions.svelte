@@ -9,11 +9,9 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Col, Icon, Row, Select, Table, TextField } from 'svelte-materialify/src';
+	import { Button, Col, Icon, Row, Table, TextField } from 'svelte-materialify/src';
 	import {
 		permissions as permissionsStore,
-		names,
-		fetchNames,
 		create,
 		update,
 		remove,
@@ -35,8 +33,6 @@
 	let updateMode = false;
 
 	let permission = { ...initialPermission };
-
-	const mapNames = (name) => ({ name, value: name });
 
 	function _create() {
 		loading.createOrUpdate = true;
@@ -101,27 +97,10 @@
 		permission = { ...initialPermission };
 	}
 
-	function getAvailableNames() {
-		let usedNames = [];
-		$permissionsStore.forEach(
-			(permission) => (usedNames = [...usedNames, ...permission.constraints])
-		);
-		return $names.filter((name) => !usedNames.includes(name));
-	}
-
 	$: if (dialogState.createOrUpdate == false && !dialogState.remove) {
 		updateMode = false;
 		reset();
 	}
-
-	// Auto fetch names when create dialog or update dialog is opened
-	$: if (dialogState.createOrUpdate) {
-		fetchNames();
-	}
-
-	$: availableNames = updateMode
-		? getAvailableNames().concat(permission.constraints).map(mapNames)
-		: $names.map(mapNames);
 </script>
 
 <Title title="Permissions" />
@@ -144,13 +123,6 @@
 	<Row>
 		<Col>
 			<TextField bind:value={permission.description} required>Description</TextField>
-		</Col>
-	</Row>
-	<Row>
-		<Col>
-			<Select items={availableNames} bind:value={permission.constraints} multiple>
-				Constraints
-			</Select>
 		</Col>
 	</Row>
 </CreateUpdateDialog>

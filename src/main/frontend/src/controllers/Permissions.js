@@ -26,23 +26,6 @@ let data = [
 	},
 ];
 
-let names = [
-	'name1',
-	'name2',
-	'name3',
-	'name4',
-	'name5',
-	'name6',
-	'name7',
-	'name8',
-	'name9',
-	'name10',
-	'name11',
-	'name12',
-	'name13',
-	'name14',
-];
-
 export async function get(req, res, next) {
 	res.end(JSON.stringify(data));
 }
@@ -57,8 +40,4 @@ export async function update(req, res, next) {
 
 export function remove(req, res, next) {
 	res.end('OK');
-}
-
-export function getNames(req, res, next) {
-	res.end(JSON.stringify(names));
 }
