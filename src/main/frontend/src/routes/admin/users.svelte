@@ -14,6 +14,7 @@
 	import { users as usersStore, create, update, remove } from '../../stores/users.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
+	import { dialogState, loading } from '../../shared/common.js';
 
 	export let users;
 	$usersStore = users;
@@ -31,16 +32,6 @@
 			id: '',
 			secret: '',
 		},
-	};
-
-	let loading = {
-		createOrUpdate: false,
-		remove: false,
-	};
-
-	let dialogState = {
-		createOrUpdate: false,
-		remove: false,
 	};
 
 	let indexToUpdateOrDelete = 0;

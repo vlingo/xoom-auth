@@ -13,6 +13,7 @@
 	import { roles as rolesStore, create, update, remove } from '../../stores/roles.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
+	import { dialogState, loading } from '../../shared/common.js';
 
 	export let roles;
 	$rolesStore = roles;
@@ -20,16 +21,6 @@
 	let initialRole = {
 		name: '',
 		description: '',
-	};
-
-	let loading = {
-		createOrUpdate: false,
-		remove: false,
-	};
-
-	let dialogState = {
-		createOrUpdate: false,
-		remove: false,
 	};
 
 	let indexToUpdateOrDelete = 0;

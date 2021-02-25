@@ -20,6 +20,7 @@
 	} from '../../stores/permissions.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
+	import { dialogState, loading } from '../../shared/common.js';
 
 	export let permissions;
 	$permissionsStore = permissions;
@@ -28,16 +29,6 @@
 		name: '',
 		description: '',
 		constraints: [],
-	};
-
-	let loading = {
-		createOrUpdate: false,
-		remove: false,
-	};
-
-	let dialogState = {
-		createOrUpdate: false,
-		remove: false,
 	};
 
 	let indexToUpdateOrDelete = 0;

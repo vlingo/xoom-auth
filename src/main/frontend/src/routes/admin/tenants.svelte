@@ -18,6 +18,7 @@
 		remove,
 	} from '../../stores/tenantsSubscription.js';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
+	import { dialogState, loading } from '../../shared/common.js';
 
 	export let tenants;
 	$tenantsStore = tenants;
@@ -26,16 +27,6 @@
 		name: '',
 		description: '',
 		active: false,
-	};
-
-	let loading = {
-		createOrUpdate: false,
-		remove: false,
-	};
-
-	let dialogState = {
-		createOrUpdate: false,
-		remove: false,
 	};
 
 	let indexToUpdateOrDelete = 0;
