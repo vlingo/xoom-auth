@@ -1,7 +1,253 @@
+<script context="module">
+	export async function preload(/* page, session */) {
+		const fetchPermissions = await this.fetch('/api/tenants/permissions');
+		const permissions = await fetchPermissions.json();
+		return { permissions };
+	}
+</script>
+
 <script>
 	import Title from '../../components/title.svelte';
+	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
+	import {
+		Button,
+		Col,
+		Dialog,
+		Divider,
+		Icon,
+		Row,
+		Select,
+		Table,
+		TextField,
+	} from 'svelte-materialify/src';
+	import {
+		permissions as permissionsStore,
+		names,
+		fetchNames,
+		create,
+		update,
+		remove,
+	} from '../../stores/permissions.js';
+
+	export let permissions;
+	$permissionsStore = permissions;
+
+	let initialPermission = {
+		name: '',
+		description: '',
+		constraints: [],
+	};
+
+	let loading = {
+		createOrUpdate: false,
+		remove: false,
+	};
+
+	let dialogState = {
+		createOrUpdate: false,
+		remove: false,
+	};
+
+	let indexToUpdateOrDelete = 0;
+	let updateMode = false;
+
+	let permission = { ...initialPermission };
+
+	const mapNames = (name) => ({ name, value: name });
+
+	function _create() {
+		loading.createOrUpdate = true;
+		create(permission)
+			.then(({ status }) => status === 200 && reset())
+			.finally(() => {
+				loading.createOrUpdate = false;
+				dialogState.createOrUpdate = false;
+			});
+	}
+
+	function _update() {
+		loading.createOrUpdate = true;
+		update(indexToUpdateOrDelete, permission)
+			.then(({ status }) => status === 200 && reset())
+			.finally(() => {
+				loading.createOrUpdate = false;
+				dialogState.createOrUpdate = false;
+			});
+	}
+
+	function _remove() {
+		loading.remove = true;
+		remove(indexToUpdateOrDelete)
+			.then(({ status }) => {
+				if (status === 200) {
+					dialogState.remove = false;
+				}
+			})
+			.finally(() => {
+				loading.remove = false;
+			});
+	}
+
+	function openCreateDialog() {
+		updateMode = false;
+		dialogState.createOrUpdate = true;
+	}
+
+	function openUpdateDialog(index) {
+		updateMode = true;
+		indexToUpdateOrDelete = index;
+		permission = $permissionsStore[index];
+		dialogState.createOrUpdate = true;
+	}
+
+	function openDeleteDialog(index) {
+		indexToUpdateOrDelete = index;
+		permission = { ...$permissionsStore[index] };
+		dialogState.remove = true;
+	}
+
+	function handleFormPost() {
+		if (updateMode) {
+			_update();
+		} else {
+			_create();
+		}
+	}
+
+	function reset() {
+		permission = { ...initialPermission };
+	}
+
+	function getAvailableNames() {
+		let usedNames = [];
+		$permissionsStore.forEach(
+			(permission) => (usedNames = [...usedNames, ...permission.constraints])
+		);
+		return $names.filter((name) => !usedNames.includes(name));
+	}
+
+	$: if (dialogState.createOrUpdate == false && !dialogState.remove) {
+		updateMode = false;
+		reset();
+	}
+
+	// Auto fetch names when create dialog or update dialog is opened
+	$: if (dialogState.createOrUpdate) {
+		fetchNames();
+	}
+
+	$: availableNames = updateMode
+		? getAvailableNames().concat(permission.constraints).map(mapNames)
+		: $names.map(mapNames);
 </script>
 
 <Title title="Permissions" />
 
 <h6>Permissions</h6>
+
+<!-- DIALOG CREATE/UPDATE PERMISSION -->
+<Dialog class="pa-4" bind:active={dialogState.createOrUpdate}>
+	<form on:submit|preventDefault={handleFormPost} class="d-flex flex-column">
+		<h6 class="mb-2">{updateMode ? 'Update' : 'Add'} Role</h6>
+		<Divider class="mb-4" />
+		<Row>
+			<Col>
+				<TextField bind:value={permission.name} required>Name</TextField>
+			</Col>
+		</Row>
+		<Row>
+			<Col>
+				<TextField bind:value={permission.description} required>Description</TextField>
+			</Col>
+		</Row>
+		<Row>
+			<Col>
+				<Select items={availableNames} bind:value={permission.constraints} multiple>
+					Constraints
+				</Select>
+			</Col>
+		</Row>
+		<Divider />
+		<div class="mt-3 d-flex">
+			<Button class="ml-auto primary-color" disabled={loading.createOrUpdate} type="submit">
+				{#if updateMode}
+					{loading.createOrUpdate ? 'updating...' : 'update'}
+				{:else}
+					{loading.createOrUpdate ? 'Adding permission...' : 'add'}
+				{/if}
+			</Button>
+		</div>
+	</form>
+</Dialog>
+
+<!-- DIALOG REMOVE PERMISSION -->
+<Dialog class="pa-4" bind:active={dialogState.remove}>
+	<h6 class="mb-2">Delete Role</h6>
+	<Divider />
+	<div class="mt-4 mb-4">
+		Are you sure want to delete <b>{permission.name}</b> from roles?
+	</div>
+	<Divider />
+	<div class="mt-3 d-flex">
+		<Button
+			class="ml-auto red white-text"
+			depressed
+			disabled={loading.remove}
+			on:click={_remove}>
+			{loading.remove ? 'deleting...' : 'delete'}
+		</Button>
+	</div>
+</Dialog>
+
+{#if $permissionsStore.length}
+	<Table class="p-5 mt-5 s-card">
+		<thead>
+			<tr style="font-weight:bold">
+				<td>Name</td>
+				<td>Description</td>
+				<td>Constraints</td>
+				<td class="text-center">Actions</td>
+			</tr>
+		</thead>
+		<tbody>
+			{#each $permissionsStore as permission, index}
+				<tr>
+					<td>{permission.name}</td>
+					<td>{permission.description}</td>
+					<td>{permission.constraints.join(', ')}</td>
+					<td class="text-center table-row-actions">
+						<Button
+							fab
+							depressed
+							on:click={() => openUpdateDialog(index)}
+							rounded
+							size="x-small"
+							text>
+							<Icon path={mdiPencil} />
+						</Button>
+						<Button
+							fab
+							depressed
+							on:click={() => openDeleteDialog(index)}
+							rounded
+							size="x-small"
+							text>
+							<Icon path={mdiDelete} />
+						</Button>
+					</td>
+				</tr>
+			{/each}
+		</tbody>
+	</Table>
+{:else}
+	<div style="padding-top: 2em">No data available</div>
+{/if}
+
+<Button
+	class="primary-color"
+	fab
+	on:click={openCreateDialog}
+	style="position: fixed; margin: 1em; right: 0; bottom: 0;"
+	float>
+	<Icon path={mdiPlus} />
+</Button>

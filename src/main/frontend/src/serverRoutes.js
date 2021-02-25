@@ -88,4 +88,52 @@ export default [
 		url: '/api/tenants/roles/:id',
 		handler: controllers.Roles.remove,
 	},
+
+	{
+		method: 'get',
+		url: '/api/tenants/groups',
+		handler: controllers.Groups.get,
+	},
+	{
+		method: 'post',
+		url: '/api/tenants/groups',
+		handler: controllers.Groups.create,
+	},
+	{
+		method: 'PATCH',
+		url: '/api/tenants/groups/:id',
+		handler: controllers.Groups.update,
+	},
+	{
+		method: 'delete',
+		url: '/api/tenants/groups/:id',
+		handler: controllers.Groups.remove,
+	},
+
+	/* --------------------------- PERMISSIONS ROUTES --------------------------- */
+	{
+		method: 'get',
+		url: '/api/tenants/permissions',
+		handler: controllers.Permissions.get,
+	},
+	{
+		method: 'get',
+		url: '/api/tenants/permissions/names',
+		handler: controllers.Permissions.getNames,
+	},
+	{
+		method: 'post',
+		url: '/api/tenants/permissions',
+		handler: controllers.Permissions.create,
+	},
+	{
+		method: 'PATCH',
+		url: '/api/tenants/permissions/:id',
+		handler: controllers.Permissions.update,
+	},
+	{
+		method: 'delete',
+		url: '/api/tenants/permissions/:id',
+		handler: controllers.Permissions.remove,
+	},
 ];
