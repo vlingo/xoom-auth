@@ -28,6 +28,7 @@
 		update,
 		remove,
 	} from '../../stores/permissions.js';
+	import DeleteDialog from '../../components/DeleteDialog.svelte';
 
 	export let permissions;
 	$permissionsStore = permissions;
@@ -181,23 +182,13 @@
 </Dialog>
 
 <!-- DIALOG REMOVE PERMISSION -->
-<Dialog class="pa-4" bind:active={dialogState.remove}>
-	<h6 class="mb-2">Delete Role</h6>
-	<Divider />
-	<div class="mt-4 mb-4">
-		Are you sure want to delete <b>{permission.name}</b> from roles?
-	</div>
-	<Divider />
-	<div class="mt-3 d-flex">
-		<Button
-			class="ml-auto red white-text"
-			depressed
-			disabled={loading.remove}
-			on:click={_remove}>
-			{loading.remove ? 'deleting...' : 'delete'}
-		</Button>
-	</div>
-</Dialog>
+<DeleteDialog
+	bind:active={dialogState.remove}
+	loading={loading.remove}
+	title="Delete Permission"
+	on:remove-button-clicked={_remove}>
+	Are you sure want to delete <b>{permission.name}</b> from permissions?
+</DeleteDialog>
 
 {#if $permissionsStore.length}
 	<Table class="p-5 mt-5 s-card">

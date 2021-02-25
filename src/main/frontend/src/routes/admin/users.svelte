@@ -12,6 +12,7 @@
 	import { Button, Checkbox, Dialog, Divider, Icon, Table } from 'svelte-materialify/src';
 	import UserForm from '../../components/UserForm.svelte';
 	import { users as usersStore, create, update, remove } from '../../stores/users.js';
+	import DeleteDialog from '../../components/DeleteDialog.svelte';
 
 	export let users;
 	$usersStore = users;
@@ -139,6 +140,14 @@
 </Dialog>
 
 <!-- DIALOG REMOVE USER -->
+<DeleteDialog
+	bind:active={dialogState.remove}
+	loading={loading.remove}
+	title="Delete User"
+	on:remove-button-clicked={_remove}>
+	Are you sure want to delete <b>{user.username}</b> from users?
+</DeleteDialog>
+
 <Dialog class="pa-4" bind:active={dialogState.remove}>
 	<h6 class="mb-2">Delete User</h6>
 	<Divider />

@@ -20,6 +20,7 @@
 		TextField,
 	} from 'svelte-materialify/src';
 	import { groups as groupsStore, create, update, remove } from '../../stores/groups.js';
+	import DeleteDialog from '../../components/DeleteDialog.svelte';
 
 	export let groups;
 	$groupsStore = groups;
@@ -146,23 +147,13 @@
 </Dialog>
 
 <!-- DIALOG REMOVE GROUP -->
-<Dialog class="pa-4" bind:active={dialogState.remove}>
-	<h6 class="mb-2">Delete Group</h6>
-	<Divider />
-	<div class="mt-4 mb-4">
-		Are you sure want to delete <b>{group.name}</b> from groups?
-	</div>
-	<Divider />
-	<div class="mt-3 d-flex">
-		<Button
-			class="ml-auto red white-text"
-			depressed
-			disabled={loading.remove}
-			on:click={_remove}>
-			{loading.remove ? 'deleting...' : 'delete'}
-		</Button>
-	</div>
-</Dialog>
+<DeleteDialog
+	bind:active={dialogState.remove}
+	loading={loading.remove}
+	title="Delete Group"
+	on:remove-button-clicked={_remove}>
+	Are you sure want to delete <b>{group.name}</b> from groups?
+</DeleteDialog>
 
 {#if $groupsStore.length}
 	<Table class="p-5 mt-5 s-card">
