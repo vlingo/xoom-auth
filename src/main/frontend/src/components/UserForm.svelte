@@ -1,5 +1,5 @@
 <script>
-	import { Col, Divider, Row, Select, TextField } from 'svelte-materialify/src';
+	import { Checkbox, Col, Divider, Row, Select, TextField } from 'svelte-materialify/src';
 
 	const authorities = [
 		{ name: 'Vlingo', value: 'vlingo' },
@@ -19,6 +19,16 @@
 			secret: '',
 		},
 	};
+
+	let usernameSameAsEmailAddress = false;
+
+	function handleCheckbox() {
+		if (!!user.username) {
+			user.email = user.username;
+		} else if (!!user.email) {
+			user.username = user.email;
+		}
+	}
 </script>
 
 <Row class="flex-column lg:flex-row">
@@ -27,6 +37,13 @@
 	</Col>
 	<Col>
 		<TextField bind:value={user.email} required>Email Address</TextField>
+	</Col>
+</Row>
+<Row>
+	<Col>
+		<Checkbox on:change={handleCheckbox} bind:usernameSameAsEmailAddress>
+			Username same as email address
+		</Checkbox>
 	</Col>
 </Row>
 <Row class="flex-column lg:flex-row">
