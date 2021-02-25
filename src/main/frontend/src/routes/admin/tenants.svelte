@@ -1,27 +1,11 @@
-<script context="module">
-	export async function preload(/* page, session */) {
-		const fetchTenantsSubscribtiono = await this.fetch('/api/tenants');
-		const tenants = await fetchTenantsSubscribtiono.json();
-		return { tenants };
-	}
-</script>
-
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
 	import { Button, Checkbox, Col, Icon, Row, Table, TextField } from 'svelte-materialify/src';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
-	import {
-		tenants as tenantsStore,
-		create,
-		update,
-		remove,
-	} from '../../stores/tenantsSubscription.js';
+	import { tenants, create, update, remove } from '../../stores/tenantsSubscription.js';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
-
-	export let tenants;
-	$tenantsStore = tenants;
 
 	let initialTenant = {
 		name: '',
@@ -75,13 +59,13 @@
 	function openUpdateDialog(index) {
 		updateMode = true;
 		indexToUpdateOrDelete = index;
-		tenant = $tenantsStore[index];
+		tenant = $tenants[index];
 		dialogState.createOrUpdate = true;
 	}
 
 	function openDeleteDialog(index) {
 		indexToUpdateOrDelete = index;
-		tenant = { ...$tenantsStore[index] };
+		tenant = { ...$tenants[index] };
 		dialogState.remove = true;
 	}
 
@@ -141,7 +125,7 @@
 	Are you sure want to delete <b>{tenant.name}</b> from tenants?
 </DeleteDialog>
 
-{#if $tenantsStore.length}
+{#if $tenants.length}
 	<Table class="p-5 mt-5 s-card">
 		<thead>
 			<tr style="font-weight:bold">
@@ -152,7 +136,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each $tenantsStore as tenant, index}
+			{#each $tenants as tenant, index}
 				<tr>
 					<td>{tenant.name}</td>
 					<td>{tenant.description}</td>

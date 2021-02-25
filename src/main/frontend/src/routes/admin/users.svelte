@@ -1,23 +1,12 @@
-<script context="module">
-	export async function preload(/* page, session */) {
-		const fetchUsers = await this.fetch('/api/tenants/users');
-		const users = await fetchUsers.json();
-		return { users };
-	}
-</script>
-
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
 	import { Button, Checkbox, Icon, Table } from 'svelte-materialify/src';
 	import UserForm from '../../components/UserForm.svelte';
-	import { users as usersStore, create, update, remove } from '../../stores/users.js';
+	import { users, create, update, remove } from '../../stores/users.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
-
-	export let users;
-	$usersStore = users;
 
 	let initialUser = {
 		username: '',
@@ -80,13 +69,13 @@
 	function openUpdateDialog(index) {
 		updateMode = true;
 		indexToUpdateOrDelete = index;
-		user = $usersStore[index];
+		user = $users[index];
 		dialogState.createOrUpdate = true;
 	}
 
 	function openDeleteDialog(index) {
 		indexToUpdateOrDelete = index;
-		user = { ...$usersStore[index] };
+		user = { ...$users[index] };
 		dialogState.remove = true;
 	}
 
@@ -132,7 +121,7 @@
 	Are you sure want to delete <b>{user.username}</b> from users?
 </DeleteDialog>
 
-{#if $usersStore.length}
+{#if $users.length}
 	<Table class="p-5 mt-5 s-card">
 		<thead>
 			<tr style="font-weight:bold">
@@ -145,7 +134,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each $usersStore as user, index}
+			{#each $users as user, index}
 				<tr>
 					<td>{user.username}</td>
 					<td>{user.givenName} {user.secondName} {user.familyName}</td>

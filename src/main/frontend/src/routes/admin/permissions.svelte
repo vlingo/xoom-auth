@@ -1,27 +1,11 @@
-<script context="module">
-	export async function preload(/* page, session */) {
-		const fetchPermissions = await this.fetch('/api/tenants/permissions');
-		const permissions = await fetchPermissions.json();
-		return { permissions };
-	}
-</script>
-
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
 	import { Button, Col, Icon, Row, Table, TextField } from 'svelte-materialify/src';
-	import {
-		permissions as permissionsStore,
-		create,
-		update,
-		remove,
-	} from '../../stores/permissions.js';
+	import { permissions, create, update, remove } from '../../stores/permissions.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
-
-	export let permissions;
-	$permissionsStore = permissions;
 
 	let initialPermission = {
 		name: '',
@@ -75,13 +59,13 @@
 	function openUpdateDialog(index) {
 		updateMode = true;
 		indexToUpdateOrDelete = index;
-		permission = $permissionsStore[index];
+		permission = $permissions[index];
 		dialogState.createOrUpdate = true;
 	}
 
 	function openDeleteDialog(index) {
 		indexToUpdateOrDelete = index;
-		permission = { ...$permissionsStore[index] };
+		permission = { ...$permissions[index] };
 		dialogState.remove = true;
 	}
 
@@ -136,7 +120,7 @@
 	Are you sure want to delete <b>{permission.name}</b> from permissions?
 </DeleteDialog>
 
-{#if $permissionsStore.length}
+{#if $permissions.length}
 	<Table class="p-5 mt-5 s-card">
 		<thead>
 			<tr style="font-weight:bold">
@@ -147,7 +131,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each $permissionsStore as permission, index}
+			{#each $permissions as permission, index}
 				<tr>
 					<td>{permission.name}</td>
 					<td>{permission.description}</td>
