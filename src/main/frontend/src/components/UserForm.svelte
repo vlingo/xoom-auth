@@ -31,7 +31,7 @@
 	}
 </script>
 
-<Row class="flex-column lg:flex-row">
+<Row class="flex-column mt-3 lg:flex-row">
 	<Col>
 		<TextField bind:value={user.username} autofocus required>Username</TextField>
 	</Col>
@@ -41,7 +41,7 @@
 </Row>
 <Row>
 	<Col>
-		<Checkbox on:change={handleCheckbox} bind:usernameSameAsEmailAddress>
+		<Checkbox on:change={handleCheckbox} bind:checked={usernameSameAsEmailAddress}>
 			Username same as email address
 		</Checkbox>
 	</Col>

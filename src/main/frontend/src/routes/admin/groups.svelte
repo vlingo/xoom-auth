@@ -21,6 +21,7 @@
 	} from 'svelte-materialify/src';
 	import { groups as groupsStore, create, update, remove } from '../../stores/groups.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
+	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 
 	export let groups;
 	$groupsStore = groups;
@@ -119,32 +120,24 @@
 <h6>Groups</h6>
 
 <!-- DIALOG CREATE/UPDATE GROUP -->
-<Dialog class="pa-4" bind:active={dialogState.createOrUpdate}>
-	<form on:submit|preventDefault={handleFormPost} class="d-flex flex-column">
-		<h6 class="mb-2">{updateMode ? 'Update' : 'Add'} Group</h6>
-		<Divider class="mb-4" />
-		<Row>
-			<Col>
-				<TextField bind:value={group.name} required>Name</TextField>
-			</Col>
-		</Row>
-		<Row>
-			<Col>
-				<TextField bind:value={group.description} required>Description</TextField>
-			</Col>
-		</Row>
-		<Divider />
-		<div class="mt-3 d-flex">
-			<Button class="ml-auto primary-color" disabled={loading.createOrUpdate} type="submit">
-				{#if updateMode}
-					{loading.createOrUpdate ? 'updating...' : 'update'}
-				{:else}
-					{loading.createOrUpdate ? 'Adding group...' : 'add'}
-				{/if}
-			</Button>
-		</div>
-	</form>
-</Dialog>
+<CreateUpdateDialog
+	on:form-submit={handleFormPost}
+	bind:active={dialogState.createOrUpdate}
+	loading={loading.createOrUpdate}
+	submitButtonCaption={updateMode ? 'Update' : 'Add Group'}
+	submitButtonCaptionOnLoading={updateMode ? 'Updating...' : 'Adding Group...'}
+	title="{updateMode ? 'Update' : 'Add'} Group">
+	<Row class="mt-3">
+		<Col>
+			<TextField bind:value={group.name} required>Name</TextField>
+		</Col>
+	</Row>
+	<Row>
+		<Col>
+			<TextField bind:value={group.description} required>Description</TextField>
+		</Col>
+	</Row>
+</CreateUpdateDialog>
 
 <!-- DIALOG REMOVE GROUP -->
 <DeleteDialog

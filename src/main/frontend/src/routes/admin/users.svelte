@@ -13,6 +13,7 @@
 	import UserForm from '../../components/UserForm.svelte';
 	import { users as usersStore, create, update, remove } from '../../stores/users.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
+	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 
 	export let users;
 	$usersStore = users;
@@ -121,23 +122,15 @@
 <h6>Users</h6>
 
 <!-- DIALOG CREATE/UPDATE USER -->
-<Dialog class="pa-4" bind:active={dialogState.createOrUpdate}>
-	<form on:submit|preventDefault={handleFormPost} class="d-flex flex-column">
-		<h6 class="mb-2">{updateMode ? 'Update' : 'Register'} User</h6>
-		<Divider class="mb-4" />
-		<UserForm bind:user />
-		<Divider />
-		<div class="mt-3 d-flex">
-			<Button class="ml-auto primary-color" disabled={loading.createOrUpdate} type="submit">
-				{#if updateMode}
-					{loading.createOrUpdate ? 'updating...' : 'update'}
-				{:else}
-					{loading.createOrUpdate ? 'registering user...' : 'register'}
-				{/if}
-			</Button>
-		</div>
-	</form>
-</Dialog>
+<CreateUpdateDialog
+	on:form-submit={handleFormPost}
+	bind:active={dialogState.createOrUpdate}
+	loading={loading.createOrUpdate}
+	submitButtonCaption={updateMode ? 'Update' : 'Register'}
+	submitButtonCaptionOnLoading={updateMode ? 'Updating...' : 'Registering...'}
+	title="{updateMode ? 'Update' : 'Register'} User">
+	<UserForm bind:user />
+</CreateUpdateDialog>
 
 <!-- DIALOG REMOVE USER -->
 <DeleteDialog
@@ -147,24 +140,6 @@
 	on:remove-button-clicked={_remove}>
 	Are you sure want to delete <b>{user.username}</b> from users?
 </DeleteDialog>
-
-<Dialog class="pa-4" bind:active={dialogState.remove}>
-	<h6 class="mb-2">Delete User</h6>
-	<Divider />
-	<div class="mt-4 mb-4">
-		Are you sure want to delete <b>{user.username}</b> from users?
-	</div>
-	<Divider />
-	<div class="mt-3 d-flex">
-		<Button
-			class="ml-auto red white-text"
-			depressed
-			disabled={loading.remove}
-			on:click={_remove}>
-			{loading.remove ? 'deleting...' : 'delete'}
-		</Button>
-	</div>
-</Dialog>
 
 {#if $usersStore.length}
 	<Table class="p-5 mt-5 s-card">

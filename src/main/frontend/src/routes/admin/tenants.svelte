@@ -27,6 +27,7 @@
 		update,
 		remove,
 	} from '../../stores/tenantsSubscription.js';
+	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 
 	export let tenants;
 	$tenantsStore = tenants;
@@ -126,37 +127,29 @@
 <h6>Tenants Subscribtion</h6>
 
 <!-- DIALOG CREATE/UPDATE TENANT SUBSCRIBTION -->
-<Dialog class="pa-4" bind:active={dialogState.createOrUpdate}>
-	<form on:submit|preventDefault={handleFormPost} class="d-flex flex-column">
-		<h6 class="mb-2">{updateMode ? 'Update' : ''} Tenant Subscribtion</h6>
-		<Divider />
-		<Row class="mt-4">
-			<Col>
-				<TextField autofocus bind:value={tenant.name} required>Name</TextField>
-			</Col>
-		</Row>
-		<Row>
-			<Col>
-				<TextField bind:value={tenant.description} required>Description</TextField>
-			</Col>
-		</Row>
-		<Row class="mb-2">
-			<Col>
-				<Checkbox bind:checked={tenant.active}>Active</Checkbox>
-			</Col>
-		</Row>
-		<Divider />
-		<div class="mt-3 d-flex">
-			<Button class="ml-auto primary-color" disabled={loading.createOrUpdate} type="submit">
-				{#if updateMode}
-					{loading.createOrUpdate ? 'updating...' : 'update'}
-				{:else}
-					{loading.createOrUpdate ? 'subscribing...' : 'subscribe'}
-				{/if}
-			</Button>
-		</div>
-	</form>
-</Dialog>
+<CreateUpdateDialog
+	on:form-submit={handleFormPost}
+	bind:active={dialogState.createOrUpdate}
+	loading={loading.createOrUpdate}
+	submitButtonCaption={updateMode ? 'Update' : 'Subscribe'}
+	submitButtonCaptionOnLoading={updateMode ? 'Updating...' : 'Subscribing...'}
+	title="{updateMode ? 'Update' : ''} Tenant Subscribtion">
+	<Row class="mt-3">
+		<Col>
+			<TextField autofocus bind:value={tenant.name} required>Name</TextField>
+		</Col>
+	</Row>
+	<Row>
+		<Col>
+			<TextField bind:value={tenant.description} required>Description</TextField>
+		</Col>
+	</Row>
+	<Row class="mb-2">
+		<Col>
+			<Checkbox bind:checked={tenant.active}>Active</Checkbox>
+		</Col>
+	</Row>
+</CreateUpdateDialog>
 
 <!-- DIALOG REMOVE TENANT SUBSCRIBTION -->
 <DeleteDialog

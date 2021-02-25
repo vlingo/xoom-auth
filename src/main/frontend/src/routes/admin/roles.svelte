@@ -21,6 +21,7 @@
 	} from 'svelte-materialify/src';
 	import { roles as rolesStore, create, update, remove } from '../../stores/roles.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
+	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 
 	export let roles;
 	$rolesStore = roles;
@@ -119,32 +120,24 @@
 <h6>Roles</h6>
 
 <!-- DIALOG CREATE/UPDATE ROLE -->
-<Dialog class="pa-4" bind:active={dialogState.createOrUpdate}>
-	<form on:submit|preventDefault={handleFormPost} class="d-flex flex-column">
-		<h6 class="mb-2">{updateMode ? 'Update' : 'Add'} Role</h6>
-		<Divider class="mb-4" />
-		<Row>
-			<Col>
-				<TextField bind:value={role.name} required>Name</TextField>
-			</Col>
-		</Row>
-		<Row>
-			<Col>
-				<TextField bind:value={role.description} required>Description</TextField>
-			</Col>
-		</Row>
-		<Divider />
-		<div class="mt-3 d-flex">
-			<Button class="ml-auto primary-color" disabled={loading.createOrUpdate} type="submit">
-				{#if updateMode}
-					{loading.createOrUpdate ? 'updating...' : 'update'}
-				{:else}
-					{loading.createOrUpdate ? 'Adding role...' : 'add'}
-				{/if}
-			</Button>
-		</div>
-	</form>
-</Dialog>
+<CreateUpdateDialog
+	on:form-submit={handleFormPost}
+	bind:active={dialogState.createOrUpdate}
+	loading={loading.createOrUpdate}
+	submitButtonCaption={updateMode ? 'Update' : 'Add Role'}
+	submitButtonCaptionOnLoading={updateMode ? 'Updating...' : 'Adding Role...'}
+	title="{updateMode ? 'Update' : 'Add'} Role">
+	<Row class="mt-3">
+		<Col>
+			<TextField bind:value={role.name} required>Name</TextField>
+		</Col>
+	</Row>
+	<Row>
+		<Col>
+			<TextField bind:value={role.description} required>Description</TextField>
+		</Col>
+	</Row>
+</CreateUpdateDialog>
 
 <!-- DIALOG REMOVE ROLE -->
 <DeleteDialog

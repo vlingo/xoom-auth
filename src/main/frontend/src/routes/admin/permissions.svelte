@@ -29,6 +29,7 @@
 		remove,
 	} from '../../stores/permissions.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
+	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 
 	export let permissions;
 	$permissionsStore = permissions;
@@ -147,39 +148,31 @@
 <h6>Permissions</h6>
 
 <!-- DIALOG CREATE/UPDATE PERMISSION -->
-<Dialog class="pa-4" bind:active={dialogState.createOrUpdate}>
-	<form on:submit|preventDefault={handleFormPost} class="d-flex flex-column">
-		<h6 class="mb-2">{updateMode ? 'Update' : 'Add'} Role</h6>
-		<Divider class="mb-4" />
-		<Row>
-			<Col>
-				<TextField bind:value={permission.name} required>Name</TextField>
-			</Col>
-		</Row>
-		<Row>
-			<Col>
-				<TextField bind:value={permission.description} required>Description</TextField>
-			</Col>
-		</Row>
-		<Row>
-			<Col>
-				<Select items={availableNames} bind:value={permission.constraints} multiple>
-					Constraints
-				</Select>
-			</Col>
-		</Row>
-		<Divider />
-		<div class="mt-3 d-flex">
-			<Button class="ml-auto primary-color" disabled={loading.createOrUpdate} type="submit">
-				{#if updateMode}
-					{loading.createOrUpdate ? 'updating...' : 'update'}
-				{:else}
-					{loading.createOrUpdate ? 'Adding permission...' : 'add'}
-				{/if}
-			</Button>
-		</div>
-	</form>
-</Dialog>
+<CreateUpdateDialog
+	on:form-submit={handleFormPost}
+	bind:active={dialogState.createOrUpdate}
+	loading={loading.createOrUpdate}
+	submitButtonCaption={updateMode ? 'Update' : 'Add Permission'}
+	submitButtonCaptionOnLoading={updateMode ? 'Updating...' : 'Adding Permission...'}
+	title="{updateMode ? 'Update' : 'Add'} Permission">
+	<Row class="mt-3">
+		<Col>
+			<TextField bind:value={permission.name} required>Name</TextField>
+		</Col>
+	</Row>
+	<Row>
+		<Col>
+			<TextField bind:value={permission.description} required>Description</TextField>
+		</Col>
+	</Row>
+	<Row>
+		<Col>
+			<Select items={availableNames} bind:value={permission.constraints} multiple>
+				Constraints
+			</Select>
+		</Col>
+	</Row>
+</CreateUpdateDialog>
 
 <!-- DIALOG REMOVE PERMISSION -->
 <DeleteDialog
