@@ -9,16 +9,7 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import {
-		Button,
-		Col,
-		Dialog,
-		Divider,
-		Icon,
-		Row,
-		Table,
-		TextField,
-	} from 'svelte-materialify/src';
+	import { Button, Col, Icon, Row, Table, TextField } from 'svelte-materialify/src';
 	import { groups as groupsStore, create, update, remove } from '../../stores/groups.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';

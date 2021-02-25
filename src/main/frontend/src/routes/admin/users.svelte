@@ -9,7 +9,7 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Checkbox, Dialog, Divider, Icon, Table } from 'svelte-materialify/src';
+	import { Button, Checkbox, Icon, Table } from 'svelte-materialify/src';
 	import UserForm from '../../components/UserForm.svelte';
 	import { users as usersStore, create, update, remove } from '../../stores/users.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';

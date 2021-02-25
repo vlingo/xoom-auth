@@ -9,17 +9,7 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import {
-		Button,
-		Col,
-		Dialog,
-		Divider,
-		Icon,
-		Row,
-		Select,
-		Table,
-		TextField,
-	} from 'svelte-materialify/src';
+	import { Button, Col, Icon, Row, Select, Table, TextField } from 'svelte-materialify/src';
 	import {
 		permissions as permissionsStore,
 		names,
