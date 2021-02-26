@@ -26,8 +26,7 @@
 				value: 'constraint',
 			},
 		];
-		await tick();
-		selectElement.selectedIndex = constraints.length - 1;
+		focusOnLastOption();
 	}
 
 	function removeSelectedConstraint() {
@@ -35,10 +34,16 @@
 			let copiedConstraints = [...constraints];
 			copiedConstraints.splice(selectElement.selectedIndex, 1);
 			constraints = [...copiedConstraints];
+			focusOnLastOption();
 		}
 	}
 
-	$: if (selectedIndex != -1) {
+	async function focusOnLastOption() {
+		await tick();
+		selectElement.selectedIndex = selectedIndex = constraints.length - 1;
+	}
+
+	$: if (!!constraints[selectedIndex]) {
 		selectedConstraint = constraints[selectedIndex];
 	}
 
