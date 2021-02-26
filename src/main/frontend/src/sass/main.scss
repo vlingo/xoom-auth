@@ -49,6 +49,12 @@ html {
 	caret-color: #00ce68 !important;
 }
 
+.s-list.nav {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
 select {
 	color: inherit;
 	border: 1px solid;
