@@ -2,6 +2,14 @@ import { writable } from 'svelte/store';
 
 export const users = writable([]);
 
+export function fetchUsers() {
+	process.browser &&
+		fetch('/api/tenants/users').then(async (response) => {
+			const data = await response.json();
+			users.set(data);
+		});
+}
+
 export function create(user) {
 	return fetch('/api/tenants/users', {
 		method: 'post',

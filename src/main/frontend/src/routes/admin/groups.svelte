@@ -1,19 +1,31 @@
 <script>
 	import Title from '../../components/title.svelte';
-	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Col, Icon, Row, Table, TextField } from 'svelte-materialify/src';
+	import { mdiAccountGroup, mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
+	import { Button, Checkbox, Col, Icon, Row, Table, TextField } from 'svelte-materialify/src';
 	import { groups, create, update, remove } from '../../stores/groups.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
+	import { fetchUsers, users } from '../../stores/users.js';
+	import uniqBy from 'lodash.uniqby';
+
+	fetchUsers();
+
+	dialogState.manageMembers = false;
+	loading.manageMembers = false;
 
 	let initialGroup = {
 		name: '',
 		description: '',
+		members: [],
 	};
 
 	let indexToUpdateOrDelete = 0;
 	let updateMode = false;
+
+	let usersLists = [];
+	let transformedUsers;
+	let transformedGroupMembers;
 
 	let group = { ...initialGroup };
 
@@ -35,6 +47,15 @@
 				loading.createOrUpdate = false;
 				dialogState.createOrUpdate = false;
 			});
+	}
+
+	function updateMembers() {
+		loading.manageMembers = true;
+		group.members = usersLists.filter((user) => user.selected).map((user) => user.username);
+		update(indexToUpdateOrDelete, group).finally(() => {
+			loading.manageMembers = false;
+			dialogState.manageMembers = false;
+		});
 	}
 
 	function _remove() {
@@ -62,6 +83,26 @@
 		dialogState.createOrUpdate = true;
 	}
 
+	function openManageMembersDialog(index) {
+		fetchUsers();
+		indexToUpdateOrDelete = index;
+		group = $groups[index];
+
+		transformedGroupMembers = group.members.map((member) => ({
+			username: member,
+			selected: true,
+		}));
+
+		transformedUsers = $users.map(({ username }) => ({
+			username,
+			selected: false,
+		}));
+
+		const mergedMembersAndUsers = transformedGroupMembers.concat(transformedUsers);
+		usersLists = uniqBy(mergedMembersAndUsers, (v) => v.username).sort();
+		dialogState.manageMembers = true;
+	}
+
 	function openDeleteDialog(index) {
 		indexToUpdateOrDelete = index;
 		group = { ...$groups[index] };
@@ -80,7 +121,11 @@
 		group = { ...initialGroup };
 	}
 
-	$: if (dialogState.createOrUpdate == false && !dialogState.remove) {
+	$: if (
+		dialogState.createOrUpdate == false &&
+		!dialogState.remove &&
+		!dialogState.manageMembers
+	) {
 		updateMode = false;
 		reset();
 	}
@@ -110,6 +155,21 @@
 	</Row>
 </CreateUpdateDialog>
 
+<!-- DIALOG MANAGE GROUP MEMBERS -->
+<CreateUpdateDialog
+	on:form-submit={updateMembers}
+	bind:active={dialogState.manageMembers}
+	loading={loading.manageMembers}
+	submitButtonCaption="Save"
+	submitButtonCaptionOnLoading="Saving..."
+	title="Manage Members of {group.name}">
+	<div class="d-flex flex-column">
+		{#each usersLists as user}
+			<Checkbox bind:checked={user.selected}>{user.username}</Checkbox>
+		{/each}
+	</div>
+</CreateUpdateDialog>
+
 <!-- DIALOG REMOVE GROUP -->
 <DeleteDialog
 	bind:active={dialogState.remove}
@@ -137,10 +197,21 @@
 						<Button
 							fab
 							depressed
+							on:click={() => openManageMembersDialog(index)}
+							rounded
+							size="x-small"
+							text
+							title="Manage group members">
+							<Icon path={mdiAccountGroup} />
+						</Button>
+						<Button
+							fab
+							depressed
 							on:click={() => openUpdateDialog(index)}
 							rounded
 							size="x-small"
-							text>
+							text
+							title="Update/edit group">
 							<Icon path={mdiPencil} />
 						</Button>
 						<Button
@@ -149,7 +220,8 @@
 							on:click={() => openDeleteDialog(index)}
 							rounded
 							size="x-small"
-							text>
+							text
+							title="Remove group">
 							<Icon path={mdiDelete} />
 						</Button>
 					</td>
