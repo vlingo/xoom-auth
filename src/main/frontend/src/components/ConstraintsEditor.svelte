@@ -97,6 +97,7 @@
 			<Button
 				fab
 				aria-label="Remove selected constraint"
+				disabled={!validSelectedIndex}
 				on:click={removeSelectedConstraint}
 				rounded
 				size="small"
