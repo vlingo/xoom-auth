@@ -1,7 +1,7 @@
 <script>
 	import Title from '../../components/title.svelte';
-	import { mdiDelete, mdiLock, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Col, Icon, Row, Textarea, TextField } from 'svelte-materialify/src';
+	import { mdiDelete, mdiLock, mdiPencil } from '@mdi/js';
+	import { Col, Row, Textarea, TextField } from 'svelte-materialify/src';
 	import { permissions, create, update, remove } from '../../stores/permissions.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CommonDialog from '../../components/CommonDialog.svelte';

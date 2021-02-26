@@ -1,16 +1,7 @@
 <script>
 	import Title from '../../components/title.svelte';
-	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import {
-		Button,
-		Checkbox,
-		Col,
-		Icon,
-		Table,
-		Row,
-		TextField,
-		Textarea,
-	} from 'svelte-materialify/src';
+	import { mdiDelete, mdiPencil } from '@mdi/js';
+	import { Checkbox, Col, Table, Row, TextField, Textarea } from 'svelte-materialify/src';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import { tenants, create, update, remove } from '../../stores/tenantsSubscription.js';
 	import CommonDialog from '../../components/CommonDialog.svelte';

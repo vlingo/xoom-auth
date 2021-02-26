@@ -1,7 +1,7 @@
 <script>
 	import Title from '../../components/title.svelte';
-	import { mdiAccountGroup, mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Checkbox, Col, Icon, Row, Textarea, TextField } from 'svelte-materialify/src';
+	import { mdiAccountGroup, mdiDelete, mdiPencil } from '@mdi/js';
+	import { Checkbox, Col, Row, Textarea, TextField } from 'svelte-materialify/src';
 	import { groups, create, update, remove } from '../../stores/groups.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CommonDialog from '../../components/CommonDialog.svelte';
