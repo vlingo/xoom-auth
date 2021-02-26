@@ -1,11 +1,13 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Col, Icon, Row, Table, TextField } from 'svelte-materialify/src';
+	import { Button, Col, Icon, Row, TextField } from 'svelte-materialify/src';
 	import { permissions, create, update, remove } from '../../stores/permissions.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
+	import Table from '../../components/Table.svelte';
+	import SmallButton from '../../components/SmallButton.svelte';
 
 	let initialPermission = {
 		name: '',
@@ -121,44 +123,24 @@
 </DeleteDialog>
 
 {#if $permissions.length}
-	<Table class="p-5 mt-5 s-card">
-		<thead>
-			<tr style="font-weight:bold">
-				<td>Name</td>
-				<td>Description</td>
-				<td>Constraints</td>
-				<td class="text-center">Actions</td>
+	<Table headers={['Name', 'Description', 'Constraints']}>
+		{#each $permissions as permission, index}
+			<tr>
+				<td>{permission.name}</td>
+				<td>{permission.description}</td>
+				<td>{permission.constraints.join(', ')}</td>
+				<td class="text-center table-row-actions">
+					<SmallButton
+						on:click={() => openUpdateDialog(index)}
+						iconPath={mdiPencil}
+						title="Update/edit permission" />
+					<SmallButton
+						on:click={() => openDeleteDialog(index)}
+						iconPath={mdiDelete}
+						title="Remove/delete permission" />
+				</td>
 			</tr>
-		</thead>
-		<tbody>
-			{#each $permissions as permission, index}
-				<tr>
-					<td>{permission.name}</td>
-					<td>{permission.description}</td>
-					<td>{permission.constraints.join(', ')}</td>
-					<td class="text-center table-row-actions">
-						<Button
-							fab
-							depressed
-							on:click={() => openUpdateDialog(index)}
-							rounded
-							size="x-small"
-							text>
-							<Icon path={mdiPencil} />
-						</Button>
-						<Button
-							fab
-							depressed
-							on:click={() => openDeleteDialog(index)}
-							rounded
-							size="x-small"
-							text>
-							<Icon path={mdiDelete} />
-						</Button>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
+		{/each}
 	</Table>
 {:else}
 	<div style="padding-top: 2em">No data available</div>

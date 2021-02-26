@@ -1,13 +1,15 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiAccountGroup, mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Checkbox, Col, Icon, Row, Table, TextField } from 'svelte-materialify/src';
+	import { Button, Checkbox, Col, Icon, Row, TextField } from 'svelte-materialify/src';
 	import { groups, create, update, remove } from '../../stores/groups.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
 	import { fetchUsers, users } from '../../stores/users.js';
 	import uniqBy from 'lodash.uniqby';
+	import Table from '../../components/Table.svelte';
+	import SmallButton from '../../components/SmallButton.svelte';
 
 	fetchUsers();
 
@@ -180,54 +182,27 @@
 </DeleteDialog>
 
 {#if $groups.length}
-	<Table class="p-5 mt-5 s-card">
-		<thead>
-			<tr style="font-weight:bold">
-				<td>Name</td>
-				<td>Description</td>
-				<td class="text-center">Actions</td>
+	<Table headers={['Name', 'Description']}>
+		{#each $groups as group, index}
+			<tr>
+				<td>{group.name}</td>
+				<td>{group.description}</td>
+				<td class="text-center table-row-actions">
+					<SmallButton
+						on:click={() => openManageMembersDialog(index)}
+						iconPath={mdiAccountGroup}
+						title="Manage group members" />
+					<SmallButton
+						on:click={() => openUpdateDialog(index)}
+						iconPath={mdiPencil}
+						title="Update/edit group" />
+					<SmallButton
+						on:click={() => openDeleteDialog(index)}
+						iconPath={mdiDelete}
+						title="Remove/delete group" />
+				</td>
 			</tr>
-		</thead>
-		<tbody>
-			{#each $groups as group, index}
-				<tr>
-					<td>{group.name}</td>
-					<td>{group.description}</td>
-					<td class="text-center table-row-actions">
-						<Button
-							fab
-							depressed
-							on:click={() => openManageMembersDialog(index)}
-							rounded
-							size="x-small"
-							text
-							title="Manage group members">
-							<Icon path={mdiAccountGroup} />
-						</Button>
-						<Button
-							fab
-							depressed
-							on:click={() => openUpdateDialog(index)}
-							rounded
-							size="x-small"
-							text
-							title="Update/edit group">
-							<Icon path={mdiPencil} />
-						</Button>
-						<Button
-							fab
-							depressed
-							on:click={() => openDeleteDialog(index)}
-							rounded
-							size="x-small"
-							text
-							title="Remove group">
-							<Icon path={mdiDelete} />
-						</Button>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
+		{/each}
 	</Table>
 {:else}
 	<div style="padding-top: 2em">No data available</div>

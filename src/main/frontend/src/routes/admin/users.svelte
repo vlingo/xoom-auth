@@ -7,6 +7,7 @@
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
+	import SmallButton from '../../components/SmallButton.svelte';
 
 	let initialUser = {
 		username: '',
@@ -144,24 +145,14 @@
 						<Checkbox class="m-0" bind:checked={user.active} />
 					</td>
 					<td class="text-center table-row-actions">
-						<Button
-							fab
-							depressed
+						<SmallButton
 							on:click={() => openUpdateDialog(index)}
-							rounded
-							size="x-small"
-							text>
-							<Icon path={mdiPencil} />
-						</Button>
-						<Button
-							fab
-							depressed
+							iconPath={mdiPencil}
+							title="Update/edit user" />
+						<SmallButton
 							on:click={() => openDeleteDialog(index)}
-							rounded
-							size="x-small"
-							text>
-							<Icon path={mdiDelete} />
-						</Button>
+							iconPath={mdiDelete}
+							title="Remove/delete user" />
 					</td>
 				</tr>
 			{/each}

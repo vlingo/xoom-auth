@@ -1,11 +1,12 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Checkbox, Col, Icon, Row, Table, TextField } from 'svelte-materialify/src';
+	import { Button, Checkbox, Col, Icon, Table, Row, TextField } from 'svelte-materialify/src';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import { tenants, create, update, remove } from '../../stores/tenantsSubscription.js';
 	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
+	import SmallButton from '../../components/SmallButton.svelte';
 
 	let initialTenant = {
 		name: '',
@@ -144,24 +145,14 @@
 						<Checkbox class="m-0" bind:checked={tenant.active} />
 					</td>
 					<td class="text-center table-row-actions">
-						<Button
-							fab
-							depressed
+						<SmallButton
 							on:click={() => openUpdateDialog(index)}
-							rounded
-							size="x-small"
-							text>
-							<Icon path={mdiPencil} />
-						</Button>
-						<Button
-							fab
-							depressed
+							iconPath={mdiPencil}
+							title="Update/edit tenant" />
+						<SmallButton
 							on:click={() => openDeleteDialog(index)}
-							rounded
-							size="x-small"
-							text>
-							<Icon path={mdiDelete} />
-						</Button>
+							iconPath={mdiDelete}
+							title="Remove/delete tenant" />
 					</td>
 				</tr>
 			{/each}
