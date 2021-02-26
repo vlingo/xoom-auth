@@ -106,7 +106,7 @@
 	</div>
 	<!-- COSNTSRAINT FORM -->
 	<div class="d-flex flex-column">
-		<label for="constraint-type mt-2 mb-3"> Type </label>
+		<label class="mb-2" for="constraint-type">Type</label>
 		<div class="d-flex">
 			<ButtonGroup activeClass="primary-color" bind:value={selectedConstraint.type}>
 				<ButtonGroupItem value="string">String</ButtonGroupItem>
