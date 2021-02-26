@@ -7,7 +7,7 @@
 
 	let initialConstraint = {
 		name: '',
-		type: 'string',
+		type: '',
 		value: '',
 	};
 
