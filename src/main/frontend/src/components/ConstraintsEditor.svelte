@@ -43,7 +43,8 @@
 		selectElement.selectedIndex = selectedIndex = constraints.length - 1;
 	}
 
-	$: if (!!constraints[selectedIndex]) {
+	$: validSelectedIndex = !!constraints[selectedIndex];
+	$: if (validSelectedIndex) {
 		selectedConstraint = constraints[selectedIndex];
 	}
 
@@ -57,24 +58,12 @@
 			},
 		};
 	}
-
-	/** @param {Node} node */
-	function handleBlurAction(node) {
-		const handler = () => (selectedIndex = -1);
-		node.addEventListener('blur', handler);
-		return {
-			onDestroy() {
-				node.removeEventListener('change', handler);
-			},
-		};
-	}
 </script>
 
 <div class="d-flex flex-column">
 	<label class="mt-1 mb-1" for="constraints">Constraints</label>
 	<select
 		use:handleSelectChangesAction
-		use:handleBlurAction
 		bind:this={selectElement}
 		class="w-full"
 		id="constraints"
@@ -114,13 +103,28 @@
 		<label class="mb-2" for="constraint-type">Type</label>
 		<div class="d-flex">
 			<ButtonGroup activeClass="primary-color" bind:value={selectedConstraint.type}>
-				<ButtonGroupItem value="string">String</ButtonGroupItem>
-				<ButtonGroupItem value="integer">Integer</ButtonGroupItem>
-				<ButtonGroupItem value="double">Double</ButtonGroupItem>
-				<ButtonGroupItem value="boolean">Boolean</ButtonGroupItem>
+				<ButtonGroupItem disabled={!validSelectedIndex} value="string">
+					String
+				</ButtonGroupItem>
+				<ButtonGroupItem disabled={!validSelectedIndex} value="integer">
+					Integer
+				</ButtonGroupItem>
+				<ButtonGroupItem disabled={!validSelectedIndex} value="double">
+					Double
+				</ButtonGroupItem>
+				<ButtonGroupItem disabled={!validSelectedIndex} value="boolean">
+					Boolean
+				</ButtonGroupItem>
 			</ButtonGroup>
 		</div>
-		<TextField class="mt-5" bind:value={selectedConstraint.name}>Name</TextField>
-		<TextField class="mt-5" bind:value={selectedConstraint.value}>Value</TextField>
+		<TextField class="mt-5" disabled={!validSelectedIndex} bind:value={selectedConstraint.name}>
+			Name
+		</TextField>
+		<TextField
+			class="mt-5"
+			disabled={!validSelectedIndex}
+			bind:value={selectedConstraint.value}>
+			Value
+		</TextField>
 	</div>
 </div>
