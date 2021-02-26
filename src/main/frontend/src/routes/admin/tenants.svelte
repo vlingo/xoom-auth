@@ -4,7 +4,7 @@
 	import { Button, Checkbox, Col, Icon, Table, Row, TextField } from 'svelte-materialify/src';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import { tenants, create, update, remove } from '../../stores/tenantsSubscription.js';
-	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
+	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
 	import SmallButton from '../../components/SmallButton.svelte';
 
@@ -93,7 +93,7 @@
 <h6>Tenants Subscribtion</h6>
 
 <!-- DIALOG CREATE/UPDATE TENANT SUBSCRIBTION -->
-<CreateUpdateDialog
+<CommonDialog
 	on:form-submit={handleFormPost}
 	bind:active={dialogState.createOrUpdate}
 	loading={loading.createOrUpdate}
@@ -115,7 +115,7 @@
 			<Checkbox bind:checked={tenant.active}>Active</Checkbox>
 		</Col>
 	</Row>
-</CreateUpdateDialog>
+</CommonDialog>
 
 <!-- DIALOG REMOVE TENANT SUBSCRIBTION -->
 <DeleteDialog

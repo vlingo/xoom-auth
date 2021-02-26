@@ -4,7 +4,7 @@
 	import { Button, Col, Icon, Row, TextField } from 'svelte-materialify/src';
 	import { roles, create, update, remove } from '../../stores/roles.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
-	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
+	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
 	import Table from '../../components/Table.svelte';
 	import SmallButton from '../../components/SmallButton.svelte';
@@ -93,7 +93,7 @@
 <h6>Roles</h6>
 
 <!-- DIALOG CREATE/UPDATE ROLE -->
-<CreateUpdateDialog
+<CommonDialog
 	on:form-submit={handleFormPost}
 	bind:active={dialogState.createOrUpdate}
 	loading={loading.createOrUpdate}
@@ -110,7 +110,7 @@
 			<TextField bind:value={role.description} required>Description</TextField>
 		</Col>
 	</Row>
-</CreateUpdateDialog>
+</CommonDialog>
 
 <!-- DIALOG REMOVE ROLE -->
 <DeleteDialog

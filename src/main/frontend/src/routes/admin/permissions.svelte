@@ -4,7 +4,7 @@
 	import { Button, Col, Icon, Row, TextField } from 'svelte-materialify/src';
 	import { permissions, create, update, remove } from '../../stores/permissions.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
-	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
+	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
 	import Table from '../../components/Table.svelte';
 	import SmallButton from '../../components/SmallButton.svelte';
@@ -94,7 +94,7 @@
 <h6>Permissions</h6>
 
 <!-- DIALOG CREATE/UPDATE PERMISSION -->
-<CreateUpdateDialog
+<CommonDialog
 	on:form-submit={handleFormPost}
 	bind:active={dialogState.createOrUpdate}
 	loading={loading.createOrUpdate}
@@ -111,7 +111,7 @@
 			<TextField bind:value={permission.description} required>Description</TextField>
 		</Col>
 	</Row>
-</CreateUpdateDialog>
+</CommonDialog>
 
 <!-- DIALOG REMOVE PERMISSION -->
 <DeleteDialog

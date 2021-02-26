@@ -5,7 +5,7 @@
 	import UserForm from '../../components/UserForm.svelte';
 	import { users, create, update, remove } from '../../stores/users.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
-	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
+	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
 	import SmallButton from '../../components/SmallButton.svelte';
 
@@ -103,7 +103,7 @@
 <h6>Users</h6>
 
 <!-- DIALOG CREATE/UPDATE USER -->
-<CreateUpdateDialog
+<CommonDialog
 	on:form-submit={handleFormPost}
 	bind:active={dialogState.createOrUpdate}
 	loading={loading.createOrUpdate}
@@ -111,7 +111,7 @@
 	submitButtonCaptionOnLoading={updateMode ? 'Updating...' : 'Registering...'}
 	title="{updateMode ? 'Update' : 'Register'} User">
 	<UserForm bind:user />
-</CreateUpdateDialog>
+</CommonDialog>
 
 <!-- DIALOG REMOVE USER -->
 <DeleteDialog

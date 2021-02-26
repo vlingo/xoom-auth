@@ -4,7 +4,7 @@
 	import { Button, Checkbox, Col, Icon, Row, TextField } from 'svelte-materialify/src';
 	import { groups, create, update, remove } from '../../stores/groups.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
-	import CreateUpdateDialog from '../../components/CreateUpdateDialog.svelte';
+	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
 	import { fetchUsers, users } from '../../stores/users.js';
 	import uniqBy from 'lodash.uniqby';
@@ -138,7 +138,7 @@
 <h6>Groups</h6>
 
 <!-- DIALOG CREATE/UPDATE GROUP -->
-<CreateUpdateDialog
+<CommonDialog
 	on:form-submit={handleFormPost}
 	bind:active={dialogState.createOrUpdate}
 	loading={loading.createOrUpdate}
@@ -155,10 +155,10 @@
 			<TextField bind:value={group.description} required>Description</TextField>
 		</Col>
 	</Row>
-</CreateUpdateDialog>
+</CommonDialog>
 
 <!-- DIALOG MANAGE GROUP MEMBERS -->
-<CreateUpdateDialog
+<CommonDialog
 	on:form-submit={updateMembers}
 	bind:active={dialogState.manageMembers}
 	loading={loading.manageMembers}
@@ -170,7 +170,7 @@
 			<Checkbox bind:checked={user.selected}>{user.username}</Checkbox>
 		{/each}
 	</div>
-</CreateUpdateDialog>
+</CommonDialog>
 
 <!-- DIALOG REMOVE GROUP -->
 <DeleteDialog
