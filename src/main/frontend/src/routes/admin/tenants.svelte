@@ -16,6 +16,7 @@
 	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
 	import SmallButton from '../../components/SmallButton.svelte';
+	import FloatAddButton from '../../components/FloatAddButton.svelte';
 
 	let initialTenant = {
 		name: '',
@@ -175,11 +176,4 @@
 	<div style="padding-top: 2em">No data available</div>
 {/if}
 
-<Button
-	class="primary-color"
-	fab
-	on:click={openCreateDialog}
-	style="position: fixed; margin: 1em; right: 0; bottom: 0;"
-	float>
-	<Icon path={mdiPlus} />
-</Button>
+<FloatAddButton on:click={openCreateDialog} />
