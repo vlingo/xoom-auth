@@ -46,6 +46,8 @@
 	$: validSelectedIndex = !!constraints[selectedIndex];
 	$: if (validSelectedIndex) {
 		selectedConstraint = constraints[selectedIndex];
+	} else {
+		selectedConstraint = { ...initialConstraint };
 	}
 
 	/** @param {Node} node */
