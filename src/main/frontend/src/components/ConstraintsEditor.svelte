@@ -27,7 +27,7 @@
 			},
 		];
 		await tick();
-		selectElement.querySelector('option:last-child').focus({ force: true });
+		selectElement.selectedIndex = constraints.length - 1;
 	}
 
 	function removeSelectedConstraint() {
