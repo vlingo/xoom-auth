@@ -1,5 +1,5 @@
 <script>
-	import { Button, Icon, Radio, TextField } from 'svelte-materialify/src';
+	import { Button, ButtonGroup, ButtonGroupItem, Icon, TextField } from 'svelte-materialify/src';
 	import { mdiMinus, mdiPlus } from '@mdi/js';
 	import { tick } from 'svelte';
 
@@ -108,10 +108,12 @@
 	<div class="d-flex flex-column">
 		<label for="constraint-type mt-2 mb-3"> Type </label>
 		<div class="d-flex">
-			<Radio bind:group={selectedConstraint.type} value="string">String</Radio>
-			<Radio bind:group={selectedConstraint.type} class="ml-3" value="integer">Integer</Radio>
-			<Radio bind:group={selectedConstraint.type} class="ml-3" value="double">Double</Radio>
-			<Radio bind:group={selectedConstraint.type} class="ml-3" value="boolean">Boolean</Radio>
+			<ButtonGroup activeClass="primary-color" bind:value={selectedConstraint.type}>
+				<ButtonGroupItem value="string">String</ButtonGroupItem>
+				<ButtonGroupItem value="integer">Integer</ButtonGroupItem>
+				<ButtonGroupItem value="double">Double</ButtonGroupItem>
+				<ButtonGroupItem value="boolean">Boolean</ButtonGroupItem>
+			</ButtonGroup>
 		</div>
 		<TextField class="mt-5" bind:value={selectedConstraint.name}>Name</TextField>
 		<TextField class="mt-5" bind:value={selectedConstraint.value}>Value</TextField>
