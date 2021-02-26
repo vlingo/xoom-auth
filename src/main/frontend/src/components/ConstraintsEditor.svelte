@@ -31,10 +31,16 @@
 
 	function removeSelectedConstraint() {
 		if (selectElement.selectedIndex !== -1) {
+			const index = selectElement.selectedIndex;
+			const isLastIndex = index === constraints.length - 1;
+
 			let copiedConstraints = [...constraints];
-			copiedConstraints.splice(selectElement.selectedIndex, 1);
+			copiedConstraints.splice(index, 1);
 			constraints = [...copiedConstraints];
-			focusOnLastOption();
+
+			if (isLastIndex) {
+				focusOnLastOption();
+			}
 		}
 	}
 
