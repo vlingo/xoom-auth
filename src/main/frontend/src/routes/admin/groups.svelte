@@ -1,7 +1,7 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiAccountGroup, mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Checkbox, Col, Icon, Row, TextField } from 'svelte-materialify/src';
+	import { Button, Checkbox, Col, Icon, Row, Textarea, TextField } from 'svelte-materialify/src';
 	import { groups, create, update, remove } from '../../stores/groups.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CommonDialog from '../../components/CommonDialog.svelte';
@@ -152,7 +152,7 @@
 	</Row>
 	<Row>
 		<Col>
-			<TextField bind:value={group.description} required>Description</TextField>
+			<Textarea bind:value={group.description} required>Description</Textarea>
 		</Col>
 	</Row>
 </CommonDialog>

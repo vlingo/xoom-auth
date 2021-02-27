@@ -1,7 +1,16 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Checkbox, Col, Icon, Table, Row, TextField } from 'svelte-materialify/src';
+	import {
+		Button,
+		Checkbox,
+		Col,
+		Icon,
+		Table,
+		Row,
+		TextField,
+		Textarea,
+	} from 'svelte-materialify/src';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import { tenants, create, update, remove } from '../../stores/tenantsSubscription.js';
 	import CommonDialog from '../../components/CommonDialog.svelte';
@@ -107,7 +116,7 @@
 	</Row>
 	<Row>
 		<Col>
-			<TextField bind:value={tenant.description} required>Description</TextField>
+			<Textarea bind:value={tenant.description} required>Description</Textarea>
 		</Col>
 	</Row>
 	<Row class="mb-2">

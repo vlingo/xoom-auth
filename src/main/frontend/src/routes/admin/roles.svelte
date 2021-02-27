@@ -1,7 +1,7 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
-	import { Button, Col, Icon, Row, TextField } from 'svelte-materialify/src';
+	import { Button, Col, Icon, Row, Textarea, TextField } from 'svelte-materialify/src';
 	import { roles, create, update, remove } from '../../stores/roles.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CommonDialog from '../../components/CommonDialog.svelte';
@@ -107,7 +107,7 @@
 	</Row>
 	<Row>
 		<Col>
-			<TextField bind:value={role.description} required>Description</TextField>
+			<Textarea bind:value={role.description} required>Description</Textarea>
 		</Col>
 	</Row>
 </CommonDialog>
