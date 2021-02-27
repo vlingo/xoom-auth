@@ -2,27 +2,92 @@ let data = [
 	{
 		name: 'Permission1',
 		description: 'Description of Permission1',
-		constraints: ['name1', 'name2', 'name3'],
+		constraints: [
+			{
+				name: 'name1',
+				value: 'name1',
+				type: 'string',
+			},
+			{
+				name: 'name2',
+				value: 'name2',
+				type: 'string',
+			},
+			{
+				name: 'name3',
+				value: 'name3',
+				type: 'string',
+			},
+		],
 	},
 	{
 		name: 'Permission2',
 		description: 'Description of Permission2',
-		constraints: ['name4', 'name5'],
+		constraints: [
+			{
+				name: 'name4',
+				value: 'name4',
+				type: 'string',
+			},
+			{
+				name: 'name5',
+				value: 'name5',
+				type: 'string',
+			},
+		],
 	},
 	{
 		name: 'Permission3',
 		description: 'Description of Permission3',
-		constraints: ['name6', 'name7', 'name8'],
+		constraints: [
+			{
+				name: 'name6',
+				value: 'name6',
+				type: 'string',
+			},
+			{
+				name: 'name7',
+				value: 'name7',
+				type: 'string',
+			},
+			{
+				name: 'name8',
+				value: 'name8',
+				type: 'string',
+			},
+		],
 	},
 	{
 		name: 'Permission4',
 		description: 'Description of Permission4',
-		constraints: ['name9', 'name5'],
+		constraints: [
+			{
+				name: 'name9',
+				value: 'name9',
+				type: 'string',
+			},
+			{
+				name: 'name5',
+				value: 'name5',
+				type: 'string',
+			},
+		],
 	},
 	{
 		name: 'Permission5',
 		description: 'Description of Permission5',
-		constraints: ['name10', 'name11'],
+		constraints: [
+			{
+				name: 'name10',
+				value: 'name10',
+				type: 'string',
+			},
+			{
+				name: 'name11',
+				value: 'name11',
+				type: 'string',
+			},
+		],
 	},
 ];
 

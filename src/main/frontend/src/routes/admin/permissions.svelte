@@ -1,6 +1,6 @@
 <script>
 	import Title from '../../components/title.svelte';
-	import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js';
+	import { mdiDelete, mdiLock, mdiPencil, mdiPlus } from '@mdi/js';
 	import { Button, Col, Icon, Row, TextField } from 'svelte-materialify/src';
 	import { permissions, create, update, remove } from '../../stores/permissions.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
@@ -8,6 +8,13 @@
 	import { dialogState, loading } from '../../shared/common.js';
 	import Table from '../../components/Table.svelte';
 	import SmallButton from '../../components/SmallButton.svelte';
+	import ConstraintsEditor from '../../components/ConstraintsEditor.svelte';
+
+	dialogState.manageConstrains = false;
+	loading.savingConstraints = false;
+
+	/** @type {ConstraintsEditor} */
+	let constrainEditor;
 
 	let initialPermission = {
 		name: '',
@@ -53,6 +60,19 @@
 			});
 	}
 
+	function updateConstraints() {
+		loading.savingConstraints = false;
+		update(indexToUpdateOrDelete, permission)
+			.then(({ status }) => {
+				if (status == 200) {
+					dialogState.manageConstrains = false;
+				}
+			})
+			.finally(() => {
+				loading.savingConstraints = false;
+			});
+	}
+
 	function openCreateDialog() {
 		updateMode = false;
 		dialogState.createOrUpdate = true;
@@ -63,6 +83,13 @@
 		indexToUpdateOrDelete = index;
 		permission = $permissions[index];
 		dialogState.createOrUpdate = true;
+	}
+
+	function openManageConstraintsDialog(index) {
+		indexToUpdateOrDelete = index;
+		reset();
+		permission = { ...$permissions[index] };
+		dialogState.manageConstrains = true;
 	}
 
 	function openDeleteDialog(index) {
@@ -83,7 +110,7 @@
 		permission = { ...initialPermission };
 	}
 
-	$: if (dialogState.createOrUpdate == false && !dialogState.remove) {
+	$: if (!dialogState.createOrUpdate && !dialogState.remove && !dialogState.manageConstrains) {
 		updateMode = false;
 		reset();
 	}
@@ -113,6 +140,16 @@
 	</Row>
 </CommonDialog>
 
+<CommonDialog
+	on:form-submit={updateConstraints}
+	bind:active={dialogState.manageConstrains}
+	loading={loading.savingConstraints}
+	submitButtonCaption="Save"
+	submitButtonCaptionOnLoading="Saving..."
+	title="Manage Permission Constraints">
+	<ConstraintsEditor bind:this={constrainEditor} bind:constraints={permission.constraints} />
+</CommonDialog>
+
 <!-- DIALOG REMOVE PERMISSION -->
 <DeleteDialog
 	bind:active={dialogState.remove}
@@ -128,8 +165,12 @@
 			<tr>
 				<td>{permission.name}</td>
 				<td>{permission.description}</td>
-				<td>{permission.constraints.join(', ')}</td>
+				<td>{permission.constraints.map((c) => c.name).join(', ')}</td>
 				<td class="text-center table-row-actions">
+					<SmallButton
+						on:click={() => openManageConstraintsDialog(index)}
+						iconPath={mdiLock}
+						title="Manage permission constraint" />
 					<SmallButton
 						on:click={() => openUpdateDialog(index)}
 						iconPath={mdiPencil}

@@ -49,12 +49,21 @@ html {
 	caret-color: #00ce68 !important;
 }
 
+select {
+	color: inherit;
+	border: 1px solid;
+}
+
 .main {
 	padding-top: 5rem;
 }
 
 .h-full {
 	height: 100%;
+}
+
+.w-full {
+	width: 100%;
 }
 
 .h-screen {
