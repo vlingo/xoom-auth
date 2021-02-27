@@ -106,16 +106,16 @@
 			<TextField autofocus bind:value={tenant.name} required>Name</TextField>
 		</Col>
 	</Row>
-	<Row>
+	<Row class="mb-2">
 		<Col>
 			<Textarea bind:value={tenant.description} required>Description</Textarea>
 		</Col>
 	</Row>
-	<Row class="mb-2">
+	<!-- <Row class="mb-2">
 		<Col>
 			<Checkbox bind:checked={tenant.active}>Active</Checkbox>
 		</Col>
-	</Row>
+	</Row> -->
 </CommonDialog>
 
 <!-- DIALOG REMOVE TENANT SUBSCRIBTION -->
