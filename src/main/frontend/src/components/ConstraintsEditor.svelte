@@ -82,10 +82,24 @@
 	</select>
 	<div class="mt-2 d-flex flex-column">
 		<div class="ml-auto">
-			<Button fab on:click={createNewConstraint} rounded size="small" text>
+			<Button
+				fab
+				aria-label="Add constraint"
+				on:click={createNewConstraint}
+				rounded
+				size="small"
+				text
+				title="Add constraint">
 				<Icon path={mdiPlus} />
 			</Button>
-			<Button fab on:click={removeSelectedConstraint} rounded size="small" text>
+			<Button
+				fab
+				aria-label="Remove selected constraint"
+				on:click={removeSelectedConstraint}
+				rounded
+				size="small"
+				text
+				title="Remove selected constraint">
 				<Icon path={mdiMinus} />
 			</Button>
 		</div>
