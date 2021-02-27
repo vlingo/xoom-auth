@@ -49,6 +49,11 @@ html {
 	caret-color: #00ce68 !important;
 }
 
+.s-dialog__content .s-row {
+	margin-left: initial !important;
+	margin-right: initial !important;
+}
+
 .s-list.nav {
 	display: flex;
 	flex-direction: column;
@@ -68,6 +73,10 @@ select {
 	height: 100%;
 }
 
+.max-h-full {
+	max-height: 100%;
+}
+
 .w-full {
 	width: 100%;
 }
@@ -78,6 +87,10 @@ select {
 
 .m-0 {
 	margin: 0 !important;
+}
+
+.overflow-y-auto {
+	overflow-y: auto;
 }
 
 .s-table {
