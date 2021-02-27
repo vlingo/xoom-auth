@@ -130,7 +130,7 @@
 	title="{updateMode ? 'Update' : 'Add'} Permission">
 	<Row class="mt-3">
 		<Col>
-			<TextField bind:value={permission.name} required>Name</TextField>
+			<TextField bind:value={permission.name} disabled={updateMode} required>Name</TextField>
 		</Col>
 	</Row>
 	<Row>
