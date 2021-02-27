@@ -68,7 +68,7 @@
 	}
 </script>
 
-<div class="d-flex flex-column">
+<div class="d-flex pl-2 pr-2 flex-column">
 	<label class="mt-1 mb-1" for="constraints">Constraints</label>
 	<select
 		use:handleSelectChangesAction
