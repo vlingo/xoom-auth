@@ -102,7 +102,7 @@
 	title="{updateMode ? 'Update' : 'Add'} Role">
 	<Row class="mt-3">
 		<Col>
-			<TextField bind:value={role.name} required>Name</TextField>
+			<TextField bind:value={role.name} disabled={updateMode} required>Name</TextField>
 		</Col>
 	</Row>
 	<Row>

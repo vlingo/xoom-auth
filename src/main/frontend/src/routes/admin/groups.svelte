@@ -147,7 +147,7 @@
 	title="{updateMode ? 'Update' : 'Add'} Group">
 	<Row class="mt-3">
 		<Col>
-			<TextField bind:value={group.name} required>Name</TextField>
+			<TextField bind:value={group.name} disabled={updateMode} required>Name</TextField>
 		</Col>
 	</Row>
 	<Row>
