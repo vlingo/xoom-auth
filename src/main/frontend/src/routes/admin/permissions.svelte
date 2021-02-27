@@ -138,6 +138,13 @@
 			<Textarea bind:value={permission.description} required>Description</Textarea>
 		</Col>
 	</Row>
+	{#if !updateMode}
+		<Row>
+			<Col>
+				<ConstraintsEditor bind:constraints={permission.constraints} />
+			</Col>
+		</Row>
+	{/if}
 </CommonDialog>
 
 <CommonDialog
