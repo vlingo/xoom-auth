@@ -142,6 +142,10 @@
 					<td>{user.email}</td>
 					<!-- <td>{user.phone}</td> -->
 					<td class="justify-center d-flex">
+						<!-- TODO: Add the following props to the checkbox
+									when svelte-materialify allow title and aria-label prop -->
+						<!-- aria-label="Toggle active" -->
+						<!-- title="Toggle active" -->
 						<Checkbox class="m-0" bind:checked={user.active} />
 					</td>
 					<td class="text-center table-row-actions">
