@@ -166,9 +166,11 @@
 	submitButtonCaption="Save"
 	submitButtonCaptionOnLoading="Saving..."
 	title="Manage Members of {group.name}">
-	<div class="d-flex flex-column">
+	<div class="d-flex pl-2 pr-2 flex-column">
 		{#each usersLists as user}
-			<Checkbox bind:checked={user.selected}>{user.username}</Checkbox>
+			<div class="mb-3">
+				<Checkbox bind:checked={user.selected}>{user.username}</Checkbox>
+			</div>
 		{/each}
 	</div>
 </CommonDialog>
