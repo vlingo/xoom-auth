@@ -73,7 +73,7 @@
 	<select
 		use:handleSelectChangesAction
 		bind:this={selectElement}
-		class="w-full"
+		class="w-full overflow-y-auto"
 		id="constraints"
 		size="5">
 		{#each constraints as constraint}
