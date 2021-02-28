@@ -22,12 +22,8 @@
 
 	let usernameSameAsEmailAddress = false;
 
-	function handleCheckbox() {
-		if (!!user.username) {
-			user.email = user.username;
-		} else if (!!user.email) {
-			user.username = user.email;
-		}
+	$: if (usernameSameAsEmailAddress) {
+		user.email = user.username;
 	}
 </script>
 
@@ -36,12 +32,14 @@
 		<TextField bind:value={user.username} autofocus required>Username</TextField>
 	</Col>
 	<Col>
-		<TextField bind:value={user.email} required>Email Address</TextField>
+		<TextField bind:value={user.email} disabled={usernameSameAsEmailAddress} required>
+			Email Address
+		</TextField>
 	</Col>
 </Row>
 <Row>
 	<Col>
-		<Checkbox on:change={handleCheckbox} bind:checked={usernameSameAsEmailAddress}>
+		<Checkbox bind:checked={usernameSameAsEmailAddress}>
 			Username same as email address
 		</Checkbox>
 	</Col>
