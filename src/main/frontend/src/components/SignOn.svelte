@@ -14,20 +14,16 @@
 
 	let useAsCredentialID = false;
 
-	function handleUseAsCredentialIDCheckbox() {
-		if (useAsCredentialID && !!loginData.username) {
-			loginData.credentialId = loginData.username;
-		} else {
-			loginData.credentialId = '';
-		}
-	}
-
 	function _login() {
 		if (form.checkValidity()) {
 			login();
 		} else {
 			alert('Login failed');
 		}
+	}
+
+	$: if (useAsCredentialID) {
+		loginData.credentialId = loginData.username;
 	}
 </script>
 
@@ -39,9 +35,7 @@
 		<TextField bind:value={loginData.username} required>Username</TextField>
 	</Col>
 	<Col>
-		<Checkbox bind:checked={useAsCredentialID} on:change={handleUseAsCredentialIDCheckbox}>
-			Use as Credential ID
-		</Checkbox>
+		<Checkbox bind:checked={useAsCredentialID}>Use as Credential ID</Checkbox>
 	</Col>
 	<Col>
 		<TextField bind:value={loginData.credentialId} required>Credential ID</TextField>
