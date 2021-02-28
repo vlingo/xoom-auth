@@ -38,7 +38,9 @@
 		<Checkbox bind:checked={useAsCredentialID}>Use as Credential ID</Checkbox>
 	</Col>
 	<Col>
-		<TextField bind:value={loginData.credentialId} required>Credential ID</TextField>
+		<TextField bind:value={loginData.credentialId} disabled={useAsCredentialID} required>
+			Credential ID
+		</TextField>
 	</Col>
 	<Col>
 		<TextField bind:value={loginData.secret} type="password" required>Secret</TextField>
