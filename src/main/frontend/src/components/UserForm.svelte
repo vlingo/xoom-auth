@@ -27,12 +27,16 @@
 	}
 </script>
 
-<Row class="flex-column mt-3 lg:flex-row">
+<Row class="mt-3 flex-column lg:flex-row">
 	<Col>
 		<TextField bind:value={user.username} autofocus required>Username</TextField>
 	</Col>
 	<Col>
-		<TextField bind:value={user.email} disabled={usernameSameAsEmailAddress} required>
+		<TextField
+			bind:value={user.email}
+			disabled={usernameSameAsEmailAddress}
+			required
+			type="email">
 			Email Address
 		</TextField>
 	</Col>
