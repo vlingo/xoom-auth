@@ -6,6 +6,9 @@ The VLINGO/PLATFORM authentication and authorization service used by platform co
 
 Docs: https://docs.vlingo.io/vlingo-auth
 
+### Important
+If using snapshot builds [follow these instructions](https://github.com/vlingo/vlingo-platform#snapshots-repository) or you will experience failures.
+
 ### Bintray
 
 ```xml
