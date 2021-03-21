@@ -60,9 +60,14 @@ html {
 	gap: 5px;
 }
 
+.line-through {
+	text-decoration: line-through;
+}
+
 select {
 	color: inherit;
 	border: 1px solid;
+	outline: none;
 }
 
 .main {

@@ -1,18 +1,15 @@
 <script>
 	import Title from '../../components/title.svelte';
 	import { mdiAccountGroup, mdiDelete, mdiPencil } from '@mdi/js';
-	import { Checkbox, Col, Row, Textarea, TextField } from 'svelte-materialify/src';
+	import { Col, Row, Textarea, TextField } from 'svelte-materialify/src';
 	import { groups, create, update, remove } from '../../stores/groups.js';
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
-	import { fetchUsers, users } from '../../stores/users.js';
-	import uniqBy from 'lodash.uniqby';
 	import Table from '../../components/Table.svelte';
 	import SmallButton from '../../components/SmallButton.svelte';
 	import FloatAddButton from '../../components/FloatAddButton.svelte';
-
-	fetchUsers();
+	import GroupMembers from '../../components/GroupMembers.svelte';
 
 	dialogState.manageMembers = false;
 	loading.manageMembers = false;
@@ -27,8 +24,6 @@
 	let updateMode = false;
 
 	let usersLists = [];
-	let transformedUsers;
-	let transformedGroupMembers;
 
 	let group = { ...initialGroup };
 
@@ -87,22 +82,8 @@
 	}
 
 	function openManageMembersDialog(index) {
-		fetchUsers();
 		indexToUpdateOrDelete = index;
 		group = $groups[index];
-
-		transformedGroupMembers = group.members.map((member) => ({
-			username: member,
-			selected: true,
-		}));
-
-		transformedUsers = $users.map(({ username }) => ({
-			username,
-			selected: false,
-		}));
-
-		const mergedMembersAndUsers = transformedGroupMembers.concat(transformedUsers);
-		usersLists = uniqBy(mergedMembersAndUsers, (v) => v.username).sort();
 		dialogState.manageMembers = true;
 	}
 
@@ -166,13 +147,9 @@
 	submitButtonCaption="Save"
 	submitButtonCaptionOnLoading="Saving..."
 	title="Manage Members of {group.name}">
-	<div class="d-flex pl-2 pr-2 flex-column">
-		{#each usersLists as user}
-			<div class="mb-3">
-				<Checkbox bind:checked={user.selected}>{user.username}</Checkbox>
-			</div>
-		{/each}
-	</div>
+	<GroupMembers bind:members={group.members}>
+		<!--  -->
+	</GroupMembers>
 </CommonDialog>
 
 <!-- DIALOG REMOVE GROUP -->
