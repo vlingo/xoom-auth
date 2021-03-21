@@ -49,7 +49,6 @@
 
 	function updateMembers() {
 		loading.manageMembers = true;
-		group.members = usersLists.filter((user) => user.selected).map((user) => user.username);
 		update(indexToUpdateOrDelete, group).finally(() => {
 			loading.manageMembers = false;
 			dialogState.manageMembers = false;
