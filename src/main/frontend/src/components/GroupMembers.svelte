@@ -53,6 +53,8 @@
 				active,
 			}));
 	}
+
+	$: inactiveMembers = transformedMembers.filter((member) => !member.active);
 </script>
 
 <div class="d-flex flex-column">
@@ -74,4 +76,9 @@
 			<option class="pa-1" class:line-through={!member.active}>{member.username}</option>
 		{/each}
 	</select>
+	{#if !!inactiveMembers.length}
+		<div class="mt-1 red-text">
+			Warning: You have {inactiveMembers.length} inactive users on your group members
+		</div>
+	{/if}
 </div>
