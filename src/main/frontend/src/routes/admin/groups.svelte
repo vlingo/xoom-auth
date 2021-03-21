@@ -10,6 +10,7 @@
 	import SmallButton from '../../components/SmallButton.svelte';
 	import FloatAddButton from '../../components/FloatAddButton.svelte';
 	import GroupMembers from '../../components/GroupMembers.svelte';
+	import { fetchUsers } from '../../stores/users';
 
 	dialogState.manageMembers = false;
 	loading.manageMembers = false;
@@ -82,7 +83,7 @@
 
 	function openManageMembersDialog(index) {
 		indexToUpdateOrDelete = index;
-		group = $groups[index];
+		group = { ...$groups[index] };
 		dialogState.manageMembers = true;
 	}
 
