@@ -5,7 +5,7 @@
 	"description": "The UI of vlingo/auth.",
 	"scripts": {
 		"dev": "sapper dev",
-		"check": "svelte-check --human",
+		"check": "svelte-check --human --fail-on-warnings",
 		"build": "npm run check && sapper build --legacy",
 		"build-prod": "npm run check && sapper build --legacy --port 8080",
 		"clean": "rm -rf ./__sapper__/**",
