@@ -5,8 +5,9 @@
 	"description": "The UI of vlingo/auth.",
 	"scripts": {
 		"dev": "sapper dev",
-		"build": "sapper build --legacy",
-		"build-prod": "sapper build --legacy --port 8080",
+		"check": "svelte-check --human",
+		"build": "npm run check && sapper build --legacy",
+		"build-prod": "npm run check && sapper build --legacy --port 8080",
 		"clean": "rm -rf ./__sapper__/**",
 		"export": "sapper export",
 		"start": "node __sapper__/build"
@@ -40,6 +41,7 @@
 		"sapper": "^0.29.1",
 		"sass": "^1.32.8",
 		"svelte": "^3.35.0",
+		"svelte-check": "^1.2.6",
 		"svelte-materialify": "^0.3.7",
 		"svelte-preprocess": "^4.6.9",
 		"svelte-simple-datatables": "^0.1.25"
