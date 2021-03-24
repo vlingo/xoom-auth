@@ -2,9 +2,12 @@
 
 [![Javadocs](http://javadoc.io/badge/io.vlingo/vlingo-auth.svg?color=brightgreen)](http://javadoc.io/doc/io.vlingo/vlingo-auth) [![Build](https://github.com/vlingo/vlingo-auth/workflows/Build/badge.svg)](https://github.com/vlingo/vlingo-auth/actions?query=workflow%3ABuild) [ ![Download](https://api.bintray.com/packages/vlingo/vlingo-platform-java/vlingo-auth/images/download.svg) ](https://bintray.com/vlingo/vlingo-platform-java/vlingo-auth/_latestVersion) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/vlingo-platform-java/community)
 
-The VLINGO/PLATFORM authentication and authorization service used by platform components, and also suitable for hosted platform services and applications.
+The VLINGO XOOM platform SDK authentication and authorization service. This can be used by XOOM platform components and also might be suitable for hosted platform services and applications.
 
 Docs: https://docs.vlingo.io/vlingo-auth
+
+### Important
+If using snapshot builds [follow these instructions](https://github.com/vlingo/vlingo-platform#snapshots-repository) or you will experience failures.
 
 ### Bintray
 
