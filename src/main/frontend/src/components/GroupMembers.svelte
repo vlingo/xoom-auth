@@ -67,8 +67,14 @@
 		{/each}
 	</select>
 	<div class="justify-center pt-2 pb-2 d-flex">
-		<SmallButton iconPath={mdiPlus} on:click={addUserToMembers} />
-		<SmallButton iconPath={mdiMinus} on:click={removeMember} />
+		<SmallButton
+			iconPath={mdiPlus}
+			on:click={addUserToMembers}
+			title="Add selected user to members" />
+		<SmallButton
+			iconPath={mdiMinus}
+			on:click={removeMember}
+			title="Remove selected member from members" />
 	</div>
 	<h6>Members</h6>
 	<select bind:this={selectMemberElement} size="5">
