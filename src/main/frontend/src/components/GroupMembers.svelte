@@ -48,8 +48,10 @@
 
 		transformedUsers = $users
 			.filter(({ username }) => !members.includes(username))
-			.filter(({ active }) => active)
-			.map(({ username }) => ({ username }));
+			.map(({ username, active }) => ({
+				username,
+				active,
+			}));
 	}
 
 	$: inactiveMembers = transformedMembers.filter((member) => !member.active);
@@ -59,7 +61,7 @@
 	<h6>Users</h6>
 	<select bind:this={selectUserElement} size="5">
 		{#each transformedUsers as user}
-			<option class="pa-1">
+			<option class="pa-1" class:line-through={!user.active} disabled={!user.active}>
 				{user.username}
 			</option>
 		{/each}
@@ -76,7 +78,7 @@
 	</select>
 	{#if !!inactiveMembers.length}
 		<div class="mt-1 red-text">
-			Note: You have {inactiveMembers.length} inactive users on your group members
+			Warning: You have {inactiveMembers.length} inactive users on your group members
 		</div>
 	{/if}
 </div>
