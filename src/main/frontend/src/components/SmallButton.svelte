@@ -1,7 +1,7 @@
 <script>
 	import { Button, Icon } from 'svelte-materialify/src';
 	export let iconPath;
-	export let title;
+	export let title = null;
 </script>
 
 <Button fab depressed on:click {title} rounded size="x-small" text>
