@@ -1,6 +1,6 @@
 <script>
 	import SmallButton from '../components/SmallButton.svelte';
-	import { fetchUsers, users } from '../stores/users.js';
+	import { users } from '../stores/users.js';
 	import { mdiMinus, mdiPlus } from '@mdi/js';
 
 	export let members = [];

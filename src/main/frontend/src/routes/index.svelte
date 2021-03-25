@@ -1,6 +1,6 @@
 <script>
 	import Title from '../components/title.svelte';
-	import { Button, Card, CardActions, Divider, Row } from 'svelte-materialify/src';
+	import { Button, Card, CardActions, Row } from 'svelte-materialify/src';
 	import RegisterUser from '../components/RegisterUser.svelte';
 	import SignOn from '../components/SignOn.svelte';
 

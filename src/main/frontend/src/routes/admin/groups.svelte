@@ -24,8 +24,6 @@
 	let indexToUpdateOrDelete = 0;
 	let updateMode = false;
 
-	let usersLists = [];
-
 	let group = { ...initialGroup };
 
 	function _create() {
