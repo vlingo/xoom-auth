@@ -178,7 +178,7 @@
 					<SmallButton
 						on:click={() => openManageConstraintsDialog(index)}
 						iconPath={mdiLock}
-						title="Manage permission constraint" />
+						title="Manage permission constraints" />
 					<SmallButton
 						on:click={() => openUpdateDialog(index)}
 						iconPath={mdiPencil}
