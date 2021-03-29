@@ -7,7 +7,7 @@
 	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
 	import Table from '../../components/Table.svelte';
-	import SmallButton from '../../components/SmallButton.svelte';
+	import SmallButton from '../../components/XSmallButton.svelte';
 	import FloatAddButton from '../../components/FloatAddButton.svelte';
 
 	let initialRole = {

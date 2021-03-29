@@ -7,7 +7,7 @@
 	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
 	import Table from '../../components/Table.svelte';
-	import SmallButton from '../../components/SmallButton.svelte';
+	import XSmallButton from '../../components/XSmallButton.svelte';
 	import ConstraintsEditor from '../../components/ConstraintsEditor.svelte';
 	import FloatAddButton from '../../components/FloatAddButton.svelte';
 
@@ -175,15 +175,15 @@
 				<td>{permission.description}</td>
 				<td>{permission.constraints.map((c) => c.name).join(', ')}</td>
 				<td class="text-center table-row-actions">
-					<SmallButton
+					<XSmallButton
 						on:click={() => openManageConstraintsDialog(index)}
 						iconPath={mdiLock}
 						title="Manage permission constraints" />
-					<SmallButton
+					<XSmallButton
 						on:click={() => openUpdateDialog(index)}
 						iconPath={mdiPencil}
 						title="Update/edit permission" />
-					<SmallButton
+					<XSmallButton
 						on:click={() => openDeleteDialog(index)}
 						iconPath={mdiDelete}
 						title="Remove/delete permission" />

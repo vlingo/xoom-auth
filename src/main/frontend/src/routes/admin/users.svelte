@@ -7,7 +7,7 @@
 	import DeleteDialog from '../../components/DeleteDialog.svelte';
 	import CommonDialog from '../../components/CommonDialog.svelte';
 	import { dialogState, loading } from '../../shared/common.js';
-	import SmallButton from '../../components/SmallButton.svelte';
+	import SmallButton from '../../components/XSmallButton.svelte';
 	import FloatAddButton from '../../components/FloatAddButton.svelte';
 
 	let initialUser = {

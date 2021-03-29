@@ -1,5 +1,5 @@
 <script>
-	import SmallButton from '../components/SmallButton.svelte';
+	import SmallButton from './XSmallButton.svelte';
 	import { users } from '../stores/users.js';
 	import { mdiMinus, mdiPlus } from '@mdi/js';
 	import { Button, Icon } from 'svelte-materialify/src';
@@ -13,6 +13,7 @@
 
 	let transformedUsers = [];
 	let transformedMembers = [];
+	let transformedGroups = [];
 
 	function addUserToMembers() {
 		const index = selectUserElement.selectedIndex;
