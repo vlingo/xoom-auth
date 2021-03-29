@@ -1,106 +1,46 @@
 <script>
-	import SmallButton from './XSmallButton.svelte';
+	import { ListItemGroup, ListItem, Checkbox } from 'svelte-materialify/src';
 	import { users } from '../stores/users.js';
-	import { mdiMinus, mdiPlus } from '@mdi/js';
-	import { Button, Icon } from 'svelte-materialify/src';
+	import { groups } from '../stores/groups.js';
 
-	export let members = [];
+	export let currentGroupName = '';
 
-	/** @type {HTMLSelectElement} */
-	let selectUserElement;
-	/** @type {HTMLSelectElement} */
-	let selectMemberElement;
-
-	let transformedUsers = [];
-	let transformedMembers = [];
-	let transformedGroups = [];
-
-	function addUserToMembers() {
-		const index = selectUserElement.selectedIndex;
-		if (index > -1) {
-			const userToAdd = transformedUsers[index];
-			if (!userToAdd.active) {
-				return;
-			}
-			members = [...members, userToAdd.username];
-		}
-	}
-
-	function removeMember() {
-		const index = selectMemberElement.selectedIndex;
-		if (index > -1) {
-			const memberToRemove = transformedMembers[index];
-			const indexOnMembers = members.findIndex(
-				(member) => member === memberToRemove.username
-			);
-			const _members = [...members];
-			_members.splice(indexOnMembers, 1);
-			members = _members;
-		}
-	}
-
-	$: if (members) {
-		transformedMembers = members.map((member) => {
-			const user = $users.find((_user) => _user.username === member);
-			return {
-				username: member,
-				active: user.active,
-			};
-		});
-
-		transformedUsers = $users
-			.filter(({ username }) => !members.includes(username))
-			.map(({ username, active }) => ({
-				username,
-				active,
-			}));
-	}
-
-	$: inactiveMembers = transformedMembers.filter((member) => !member.active);
+	export let members = {
+		users: [],
+		groups: [],
+	};
 </script>
 
 <div class="d-flex flex-column">
-	<h6>Users</h6>
-	<select bind:this={selectUserElement} size="5">
-		{#each transformedUsers as user}
-			<option class="pa-1" class:line-through={!user.active} disabled={!user.active}>
-				{user.username}
-			</option>
-		{/each}
-	</select>
-
-	<div class="justify-end pt-2 pb-2 d-flex">
-		<Button
-			fab
-			aria-label="Add selected user to members"
-			on:click={addUserToMembers}
-			rounded
-			size="small"
-			text
-			title="Add selected user to members">
-			<Icon path={mdiPlus} />
-		</Button>
-		<Button
-			fab
-			aria-label="Remove selected member from members"
-			on:click={removeMember}
-			rounded
-			size="small"
-			text
-			title="Remove selected member from members">
-			<Icon path={mdiMinus} />
-		</Button>
+	<h6>Groups</h6>
+	<div class="list-item-group-wrapper">
+		<ListItemGroup multiple bind:value={members.groups}>
+			{#each $groups.filter((group) => group.name !== currentGroupName) as group}
+				<ListItem value={group.name}>
+					{group.name}
+					<span slot="append">
+						<Checkbox
+							checked={members.groups.includes(group.name)}
+							bind:group={members.groups} />
+					</span>
+				</ListItem>
+			{/each}
+		</ListItemGroup>
 	</div>
 
-	<h6>Members</h6>
-	<select bind:this={selectMemberElement} size="5">
-		{#each transformedMembers as member}
-			<option class="pa-1" class:line-through={!member.active}>{member.username}</option>
-		{/each}
-	</select>
-	{#if !!inactiveMembers.length}
-		<div class="mt-1 red-text">
-			Warning: You have {inactiveMembers.length} inactive users on your group members
-		</div>
-	{/if}
+	<h6 class="mt-3">Users</h6>
+	<div class="list-item-group-wrapper">
+		<ListItemGroup multiple bind:value={members.users}>
+			{#each $users as user}
+				<ListItem value={user.username}>
+					{user.username}
+					<span slot="append">
+						<Checkbox
+							checked={members.users.includes(user.username)}
+							bind:group={members.users} />
+					</span>
+				</ListItem>
+			{/each}
+		</ListItemGroup>
+	</div>
 </div>

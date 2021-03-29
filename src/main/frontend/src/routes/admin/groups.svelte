@@ -145,7 +145,7 @@
 	submitButtonCaption="Save"
 	submitButtonCaptionOnLoading="Saving..."
 	title="Manage Members of {group.name}">
-	<GroupMembers bind:members={group.members}>
+	<GroupMembers currentGroupName={group.name} bind:members={group.members}>
 		<!--  -->
 	</GroupMembers>
 </CommonDialog>
