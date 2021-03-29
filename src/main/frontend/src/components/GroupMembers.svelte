@@ -2,6 +2,7 @@
 	import SmallButton from '../components/SmallButton.svelte';
 	import { users } from '../stores/users.js';
 	import { mdiMinus, mdiPlus } from '@mdi/js';
+	import { Button, Icon } from 'svelte-materialify/src';
 
 	export let members = [];
 
@@ -66,16 +67,30 @@
 			</option>
 		{/each}
 	</select>
-	<div class="justify-center pt-2 pb-2 d-flex">
-		<SmallButton
-			iconPath={mdiPlus}
+
+	<div class="justify-end pt-2 pb-2 d-flex">
+		<Button
+			fab
+			aria-label="Add selected user to members"
 			on:click={addUserToMembers}
-			title="Add selected user to members" />
-		<SmallButton
-			iconPath={mdiMinus}
+			rounded
+			size="small"
+			text
+			title="Add selected user to members">
+			<Icon path={mdiPlus} />
+		</Button>
+		<Button
+			fab
+			aria-label="Remove selected member from members"
 			on:click={removeMember}
-			title="Remove selected member from members" />
+			rounded
+			size="small"
+			text
+			title="Remove selected member from members">
+			<Icon path={mdiMinus} />
+		</Button>
 	</div>
+
 	<h6>Members</h6>
 	<select bind:this={selectMemberElement} size="5">
 		{#each transformedMembers as member}
