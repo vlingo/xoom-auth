@@ -13,7 +13,7 @@ Docs: https://docs.vlingo.io/vlingo-auth
     <dependency>
       <groupId>io.vlingo</groupId>
       <artifactId>vlingo-auth</artifactId>
-      <version>1.5.2</version>
+      <version>1.6.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -21,7 +21,7 @@ Docs: https://docs.vlingo.io/vlingo-auth
 
 ```gradle
 dependencies {
-    compile 'io.vlingo:vlingo-auth:1.5.2'
+    compile 'io.vlingo:vlingo-auth:1.6.0'
 }
 ```
 
