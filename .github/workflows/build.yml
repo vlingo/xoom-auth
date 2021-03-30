@@ -131,7 +131,7 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
       - name: Notify slack
-        if: always()
+        if: startsWith(github.ref, 'refs/tags/') || failure()
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_COLOR: "${{ job.status == 'success' && 'good' || 'danger' }}"
