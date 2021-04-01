@@ -1,0 +1,182 @@
+html {
+	scroll-behavior: smooth;
+}
+
+.outlined textarea {
+	font-family: Courier New, Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+		Bitstream Vera Sans Mono, monospace;
+}
+
+.m-1 {
+	margin: 0.5em;
+}
+
+#sapper {
+	height: 100%;
+}
+
+.s-app-bar {
+	// Fixes bad background-color transition on app bar
+	// when switching theme,
+	// maybe make an issue on svelte-materialify?
+	transition-property: color;
+}
+
+.s-navigation-drawer a,
+.s-list-item__content a {
+	text-decoration: none;
+}
+
+.s-list-item__content a {
+	color: inherit;
+}
+
+.s-icon {
+	transition-property: none !important;
+}
+
+.s-btn.size-x-small .s-icon {
+	width: 0.9em;
+}
+
+.theme--light .s-navigation-drawer a {
+	color: #00753b !important;
+}
+
+.theme--dark .s-navigation-drawer a,
+.theme--dark .primary-text {
+	color: #00ce68 !important;
+	caret-color: #00ce68 !important;
+}
+
+.s-dialog__content .s-row {
+	margin-left: initial !important;
+	margin-right: initial !important;
+}
+
+.s-list.nav {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.line-through {
+	text-decoration: line-through;
+}
+
+select {
+	color: inherit;
+	border: 1px solid;
+	outline: none;
+}
+
+.main {
+	padding-top: 5rem;
+}
+
+.h-full {
+	height: 100%;
+}
+
+.max-h-full {
+	max-height: 100%;
+}
+
+.w-full {
+	width: 100%;
+}
+
+.h-screen {
+	height: 100vh;
+}
+
+.m-0 {
+	margin: 0 !important;
+}
+
+.overflow-y-auto {
+	overflow-y: auto;
+}
+
+.s-table,
+.list-item-group-wrapper {
+	border-radius: 5px;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.s-table > thead > tr > td {
+	padding: 15px 16px !important;
+}
+
+.table-row-actions {
+	padding: 0 !important;
+}
+
+.theme--light .s-table,
+.theme--light .list-item-group-wrapper {
+	border-color: #cecece;
+}
+
+.theme--dark .s-table,
+.theme--dark,
+.list-item-group-wrapper {
+	border-color: #424040;
+}
+
+.list-item-group-wrapper {
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.s-btn.disabled:not(.flat):not(.text):not(.outlined) {
+	background-color: var(--theme-buttons-disabled) !important;
+}
+
+@media (min-width: 400px) {
+	body {
+		font-size: 16px;
+	}
+}
+
+/* medium screens and up */
+@media (min-width: 768px) {
+	.md\:flex-row {
+		flex-direction: row;
+	}
+
+	.md\:max-width-initial {
+		max-width: initial;
+	}
+
+	.md\:d-none {
+		display: none !important;
+	}
+}
+
+/* large screens and up */
+@media (min-width: 1024px) {
+	.lg\:flex-row {
+		flex-direction: row;
+	}
+}
+
+// medium screens and up
+@media (min-width: 768px) {
+	.main {
+		transition-duration: 0.2s;
+		transition-property: padding-left, padding-right;
+		will-change: padding-left, padding-right;
+	}
+
+	.s-navigation-drawer.active ~ .main {
+		padding: 5rem 7rem 5rem 13rem;
+	}
+}
+
+/* medium screens and down */
+/* @media (max-width: 768px) {
+	.md-and-down\:d-none {
+		display: none;
+	}
+} */

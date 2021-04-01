@@ -12,3 +12,4 @@ target/
 .idea/
 *.iml
 *.iws
+wireframes/vlingo-auth-ui
