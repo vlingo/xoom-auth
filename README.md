@@ -1,18 +1,18 @@
-# vlingo-auth
+# xoom-auth
 
-[![Javadocs](http://javadoc.io/badge/io.vlingo/vlingo-auth.svg?color=brightgreen)](http://javadoc.io/doc/io.vlingo/vlingo-auth) [![Build](https://github.com/vlingo/vlingo-auth/workflows/Build/badge.svg)](https://github.com/vlingo/vlingo-auth/actions?query=workflow%3ABuild) [![Download](https://img.shields.io/maven-central/v/io.vlingo/vlingo-auth?label=maven)](https://search.maven.org/artifact/io.vlingo/vlingo-auth) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/vlingo-platform-java/community)
+[![Javadocs](http://javadoc.io/badge/io.vlingo.xoom/xoom-auth.svg?color=brightgreen)](http://javadoc.io/doc/io.vlingo.xoom/xoom-auth) [![Build](https://github.com/vlingo/xoom-auth/workflows/Build/badge.svg)](https://github.com/vlingo/xoom-auth/actions?query=workflow%3ABuild) [![Download](https://img.shields.io/maven-central/v/io.vlingo.xoom/xoom-auth?label=maven)](https://search.maven.org/artifact/io.vlingo.xoom/xoom-auth) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/vlingo-platform-java/community)
 
 The VLINGO XOOM platform SDK authentication and authorization service. This can be used by XOOM platform components and also might be suitable for hosted platform services and applications.
 
-Docs: https://docs.vlingo.io/vlingo-auth
+Docs: https://docs.vlingo.io/xoom-auth
 
 ### Installation
 
 ```xml
   <dependencies>
     <dependency>
-      <groupId>io.vlingo</groupId>
-      <artifactId>vlingo-auth</artifactId>
+      <groupId>io.vlingo.xoom</groupId>
+      <artifactId>xoom-auth</artifactId>
       <version>1.6.0</version>
       <scope>compile</scope>
     </dependency>
@@ -21,7 +21,7 @@ Docs: https://docs.vlingo.io/vlingo-auth
 
 ```gradle
 dependencies {
-    compile 'io.vlingo:vlingo-auth:1.6.0'
+    compile 'io.vlingo.xoom:xoom-auth:1.6.0'
 }
 ```
 
