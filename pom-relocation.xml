@@ -4,7 +4,7 @@
   <artifactId>vlingo-auth</artifactId>
   <version>1.6.1-SNAPSHOT</version>
   <name>vlingo-auth</name>
-  <description>The reactive, scalable, and resilient authentication and authorization service for vlingo/platform components, and also suitable for hosted platform services and applications.</description>
+  <description>The reactive, scalable, and resilient authentication and authorization service for VLINGO XOOM Platform components, and also suitable for hosted platform services and applications.</description>
   <url>https://github.com/vlingo/xoom-auth</url>
   <licenses>
     <license>
@@ -15,7 +15,7 @@
   <developers>
     <developer>
       <id>vlingo</id>
-      <name>vlingo/PLATFORM Team</name>
+      <name>VLINGO XOOM Team</name>
       <email>info@vlingo.io</email>
       <organization>vlingo</organization>
       <organizationUrl>https://vlingo.io/contributors/</organizationUrl>
