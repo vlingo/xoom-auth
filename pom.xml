@@ -30,6 +30,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <graalvm.version>21.1.0</graalvm.version>
   </properties>
   <build>
     <plugins>
@@ -101,14 +102,24 @@
       <artifactId>xoom-http</artifactId>
       <version>1.7.6-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.graalvm.sdk</groupId>
+      <artifactId>graal-sdk</artifactId>
+      <version>${graalvm.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <repositories>
     <repository>
       <id>ossrh-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-      <releases><enabled>false</enabled></releases>
-      <snapshots><enabled>true</enabled></snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
   </repositories>
 
@@ -133,6 +144,8 @@
               <imageName>${project.name}</imageName>
               <buildArgs>
             --no-fallback --shared 
+            --initialize-at-run-time=io.netty
+            --allow-incomplete-classpath
         </buildArgs>
             </configuration>
           </plugin>
