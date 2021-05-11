@@ -14,18 +14,18 @@ import org.graalvm.nativeimage.c.type.CTypeConversion;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class NativeImpl {
-    @CEntryPoint(name = "Java_io_vlingo_xoom_authnative_Native_start")
-    public static int start(@CEntryPoint.IsolateThreadContext long isolateId, CCharPointer name) {
-        final String nameString = CTypeConversion.toJavaString(name);
-        final AtomicInteger baseServerPort = new AtomicInteger(19090);
-        World world = World.start(nameString);
+  @CEntryPoint(name = "Java_io_vlingo_xoom_authnative_Native_start")
+  public static int start(@CEntryPoint.IsolateThreadContext long isolateId, CCharPointer name) {
+    final String nameString = CTypeConversion.toJavaString(name);
+    final AtomicInteger baseServerPort = new AtomicInteger(19090);
+    World world = World.start(nameString);
 
-        int serverPort = baseServerPort.getAndIncrement();
+    int serverPort = baseServerPort.getAndIncrement();
 
-        ResponseChannelConsumer consumer = world.actorFor(ResponseChannelConsumer.class, null);
+    ResponseChannelConsumer consumer = world.actorFor(ResponseChannelConsumer.class, null);
 
-        ClientRequestResponseChannel client = new NettyClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240);
+    ClientRequestResponseChannel client = new NettyClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240);
 
-        return 0;
-    }
+    return 0;
+  }
 }
