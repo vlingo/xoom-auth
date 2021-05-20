@@ -1,4 +1,4 @@
-package io.vlingo.xoom.auth.nativebuild;
+package nativebuild;
 
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.wire.channel.ResponseChannelConsumer;
