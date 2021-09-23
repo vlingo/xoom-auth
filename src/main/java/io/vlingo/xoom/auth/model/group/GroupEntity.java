@@ -41,35 +41,35 @@ public final class GroupEntity extends EventSourced implements Group {
   }
 
   @Override
-  public Completes<GroupState> assignGroup(final String id, final String tenantId) {
+  public Completes<GroupState> assignGroup(final String tenantId) {
     /**
      * TODO: Implement command logic. See {@link GroupState#assignGroup()}
      */
-    return apply(new GroupAssignedToGroup(state.id, id, tenantId), () -> state);
+    return apply(new GroupAssignedToGroup(state.id, tenantId), () -> state);
   }
 
   @Override
-  public Completes<GroupState> unassignGroup(final String id, final String tenantId) {
+  public Completes<GroupState> unassignGroup(final String tenantId) {
     /**
      * TODO: Implement command logic. See {@link GroupState#unassignGroup()}
      */
-    return apply(new GroupUnassignedFromGroup(state.id, id, tenantId), () -> state);
+    return apply(new GroupUnassignedFromGroup(state.id, tenantId), () -> state);
   }
 
   @Override
-  public Completes<GroupState> assignUser(final String id, final String tenantId) {
+  public Completes<GroupState> assignUser(final String tenantId) {
     /**
      * TODO: Implement command logic. See {@link GroupState#assignUser()}
      */
-    return apply(new UserAssignedToGroup(state.id, id, tenantId), () -> state);
+    return apply(new UserAssignedToGroup(state.id, tenantId), () -> state);
   }
 
   @Override
-  public Completes<GroupState> unassignUser(final String id, final String tenantId) {
+  public Completes<GroupState> unassignUser(final String tenantId) {
     /**
      * TODO: Implement command logic. See {@link GroupState#unassignUser()}
      */
-    return apply(new UserUnassignedFromGroup(state.id, id, tenantId), () -> state);
+    return apply(new UserUnassignedFromGroup(state.id, tenantId), () -> state);
   }
 
   private void applyGroupProvisioned(final GroupProvisioned event) {
@@ -81,19 +81,19 @@ public final class GroupEntity extends EventSourced implements Group {
   }
 
   private void applyGroupAssignedToGroup(final GroupAssignedToGroup event) {
-    state = state.assignGroup(event.id, event.tenantId);
+    state = state.assignGroup(event.tenantId);
   }
 
   private void applyGroupUnassignedFromGroup(final GroupUnassignedFromGroup event) {
-    state = state.unassignGroup(event.id, event.tenantId);
+    state = state.unassignGroup(event.tenantId);
   }
 
   private void applyUserAssignedToGroup(final UserAssignedToGroup event) {
-    state = state.assignUser(event.id, event.tenantId);
+    state = state.assignUser(event.tenantId);
   }
 
   private void applyUserUnassignedFromGroup(final UserUnassignedFromGroup event) {
-    state = state.unassignUser(event.id, event.tenantId);
+    state = state.unassignUser(event.tenantId);
   }
 
   /*

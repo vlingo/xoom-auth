@@ -16,13 +16,11 @@ public final class PermissionConstraintEnforced extends IdentifiedDomainEvent {
 
   public final String id;
   public final Constraint constraint;
-  public final String tenantId;
 
-  public PermissionConstraintEnforced(final String id, final Constraint constraint, final String tenantId) {
+  public PermissionConstraintEnforced(final String id, final Constraint constraint) {
     super(SemanticVersion.from("1.0.0").toValue());
     this.id = id;
     this.constraint = constraint;
-    this.tenantId = tenantId;
   }
 
   @Override

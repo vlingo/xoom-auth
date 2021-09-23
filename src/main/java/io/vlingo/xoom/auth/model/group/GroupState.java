@@ -29,24 +29,24 @@ public final class GroupState {
     return new GroupState(this.id, this.name, description, tenantId);
   }
 
-  public GroupState assignGroup(final String id, final String tenantId) {
+  public GroupState assignGroup(final String tenantId) {
     //TODO: Implement command logic.
-    return new GroupState(id, this.name, this.description, tenantId);
+    return new GroupState(this.id, this.name, this.description, tenantId);
   }
 
-  public GroupState unassignGroup(final String id, final String tenantId) {
+  public GroupState unassignGroup(final String tenantId) {
     //TODO: Implement command logic.
-    return new GroupState(id, this.name, this.description, tenantId);
+    return new GroupState(this.id, this.name, this.description, tenantId);
   }
 
-  public GroupState assignUser(final String id, final String tenantId) {
+  public GroupState assignUser(final String tenantId) {
     //TODO: Implement command logic.
-    return new GroupState(id, this.name, this.description, tenantId);
+    return new GroupState(this.id, this.name, this.description, tenantId);
   }
 
-  public GroupState unassignUser(final String id, final String tenantId) {
+  public GroupState unassignUser(final String tenantId) {
     //TODO: Implement command logic.
-    return new GroupState(id, this.name, this.description, tenantId);
+    return new GroupState(this.id, this.name, this.description, tenantId);
   }
 
 }

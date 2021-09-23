@@ -49,74 +49,77 @@ public class TenantEntityTest {
     tenant = world.actorFor(Tenant.class, TenantEntity.class, "#1");
   }
 
+  private static final String NAME_FOR_SUBSCRIBE_FOR_TEST = "tenant-name";
+  private static final String DESCRIPTION_FOR_SUBSCRIBE_FOR_TEST = "tenant-description";
+  private static final boolean ACTIVE_FOR_SUBSCRIBE_FOR_TEST = true;
 
   @Test
   public void subscribeFor() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    tenant.subscribeFor().await();
+    final TenantState state = tenant.subscribeFor(NAME_FOR_SUBSCRIBE_FOR_TEST, DESCRIPTION_FOR_SUBSCRIBE_FOR_TEST, ACTIVE_FOR_SUBSCRIBE_FOR_TEST).await();
 
+    assertEquals(state.name, "tenant-name");
+    assertEquals(state.description, "tenant-description");
+    assertEquals(state.active, true);
     assertEquals(1, (int) dispatcherAccess.readFrom("entriesCount"));
     assertEquals(TenantSubscribed.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 0)).typeName());
   }
 
-  private static final String ID_FOR_ACTIVATE_TEST = "updated-1";
 
   @Test
   public void activate() {
-    _createEntity();
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final TenantState state = tenant.activate(ID_FOR_ACTIVATE_TEST).await();
+    tenant.activate().await();
 
-    assertEquals(state.id, "updated-1");
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(TenantActivated.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEquals(1, (int) dispatcherAccess.readFrom("entriesCount"));
+    assertEquals(TenantActivated.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 0)).typeName());
   }
 
-  private static final String ID_FOR_DEACTIVATE_TEST = "updated-1";
 
   @Test
   public void deactivate() {
-    _createEntity();
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final TenantState state = tenant.deactivate(ID_FOR_DEACTIVATE_TEST).await();
+    tenant.deactivate().await();
 
-    assertEquals(state.id, "updated-1");
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(TenantDeactivated.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEquals(1, (int) dispatcherAccess.readFrom("entriesCount"));
+    assertEquals(TenantDeactivated.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 0)).typeName());
   }
 
-  private static final String ID_FOR_CHANGE_NAME_TEST = "updated-1";
   private static final String NAME_FOR_CHANGE_NAME_TEST = "updated-tenant-name";
 
   @Test
   public void changeName() {
     _createEntity();
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final TenantState state = tenant.changeName(ID_FOR_CHANGE_NAME_TEST, NAME_FOR_CHANGE_NAME_TEST).await();
+    final TenantState state = tenant.changeName(NAME_FOR_CHANGE_NAME_TEST).await();
 
-    assertEquals(state.id, "updated-1");
+    assertEquals(state.description, "tenant-description");
+    assertEquals(state.active, true);
     assertEquals(state.name, "updated-tenant-name");
     assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
     assertEquals(TenantNameChanged.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
   }
 
-  private static final String ID_FOR_CHANGE_DESCRIPTION_TEST = "updated-1";
   private static final String DESCRIPTION_FOR_CHANGE_DESCRIPTION_TEST = "updated-tenant-description";
 
   @Test
   public void changeDescription() {
     _createEntity();
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final TenantState state = tenant.changeDescription(ID_FOR_CHANGE_DESCRIPTION_TEST, DESCRIPTION_FOR_CHANGE_DESCRIPTION_TEST).await();
+    final TenantState state = tenant.changeDescription(DESCRIPTION_FOR_CHANGE_DESCRIPTION_TEST).await();
 
-    assertEquals(state.id, "updated-1");
+    assertEquals(state.name, "tenant-name");
+    assertEquals(state.active, true);
     assertEquals(state.description, "updated-tenant-description");
     assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
     assertEquals(TenantDescriptionChanged.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
   }
 
+  private static final String NAME_FOR_ENTITY_CREATION = "tenant-name";
+  private static final String DESCRIPTION_FOR_ENTITY_CREATION = "tenant-description";
+  private static final boolean ACTIVE_FOR_ENTITY_CREATION = true;
 
   private void _createEntity() {
-    tenant.subscribeFor().await();
+    tenant.subscribeFor(NAME_FOR_ENTITY_CREATION, DESCRIPTION_FOR_ENTITY_CREATION, ACTIVE_FOR_ENTITY_CREATION).await();
   }
 }

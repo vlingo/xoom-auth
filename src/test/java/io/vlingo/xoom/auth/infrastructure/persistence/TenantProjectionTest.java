@@ -53,7 +53,7 @@ public class TenantProjectionTest {
 
 
   private Projectable createTenantSubscribed(TenantState data) {
-    final TenantSubscribed eventData = new TenantSubscribed(data.id, );
+    final TenantSubscribed eventData = new TenantSubscribed(data.id, data.name, data.description, data.active);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantSubscribed.class, 1,
     JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
@@ -90,7 +90,7 @@ public class TenantProjectionTest {
 
 
   private Projectable createTenantActivated(TenantState data) {
-    final TenantActivated eventData = new TenantActivated(data.id, data.id);
+    final TenantActivated eventData = new TenantActivated(data.id, );
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantActivated.class, 1,
     JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
     final String projectionId = UUID.randomUUID().toString();
@@ -120,7 +120,7 @@ public class TenantProjectionTest {
 
 
   private Projectable createTenantDeactivated(TenantState data) {
-    final TenantDeactivated eventData = new TenantDeactivated(data.id, data.id);
+    final TenantDeactivated eventData = new TenantDeactivated(data.id, );
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDeactivated.class, 1,
     JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
     final String projectionId = UUID.randomUUID().toString();
@@ -150,7 +150,7 @@ public class TenantProjectionTest {
 
 
   private Projectable createTenantNameChanged(TenantState data) {
-    final TenantNameChanged eventData = new TenantNameChanged(data.id, data.id, data.name);
+    final TenantNameChanged eventData = new TenantNameChanged(data.id, data.name);
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantNameChanged.class, 1,
     JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
     final String projectionId = UUID.randomUUID().toString();
@@ -180,7 +180,7 @@ public class TenantProjectionTest {
 
 
   private Projectable createTenantDescriptionChanged(TenantState data) {
-    final TenantDescriptionChanged eventData = new TenantDescriptionChanged(data.id, data.id, data.description);
+    final TenantDescriptionChanged eventData = new TenantDescriptionChanged(data.id, data.description);
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDescriptionChanged.class, 1,
     JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
     final String projectionId = UUID.randomUUID().toString();

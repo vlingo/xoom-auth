@@ -15,15 +15,13 @@ import io.vlingo.xoom.auth.model.value.*;
 public final class PermissionProvisioned extends IdentifiedDomainEvent {
 
   public final String id;
-  public final Set<Constraint> constraints = new HashSet<>();
   public final String description;
   public final String name;
   public final String tenantId;
 
-  public PermissionProvisioned(final String id, final Set<Constraint> constraints, final String description, final String name, final String tenantId) {
+  public PermissionProvisioned(final String id, final String description, final String name, final String tenantId) {
     super(SemanticVersion.from("1.0.0").toValue());
     this.id = id;
-    this.constraints.addAll(constraints);
     this.description = description;
     this.name = name;
     this.tenantId = tenantId;

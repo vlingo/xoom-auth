@@ -24,63 +24,63 @@ public final class TenantEntity extends EventSourced implements Tenant {
   }
 
   @Override
-  public Completes<TenantState> subscribeFor() {
+  public Completes<TenantState> subscribeFor(final String name, final String description, final boolean active) {
     /**
      * TODO: Implement command logic. See {@link TenantState#subscribeFor()}
      */
-    return apply(new TenantSubscribed(state.id), () -> state);
+    return apply(new TenantSubscribed(state.id, name, description, active), () -> state);
   }
 
   @Override
-  public Completes<TenantState> activate(final String id) {
+  public Completes<TenantState> activate() {
     /**
      * TODO: Implement command logic. See {@link TenantState#activate()}
      */
-    return apply(new TenantActivated(state.id, id), () -> state);
+    return apply(new TenantActivated(state.id), () -> state);
   }
 
   @Override
-  public Completes<TenantState> deactivate(final String id) {
+  public Completes<TenantState> deactivate() {
     /**
      * TODO: Implement command logic. See {@link TenantState#deactivate()}
      */
-    return apply(new TenantDeactivated(state.id, id), () -> state);
+    return apply(new TenantDeactivated(state.id), () -> state);
   }
 
   @Override
-  public Completes<TenantState> changeName(final String id, final String name) {
+  public Completes<TenantState> changeName(final String name) {
     /**
      * TODO: Implement command logic. See {@link TenantState#changeName()}
      */
-    return apply(new TenantNameChanged(state.id, id, name), () -> state);
+    return apply(new TenantNameChanged(state.id, name), () -> state);
   }
 
   @Override
-  public Completes<TenantState> changeDescription(final String id, final String description) {
+  public Completes<TenantState> changeDescription(final String description) {
     /**
      * TODO: Implement command logic. See {@link TenantState#changeDescription()}
      */
-    return apply(new TenantDescriptionChanged(state.id, id, description), () -> state);
+    return apply(new TenantDescriptionChanged(state.id, description), () -> state);
   }
 
   private void applyTenantSubscribed(final TenantSubscribed event) {
-    state = state.subscribeFor();
+    state = state.subscribeFor(event.name, event.description, event.active);
   }
 
   private void applyTenantActivated(final TenantActivated event) {
-    state = state.activate(event.id);
+    state = state.activate();
   }
 
   private void applyTenantDeactivated(final TenantDeactivated event) {
-    state = state.deactivate(event.id);
+    state = state.deactivate();
   }
 
   private void applyTenantNameChanged(final TenantNameChanged event) {
-    state = state.changeName(event.id, event.name);
+    state = state.changeName(event.name);
   }
 
   private void applyTenantDescriptionChanged(final TenantDescriptionChanged event) {
-    state = state.changeDescription(event.id, event.description);
+    state = state.changeDescription(event.description);
   }
 
   /*

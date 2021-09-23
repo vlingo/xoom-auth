@@ -16,13 +16,11 @@ public final class PermissionConstraintForgotten extends IdentifiedDomainEvent {
 
   public final String id;
   public final Constraint constraint;
-  public final String tenantId;
 
-  public PermissionConstraintForgotten(final String id, final Constraint constraint, final String tenantId) {
+  public PermissionConstraintForgotten(final String id, final Constraint constraint) {
     super(SemanticVersion.from("1.0.0").toValue());
     this.id = id;
     this.constraint = constraint;
-    this.tenantId = tenantId;
   }
 
   @Override

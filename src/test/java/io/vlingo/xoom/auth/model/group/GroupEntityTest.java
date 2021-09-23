@@ -83,69 +83,61 @@ public class GroupEntityTest {
     assertEquals(GroupDescriptionChanged.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
   }
 
-  private static final String ID_FOR_ASSIGN_GROUP_TEST = "updated-1";
   private static final String TENANT_ID_FOR_ASSIGN_GROUP_TEST = "updated-group-tenantId";
 
   @Test
   public void assignGroup() {
     _createEntity();
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final GroupState state = group.assignGroup(ID_FOR_ASSIGN_GROUP_TEST, TENANT_ID_FOR_ASSIGN_GROUP_TEST).await();
+    final GroupState state = group.assignGroup(TENANT_ID_FOR_ASSIGN_GROUP_TEST).await();
 
     assertEquals(state.name, "group-name");
     assertEquals(state.description, "group-description");
-    assertEquals(state.id, "updated-1");
     assertEquals(state.tenantId, "updated-group-tenantId");
     assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
     assertEquals(GroupAssignedToGroup.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
   }
 
-  private static final String ID_FOR_UNASSIGN_GROUP_TEST = "updated-1";
   private static final String TENANT_ID_FOR_UNASSIGN_GROUP_TEST = "updated-group-tenantId";
 
   @Test
   public void unassignGroup() {
     _createEntity();
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final GroupState state = group.unassignGroup(ID_FOR_UNASSIGN_GROUP_TEST, TENANT_ID_FOR_UNASSIGN_GROUP_TEST).await();
+    final GroupState state = group.unassignGroup(TENANT_ID_FOR_UNASSIGN_GROUP_TEST).await();
 
     assertEquals(state.name, "group-name");
     assertEquals(state.description, "group-description");
-    assertEquals(state.id, "updated-1");
     assertEquals(state.tenantId, "updated-group-tenantId");
     assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
     assertEquals(GroupUnassignedFromGroup.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
   }
 
-  private static final String ID_FOR_ASSIGN_USER_TEST = "updated-1";
   private static final String TENANT_ID_FOR_ASSIGN_USER_TEST = "updated-group-tenantId";
 
   @Test
   public void assignUser() {
     _createEntity();
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final GroupState state = group.assignUser(ID_FOR_ASSIGN_USER_TEST, TENANT_ID_FOR_ASSIGN_USER_TEST).await();
+    final GroupState state = group.assignUser(TENANT_ID_FOR_ASSIGN_USER_TEST).await();
 
     assertEquals(state.name, "group-name");
     assertEquals(state.description, "group-description");
-    assertEquals(state.id, "updated-1");
     assertEquals(state.tenantId, "updated-group-tenantId");
     assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
     assertEquals(UserAssignedToGroup.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
   }
 
-  private static final String ID_FOR_UNASSIGN_USER_TEST = "updated-1";
   private static final String TENANT_ID_FOR_UNASSIGN_USER_TEST = "updated-group-tenantId";
 
   @Test
   public void unassignUser() {
     _createEntity();
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final GroupState state = group.unassignUser(ID_FOR_UNASSIGN_USER_TEST, TENANT_ID_FOR_UNASSIGN_USER_TEST).await();
+    final GroupState state = group.unassignUser(TENANT_ID_FOR_UNASSIGN_USER_TEST).await();
 
     assertEquals(state.name, "group-name");
     assertEquals(state.description, "group-description");
-    assertEquals(state.id, "updated-1");
     assertEquals(state.tenantId, "updated-group-tenantId");
     assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
     assertEquals(UserUnassignedFromGroup.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());

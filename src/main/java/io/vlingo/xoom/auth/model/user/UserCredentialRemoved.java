@@ -15,15 +15,11 @@ import io.vlingo.xoom.auth.model.value.*;
 public final class UserCredentialRemoved extends IdentifiedDomainEvent {
 
   public final String id;
-  public final String tenantId;
-  public final String username;
   public final Credential credential;
 
-  public UserCredentialRemoved(final String id, final String tenantId, final String username, final Credential credential) {
+  public UserCredentialRemoved(final String id, final Credential credential) {
     super(SemanticVersion.from("1.0.0").toValue());
     this.id = id;
-    this.tenantId = tenantId;
-    this.username = username;
     this.credential = credential;
   }
 

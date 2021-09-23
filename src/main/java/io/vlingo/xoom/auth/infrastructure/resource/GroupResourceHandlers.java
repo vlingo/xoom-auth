@@ -36,22 +36,22 @@ public class GroupResourceHandlers {
 
   public static final HandlerEntry<Three<Completes<GroupState>, Group, GroupData>> ASSIGN_GROUP_HANDLER =
           HandlerEntry.of(ASSIGN_GROUP, (group, data) -> {
-              return group.assignGroup(data.id, data.tenantId);
+              return group.assignGroup(data.tenantId);
           });
 
   public static final HandlerEntry<Three<Completes<GroupState>, Group, GroupData>> UNASSIGN_GROUP_HANDLER =
           HandlerEntry.of(UNASSIGN_GROUP, (group, data) -> {
-              return group.unassignGroup(data.id, data.tenantId);
+              return group.unassignGroup(data.tenantId);
           });
 
   public static final HandlerEntry<Three<Completes<GroupState>, Group, GroupData>> ASSIGN_USER_HANDLER =
           HandlerEntry.of(ASSIGN_USER, (group, data) -> {
-              return group.assignUser(data.id, data.tenantId);
+              return group.assignUser(data.tenantId);
           });
 
   public static final HandlerEntry<Three<Completes<GroupState>, Group, GroupData>> UNASSIGN_USER_HANDLER =
           HandlerEntry.of(UNASSIGN_USER, (group, data) -> {
-              return group.unassignUser(data.id, data.tenantId);
+              return group.unassignUser(data.tenantId);
           });
 
   public static final HandlerEntry<Two<GroupData, GroupState>> ADAPT_STATE_HANDLER =

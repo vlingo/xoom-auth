@@ -25,27 +25,27 @@ public class TenantResourceHandlers {
 
   public static final HandlerEntry<Three<Completes<TenantState>, Stage, TenantData>> SUBSCRIBE_FOR_HANDLER =
           HandlerEntry.of(SUBSCRIBE_FOR, ($stage, data) -> {
-              return Tenant.subscribeFor($stage);
+              return Tenant.subscribeFor($stage, data.name, data.description, data.active);
           });
 
   public static final HandlerEntry<Three<Completes<TenantState>, Tenant, TenantData>> ACTIVATE_HANDLER =
           HandlerEntry.of(ACTIVATE, (tenant, data) -> {
-              return tenant.activate(data.id);
+              return tenant.activate();
           });
 
   public static final HandlerEntry<Three<Completes<TenantState>, Tenant, TenantData>> DEACTIVATE_HANDLER =
           HandlerEntry.of(DEACTIVATE, (tenant, data) -> {
-              return tenant.deactivate(data.id);
+              return tenant.deactivate();
           });
 
   public static final HandlerEntry<Three<Completes<TenantState>, Tenant, TenantData>> CHANGE_DESCRIPTION_HANDLER =
           HandlerEntry.of(CHANGE_DESCRIPTION, (tenant, data) -> {
-              return tenant.changeDescription(data.id, data.description);
+              return tenant.changeDescription(data.description);
           });
 
   public static final HandlerEntry<Three<Completes<TenantState>, Tenant, TenantData>> CHANGE_NAME_HANDLER =
           HandlerEntry.of(CHANGE_NAME, (tenant, data) -> {
-              return tenant.changeName(data.id, data.name);
+              return tenant.changeName(data.name);
           });
 
   public static final HandlerEntry<Two<TenantData, TenantState>> ADAPT_STATE_HANDLER =

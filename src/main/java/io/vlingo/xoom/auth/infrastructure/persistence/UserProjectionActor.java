@@ -66,7 +66,7 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
           final UserCredentialAdded typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
           previousData.credentials.add(credential);
-          merged = UserData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
           break;
         }
 
@@ -74,7 +74,7 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
           final UserCredentialRemoved typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
           previousData.credentials.remove(credential);
-          merged = UserData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
           break;
         }
 
@@ -82,7 +82,7 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
           final UserCredentialReplaced typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
           previousData.credentials.add(credential);
-          merged = UserData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
           break;
         }
 

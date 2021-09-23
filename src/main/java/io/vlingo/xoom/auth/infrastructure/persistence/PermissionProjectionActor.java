@@ -1,6 +1,7 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.auth.model.permission.*;
+import java.util.*;
 import io.vlingo.xoom.auth.infrastructure.*;
 
 import io.vlingo.xoom.lattice.model.projection.Projectable;
@@ -43,7 +44,7 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
       switch (Events.valueOf(event.typeName())) {
         case PermissionProvisioned: {
           final PermissionProvisioned typedEvent = typed(event);
-          merged = PermissionData.from(typedEvent.id, ConstraintData.from(typedEvent.constraints), typedEvent.description, typedEvent.name, typedEvent.tenantId);
+          merged = PermissionData.from(typedEvent.id, new HashSet<>(), typedEvent.description, typedEvent.name, typedEvent.tenantId);
           break;
         }
 
@@ -51,7 +52,7 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
           final PermissionConstraintEnforced typedEvent = typed(event);
           final ConstraintData constraint = ConstraintData.from(typedEvent.constraint);
           previousData.constraints.add(constraint);
-          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.description, previousData.name, typedEvent.tenantId);
+          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.description, previousData.name, previousData.tenantId);
           break;
         }
 
@@ -59,7 +60,7 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
           final PermissionConstraintReplacementEnforced typedEvent = typed(event);
           final ConstraintData constraint = ConstraintData.from(typedEvent.constraint);
           previousData.constraints.add(constraint);
-          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.description, previousData.name, typedEvent.tenantId);
+          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.description, previousData.name, previousData.tenantId);
           break;
         }
 
@@ -67,7 +68,7 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
           final PermissionConstraintForgotten typedEvent = typed(event);
           final ConstraintData constraint = ConstraintData.from(typedEvent.constraint);
           previousData.constraints.add(constraint);
-          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.description, previousData.name, typedEvent.tenantId);
+          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.description, previousData.name, previousData.tenantId);
           break;
         }
 

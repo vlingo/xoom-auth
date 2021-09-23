@@ -120,7 +120,7 @@ public class GroupProjectionTest {
 
 
   private Projectable createGroupAssignedToGroup(GroupState data) {
-    final GroupAssignedToGroup eventData = new GroupAssignedToGroup(data.id, data.id, data.tenantId);
+    final GroupAssignedToGroup eventData = new GroupAssignedToGroup(data.id, data.tenantId);
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupAssignedToGroup.class, 1,
     JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
     final String projectionId = UUID.randomUUID().toString();
@@ -150,7 +150,7 @@ public class GroupProjectionTest {
 
 
   private Projectable createGroupUnassignedFromGroup(GroupState data) {
-    final GroupUnassignedFromGroup eventData = new GroupUnassignedFromGroup(data.id, data.id, data.tenantId);
+    final GroupUnassignedFromGroup eventData = new GroupUnassignedFromGroup(data.id, data.tenantId);
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupUnassignedFromGroup.class, 1,
     JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
     final String projectionId = UUID.randomUUID().toString();
@@ -180,7 +180,7 @@ public class GroupProjectionTest {
 
 
   private Projectable createUserAssignedToGroup(GroupState data) {
-    final UserAssignedToGroup eventData = new UserAssignedToGroup(data.id, data.id, data.tenantId);
+    final UserAssignedToGroup eventData = new UserAssignedToGroup(data.id, data.tenantId);
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserAssignedToGroup.class, 1,
     JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
     final String projectionId = UUID.randomUUID().toString();
@@ -210,7 +210,7 @@ public class GroupProjectionTest {
 
 
   private Projectable createUserUnassignedFromGroup(GroupState data) {
-    final UserUnassignedFromGroup eventData = new UserUnassignedFromGroup(data.id, data.id, data.tenantId);
+    final UserUnassignedFromGroup eventData = new UserUnassignedFromGroup(data.id, data.tenantId);
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserUnassignedFromGroup.class, 1,
     JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
     final String projectionId = UUID.randomUUID().toString();

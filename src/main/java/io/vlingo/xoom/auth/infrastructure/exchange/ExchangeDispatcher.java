@@ -29,8 +29,8 @@ import io.vlingo.xoom.auth.model.user.UserCredentialRemoved;
 import io.vlingo.xoom.auth.model.permission.PermissionConstraintForgotten;
 import io.vlingo.xoom.auth.model.role.UserAssignedToRole;
 import io.vlingo.xoom.auth.model.group.GroupDescriptionChanged;
-import io.vlingo.xoom.auth.model.group.UserAssignedToGroup;
 import io.vlingo.xoom.auth.model.tenant.TenantSubscribed;
+import io.vlingo.xoom.auth.model.group.UserAssignedToGroup;
 import io.vlingo.xoom.auth.model.tenant.TenantNameChanged;
 import io.vlingo.xoom.auth.model.group.GroupProvisioned;
 import io.vlingo.xoom.auth.model.role.UserUnassignedFromRole;
@@ -44,8 +44,8 @@ import io.vlingo.xoom.auth.model.user.UserDeactivated;
 import io.vlingo.xoom.auth.model.role.RolePermissionAttached;
 import io.vlingo.xoom.auth.model.permission.PermissionConstraintEnforced;
 import io.vlingo.xoom.auth.model.group.GroupUnassignedFromGroup;
-import io.vlingo.xoom.auth.model.group.UserUnassignedFromGroup;
 import io.vlingo.xoom.auth.model.tenant.TenantDescriptionChanged;
+import io.vlingo.xoom.auth.model.group.UserUnassignedFromGroup;
 
 /**
  * See
@@ -73,11 +73,11 @@ public class ExchangeDispatcher implements Dispatcher<Dispatchable<Entry<String>
     this.eventsByExchangeName.get("xoom-auth").add(UserCredentialRemoved.class.getCanonicalName());
     this.eventsByExchangeName.get("xoom-auth").add(PermissionConstraintEnforced.class.getCanonicalName());
     this.eventsByExchangeName.get("xoom-auth").add(GroupAssignedToGroup.class.getCanonicalName());
-    this.eventsByExchangeName.get("xoom-auth").add(UserCredentialReplaced.class.getCanonicalName());
     this.eventsByExchangeName.get("xoom-auth").add(TenantNameChanged.class.getCanonicalName());
+    this.eventsByExchangeName.get("xoom-auth").add(UserCredentialReplaced.class.getCanonicalName());
     this.eventsByExchangeName.get("xoom-auth").add(GroupAssignedToRole.class.getCanonicalName());
-    this.eventsByExchangeName.get("xoom-auth").add(GroupDescriptionChanged.class.getCanonicalName());
     this.eventsByExchangeName.get("xoom-auth").add(GroupUnassignedFromRole.class.getCanonicalName());
+    this.eventsByExchangeName.get("xoom-auth").add(GroupDescriptionChanged.class.getCanonicalName());
     this.eventsByExchangeName.get("xoom-auth").add(GroupUnassignedFromGroup.class.getCanonicalName());
     this.eventsByExchangeName.get("xoom-auth").add(RoleProvisioned.class.getCanonicalName());
     this.eventsByExchangeName.get("xoom-auth").add(UserUnassignedFromGroup.class.getCanonicalName());

@@ -16,12 +16,12 @@ public interface Group {
 
   Completes<GroupState> changeDescription(final String description, final String tenantId);
 
-  Completes<GroupState> assignGroup(final String id, final String tenantId);
+  Completes<GroupState> assignGroup(final String tenantId);
 
-  Completes<GroupState> unassignGroup(final String id, final String tenantId);
+  Completes<GroupState> unassignGroup(final String tenantId);
 
-  Completes<GroupState> assignUser(final String id, final String tenantId);
+  Completes<GroupState> assignUser(final String tenantId);
 
-  Completes<GroupState> unassignUser(final String id, final String tenantId);
+  Completes<GroupState> unassignUser(final String tenantId);
 
 }

@@ -19,29 +19,29 @@ public final class TenantState {
     this.active = active;
   }
 
-  public TenantState subscribeFor() {
+  public TenantState subscribeFor(final String name, final String description, final boolean active) {
+    //TODO: Implement command logic.
+    return new TenantState(this.id, name, description, active);
+  }
+
+  public TenantState activate() {
     //TODO: Implement command logic.
     return new TenantState(this.id, this.name, this.description, this.active);
   }
 
-  public TenantState activate(final String id) {
+  public TenantState deactivate() {
     //TODO: Implement command logic.
-    return new TenantState(id, this.name, this.description, this.active);
+    return new TenantState(this.id, this.name, this.description, this.active);
   }
 
-  public TenantState deactivate(final String id) {
+  public TenantState changeName(final String name) {
     //TODO: Implement command logic.
-    return new TenantState(id, this.name, this.description, this.active);
+    return new TenantState(this.id, name, this.description, this.active);
   }
 
-  public TenantState changeName(final String id, final String name) {
+  public TenantState changeDescription(final String description) {
     //TODO: Implement command logic.
-    return new TenantState(id, name, this.description, this.active);
-  }
-
-  public TenantState changeDescription(final String id, final String description) {
-    //TODO: Implement command logic.
-    return new TenantState(id, this.name, description, this.active);
+    return new TenantState(this.id, this.name, description, this.active);
   }
 
 }
