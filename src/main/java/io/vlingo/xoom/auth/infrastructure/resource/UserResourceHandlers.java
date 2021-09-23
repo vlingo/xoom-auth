@@ -26,52 +26,52 @@ public class UserResourceHandlers {
   public static final int USER_OF = 8;
   public static final int ADAPT_STATE = 9;
 
-  public static final HandlerEntry<Three<Completes<UserState>, Stage, UserData>> REGISTER_USER_HANDLER =
+  public static final HandlerEntry<Three<Completes<UserState>, Stage, UserRegistrationData>> REGISTER_USER_HANDLER =
           HandlerEntry.of(REGISTER_USER, ($stage, data) -> {
               final PersonName name = PersonName.from(data.profile.name.given, data.profile.name.family, data.profile.name.second);
               final Profile profile = Profile.from(data.profile.emailAddress, name, data.profile.phone);
               return User.registerUser($stage, data.tenantId, data.username, data.active, profile);
           });
 
-  public static final HandlerEntry<Three<Completes<UserState>, User, UserData>> ACTIVATE_HANDLER =
+  public static final HandlerEntry<Three<Completes<UserState>, User, UserRegistrationData>> ACTIVATE_HANDLER =
           HandlerEntry.of(ACTIVATE, (user, data) -> {
               return user.activate(data.tenantId, data.username);
           });
 
-  public static final HandlerEntry<Three<Completes<UserState>, User, UserData>> DEACTIVATE_HANDLER =
+  public static final HandlerEntry<Three<Completes<UserState>, User, UserRegistrationData>> DEACTIVATE_HANDLER =
           HandlerEntry.of(DEACTIVATE, (user, data) -> {
               return user.deactivate(data.tenantId, data.username);
           });
 
-  public static final HandlerEntry<Three<Completes<UserState>, User, UserData>> ADD_CREDENTIAL_HANDLER =
+  public static final HandlerEntry<Three<Completes<UserState>, User, UserRegistrationData>> ADD_CREDENTIAL_HANDLER =
           HandlerEntry.of(ADD_CREDENTIAL, (user, data) -> {
               return user.addCredential(data.credentials.stream().map(CredentialData::toCredential).findFirst().get());
           });
 
-  public static final HandlerEntry<Three<Completes<UserState>, User, UserData>> REMOVE_CREDENTIAL_HANDLER =
+  public static final HandlerEntry<Three<Completes<UserState>, User, UserRegistrationData>> REMOVE_CREDENTIAL_HANDLER =
           HandlerEntry.of(REMOVE_CREDENTIAL, (user, data) -> {
               return user.removeCredential(data.credentials.stream().map(CredentialData::toCredential).findFirst().get());
           });
 
-  public static final HandlerEntry<Three<Completes<UserState>, User, UserData>> REPLACE_CREDENTIAL_HANDLER =
+  public static final HandlerEntry<Three<Completes<UserState>, User, UserRegistrationData>> REPLACE_CREDENTIAL_HANDLER =
           HandlerEntry.of(REPLACE_CREDENTIAL, (user, data) -> {
               return user.replaceCredential(data.credentials.stream().map(CredentialData::toCredential).findFirst().get());
           });
 
-  public static final HandlerEntry<Three<Completes<UserState>, User, UserData>> REPLACE_PROFILE_HANDLER =
+  public static final HandlerEntry<Three<Completes<UserState>, User, UserRegistrationData>> REPLACE_PROFILE_HANDLER =
           HandlerEntry.of(REPLACE_PROFILE, (user, data) -> {
               final PersonName name = PersonName.from(data.profile.name.given, data.profile.name.family, data.profile.name.second);
               final Profile profile = Profile.from(data.profile.emailAddress, name, data.profile.phone);
               return user.replaceProfile(data.tenantId, data.username, profile);
           });
 
-  public static final HandlerEntry<Two<UserData, UserState>> ADAPT_STATE_HANDLER =
-          HandlerEntry.of(ADAPT_STATE, UserData::from);
+  public static final HandlerEntry<Two<UserRegistrationData, UserState>> ADAPT_STATE_HANDLER =
+          HandlerEntry.of(ADAPT_STATE, UserRegistrationData::from);
 
-  public static final HandlerEntry<Two<Completes<Collection<UserData>>, UserQueries>> QUERY_ALL_HANDLER =
+  public static final HandlerEntry<Two<Completes<Collection<UserRegistrationData>>, UserQueries>> QUERY_ALL_HANDLER =
           HandlerEntry.of(USERS, UserQueries::users);
 
-  public static final HandlerEntry<Three<Completes<UserData>, UserQueries, String>> QUERY_BY_ID_HANDLER =
+  public static final HandlerEntry<Three<Completes<UserRegistrationData>, UserQueries, String>> QUERY_BY_ID_HANDLER =
           HandlerEntry.of(USER_OF, ($queries, id) -> $queries.userOf(id));
 
 }

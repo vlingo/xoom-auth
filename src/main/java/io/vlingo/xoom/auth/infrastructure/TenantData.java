@@ -1,7 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.stream.Collectors;
@@ -10,7 +9,7 @@ import java.util.*;
 
 @SuppressWarnings("all")
 public class TenantData {
-  public final String id;
+  public final String tenantId;
   public final String name;
   public final String description;
   public final boolean active;
@@ -19,8 +18,12 @@ public class TenantData {
     return from(tenantState.id, tenantState.name, tenantState.description, tenantState.active);
   }
 
-  public static TenantData from(final String id, final String name, final String description, final boolean active) {
-    return new TenantData(id, name, description, active);
+  public static TenantData from(final String tenantId, final String name, final String description, final boolean active) {
+    return new TenantData(tenantId, name, description, active);
+  }
+
+  public static TenantData from(final String name, final String description, final boolean active) {
+    return from(UUID.randomUUID().toString(), name, description, active);
   }
 
   public static List<TenantData> fromAll(final List<TenantState> states) {
@@ -31,15 +34,19 @@ public class TenantData {
     return from(TenantState.identifiedBy(""));
   }
 
-  private TenantData (final String id, final String name, final String description, final boolean active) {
-    this.id = id;
+  private TenantData (final String tenantId, final String name, final String description, final boolean active) {
+    this.tenantId = tenantId;
     this.name = name;
     this.description = description;
     this.active = active;
   }
 
   public TenantState toTenantState() {
-    return new TenantState(id, name, description, active);
+    return new TenantState(tenantId, name, description, active);
+  }
+
+  public TenantData withTenantId(String tenantId) {
+    return from(tenantId, this.name, this.description, this.active);
   }
 
   @Override
@@ -52,7 +59,7 @@ public class TenantData {
     }
     TenantData another = (TenantData) other;
     return new EqualsBuilder()
-              .append(this.id, another.id)
+              .append(this.tenantId, another.tenantId)
               .append(this.name, another.name)
               .append(this.description, another.description)
               .append(this.active, another.active)
@@ -62,11 +69,10 @@ public class TenantData {
   @Override
   public String toString() {
     return new ToStringBuilder(this, ToStringStyle.DEFAULT_STYLE)
-              .append("id", id)
+              .append("id", tenantId)
               .append("name", name)
               .append("description", description)
               .append("active", active)
               .toString();
   }
-
 }

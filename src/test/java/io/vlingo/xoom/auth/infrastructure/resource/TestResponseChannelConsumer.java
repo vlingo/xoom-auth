@@ -49,8 +49,8 @@ public class TestResponseChannelConsumer extends Actor implements ResponseChanne
 
   public static class Progress {
     private TestUntil untilConsumed;
-    private Queue<Response> responses = new ConcurrentLinkedQueue<>();
-    private AtomicInteger consumeCount = new AtomicInteger(0);
+    private final Queue<Response> responses = new ConcurrentLinkedQueue<>();
+    private final AtomicInteger consumeCount = new AtomicInteger(0);
 
     public Progress(final int times) {
       untilConsumed = TestUntil.happenings(times);

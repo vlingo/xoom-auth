@@ -11,7 +11,6 @@ import io.vlingo.xoom.symbio.store.state.StateStore;
 import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.time.LocalDateTime;
 import io.vlingo.xoom.auth.infrastructure.*;
 
 import java.util.*;
@@ -42,14 +41,14 @@ public class TenantQueriesTest {
 
     final TenantData firstData = queries.tenantOf("1").await();
 
-    assertEquals(firstData.id, "1");
+    assertEquals(firstData.tenantId, "1");
     assertEquals(firstData.name, "first-tenant-name");
     assertEquals(firstData.description, "first-tenant-description");
     assertEquals(firstData.active, true);
 
     final TenantData secondData = queries.tenantOf("2").await();
 
-    assertEquals(secondData.id, "2");
+    assertEquals(secondData.tenantId, "2");
     assertEquals(secondData.name, "second-tenant-name");
     assertEquals(secondData.description, "second-tenant-description");
     assertEquals(secondData.active, true);
@@ -64,16 +63,16 @@ public class TenantQueriesTest {
     stateStore.write("2", SECOND_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
 
     final Collection<TenantData> results = queries.tenants().await();
-    final TenantData firstData = results.stream().filter(data -> data.id.equals("1")).findFirst().orElseThrow(RuntimeException::new);
+    final TenantData firstData = results.stream().filter(data -> data.tenantId.equals("1")).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(firstData.id, "1");
+    assertEquals(firstData.tenantId, "1");
     assertEquals(firstData.name, "first-tenant-name");
     assertEquals(firstData.description, "first-tenant-description");
     assertEquals(firstData.active, true);
 
-    final TenantData secondData = results.stream().filter(data -> data.id.equals("2")).findFirst().orElseThrow(RuntimeException::new);
+    final TenantData secondData = results.stream().filter(data -> data.tenantId.equals("2")).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(secondData.id, "2");
+    assertEquals(secondData.tenantId, "2");
     assertEquals(secondData.name, "second-tenant-name");
     assertEquals(secondData.description, "second-tenant-description");
     assertEquals(secondData.active, true);
@@ -82,7 +81,7 @@ public class TenantQueriesTest {
   @Test
   public void tenantOfEmptyResult(){
     final TenantData result = queries.tenantOf("1").await();
-    assertEquals("", result.id);
+    assertEquals("", result.tenantId);
   }
 
   private static final StateStore.WriteResultInterest NOOP_WRITER = new StateStore.WriteResultInterest() {

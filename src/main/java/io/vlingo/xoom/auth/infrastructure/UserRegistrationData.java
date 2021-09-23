@@ -7,10 +7,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.stream.Collectors;
 import java.util.*;
 import io.vlingo.xoom.auth.model.value.*;
+import java.util.stream.Stream;
 import io.vlingo.xoom.auth.model.user.UserState;
 
 @SuppressWarnings("all")
-public class UserData {
+public class UserRegistrationData {
   public final String id;
   public final String tenantId;
   public final String username;
@@ -18,25 +19,29 @@ public class UserData {
   public final Set<CredentialData> credentials = new HashSet<>();
   public final ProfileData profile;
 
-  public static UserData from(final UserState userState) {
+  public static UserRegistrationData from(final UserState userState) {
     final Set<CredentialData> credentials = userState.credentials != null ? userState.credentials.stream().map(CredentialData::from).collect(java.util.stream.Collectors.toSet()) : new HashSet<>();
     final ProfileData profile = userState.profile != null ? ProfileData.from(userState.profile) : null;
     return from(userState.id, userState.tenantId, userState.username, userState.active, credentials, profile);
   }
 
-  public static UserData from(final String id, final String tenantId, final String username, final boolean active, final Set<CredentialData> credentials, final ProfileData profile) {
-    return new UserData(id, tenantId, username, active, credentials, profile);
+  public static UserRegistrationData from(final String id, final String tenantId, final String username, final boolean active, final Set<CredentialData> credentials, final ProfileData profile) {
+    return new UserRegistrationData(id, tenantId, username, active, credentials, profile);
   }
 
-  public static List<UserData> fromAll(final List<UserState> states) {
-    return states.stream().map(UserData::from).collect(Collectors.toList());
+  public static UserRegistrationData from(String tenantId, String username, ProfileData profile, CredentialData credential, boolean active) {
+    return from(null, tenantId, username, active, Stream.of(credential).collect(Collectors.toSet()), profile);
   }
 
-  public static UserData empty() {
+  public static List<UserRegistrationData> fromAll(final List<UserState> states) {
+    return states.stream().map(UserRegistrationData::from).collect(Collectors.toList());
+  }
+
+  public static UserRegistrationData empty() {
     return from(UserState.identifiedBy(""));
   }
 
-  private UserData (final String id, final String tenantId, final String username, final boolean active, final Set<CredentialData> credentials, final ProfileData profile) {
+  private UserRegistrationData(final String id, final String tenantId, final String username, final boolean active, final Set<CredentialData> credentials, final ProfileData profile) {
     this.id = id;
     this.tenantId = tenantId;
     this.username = username;
@@ -59,7 +64,7 @@ public class UserData {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    UserData another = (UserData) other;
+    UserRegistrationData another = (UserRegistrationData) other;
     return new EqualsBuilder()
               .append(this.id, another.id)
               .append(this.tenantId, another.tenantId)

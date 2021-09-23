@@ -18,8 +18,6 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import java.time.LocalDateTime;
-import java.util.*;
 import io.vlingo.xoom.auth.infrastructure.*;
 import io.vlingo.xoom.auth.model.user.*;
 
@@ -39,7 +37,7 @@ public class UserProjectionTest {
     NoOpDispatcher dispatcher = new NoOpDispatcher();
     valueToProjectionId = new ConcurrentHashMap<>();
     stateStore = world.actorFor(StateStore.class, InMemoryStateStoreActor.class, Collections.singletonList(dispatcher));
-    StatefulTypeRegistry statefulTypeRegistry = StatefulTypeRegistry.registerAll(world, stateStore, UserData.class);
+    StatefulTypeRegistry statefulTypeRegistry = StatefulTypeRegistry.registerAll(world, stateStore, UserRegistrationData.class);
     QueryModelStateStoreProvider.using(world.stage(), statefulTypeRegistry);
     projection = world.actorFor(Projection.class, UserProjectionActor.class, stateStore);
   }
@@ -53,8 +51,8 @@ public class UserProjectionTest {
 
   @Test
   public void registerUser() {
-    final UserData firstData = UserData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"));
-    final UserData secondData = UserData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"));
+    final UserRegistrationData firstData = UserRegistrationData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-emailAddress", "first-user-profile-phone"));
+    final UserRegistrationData secondData = UserRegistrationData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-emailAddress", "second-user-profile-phone"));
 
     final CountingProjectionControl control = new CountingProjectionControl();
     final AccessSafely access = control.afterCompleting(2);
@@ -68,8 +66,8 @@ public class UserProjectionTest {
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserData.class, interest);
-    UserData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.id, UserRegistrationData.class, interest);
+    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-user-tenantId");
@@ -83,7 +81,7 @@ public class UserProjectionTest {
 
     interest = new CountingReadResultInterest();
     interestAccess = interest.afterCompleting(1);
-    stateStore.read(secondData.id, UserData.class, interest);
+    stateStore.read(secondData.id, UserRegistrationData.class, interest);
     item = interestAccess.readFrom("item", secondData.id);
     assertEquals(secondData.id, item.id);
     assertEquals(item.id, "2");
@@ -99,8 +97,8 @@ public class UserProjectionTest {
 
   @Test
   public void activate() {
-    final UserData firstData = UserData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"));
-    final UserData secondData = UserData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"));
+    final UserRegistrationData firstData = UserRegistrationData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-emailAddress", "first-user-profile-phone"));
+    final UserRegistrationData secondData = UserRegistrationData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-emailAddress", "second-user-profile-phone"));
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -113,8 +111,8 @@ public class UserProjectionTest {
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserData.class, interest);
-    UserData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.id, UserRegistrationData.class, interest);
+    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-user-tenantId");
@@ -123,8 +121,8 @@ public class UserProjectionTest {
 
   @Test
   public void deactivate() {
-    final UserData firstData = UserData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"));
-    final UserData secondData = UserData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"));
+    final UserRegistrationData firstData = UserRegistrationData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-emailAddress", "first-user-profile-phone"));
+    final UserRegistrationData secondData = UserRegistrationData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-emailAddress", "second-user-profile-phone"));
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -137,8 +135,8 @@ public class UserProjectionTest {
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserData.class, interest);
-    UserData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.id, UserRegistrationData.class, interest);
+    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-user-tenantId");
@@ -147,8 +145,8 @@ public class UserProjectionTest {
 
   @Test
   public void addCredential() {
-    final UserData firstData = UserData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"));
-    final UserData secondData = UserData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"));
+    final UserRegistrationData firstData = UserRegistrationData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-emailAddress", "first-user-profile-phone"));
+    final UserRegistrationData secondData = UserRegistrationData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-emailAddress", "second-user-profile-phone"));
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -161,8 +159,8 @@ public class UserProjectionTest {
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserData.class, interest);
-    UserData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.id, UserRegistrationData.class, interest);
+    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(item.id, "1");
     assertNotNull(item.credentials);
@@ -170,8 +168,8 @@ public class UserProjectionTest {
 
   @Test
   public void removeCredential() {
-    final UserData firstData = UserData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"));
-    final UserData secondData = UserData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"));
+    final UserRegistrationData firstData = UserRegistrationData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-emailAddress", "first-user-profile-phone"));
+    final UserRegistrationData secondData = UserRegistrationData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-emailAddress", "second-user-profile-phone"));
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -184,8 +182,8 @@ public class UserProjectionTest {
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserData.class, interest);
-    UserData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.id, UserRegistrationData.class, interest);
+    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(item.id, "1");
     assertNotNull(item.credentials);
@@ -193,8 +191,8 @@ public class UserProjectionTest {
 
   @Test
   public void replaceCredential() {
-    final UserData firstData = UserData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"));
-    final UserData secondData = UserData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"));
+    final UserRegistrationData firstData = UserRegistrationData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-emailAddress", "first-user-profile-phone"));
+    final UserRegistrationData secondData = UserRegistrationData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-emailAddress", "second-user-profile-phone"));
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -207,8 +205,8 @@ public class UserProjectionTest {
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserData.class, interest);
-    UserData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.id, UserRegistrationData.class, interest);
+    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(item.id, "1");
     assertNotNull(item.credentials);
@@ -216,8 +214,8 @@ public class UserProjectionTest {
 
   @Test
   public void replaceProfile() {
-    final UserData firstData = UserData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"));
-    final UserData secondData = UserData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"));
+    final UserRegistrationData firstData = UserRegistrationData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-emailAddress", "first-user-profile-phone"));
+    final UserRegistrationData secondData = UserRegistrationData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from(PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-emailAddress", "second-user-profile-phone"));
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -230,8 +228,8 @@ public class UserProjectionTest {
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserData.class, interest);
-    UserData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.id, UserRegistrationData.class, interest);
+    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-user-tenantId");

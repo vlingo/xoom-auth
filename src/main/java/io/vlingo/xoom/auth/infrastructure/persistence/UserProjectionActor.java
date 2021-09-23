@@ -16,9 +16,9 @@ import io.vlingo.xoom.turbo.ComponentRegistry;
  *   StateStoreProjectionActor
  * </a>
  */
-public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
+public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrationData> {
 
-  private static final UserData Empty = UserData.empty();
+  private static final UserRegistrationData Empty = UserRegistrationData.empty();
 
   public UserProjectionActor() {
     this(ComponentRegistry.withType(QueryModelStateStoreProvider.class).store);
@@ -29,35 +29,35 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
   }
 
   @Override
-  protected UserData currentDataFor(final Projectable projectable) {
+  protected UserRegistrationData currentDataFor(final Projectable projectable) {
     return Empty;
   }
 
   @Override
-  protected UserData merge(final UserData previousData, final int previousVersion, final UserData currentData, final int currentVersion) {
+  protected UserRegistrationData merge(final UserRegistrationData previousData, final int previousVersion, final UserRegistrationData currentData, final int currentVersion) {
 
     if (previousVersion == currentVersion) return currentData;
 
-    UserData merged = previousData;
+    UserRegistrationData merged = previousData;
 
     for (final Source<?> event : sources()) {
       switch (Events.valueOf(event.typeName())) {
         case UserRegistered: {
           final UserRegistered typedEvent = typed(event);
           final ProfileData profile = ProfileData.from(typedEvent.profile);
-          merged = UserData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, typedEvent.active, new HashSet<>(), profile);
+          merged = UserRegistrationData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, typedEvent.active, new HashSet<>(), profile);
           break;
         }
 
         case UserActivated: {
           final UserActivated typedEvent = typed(event);
-          merged = UserData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, previousData.profile);
           break;
         }
 
         case UserDeactivated: {
           final UserDeactivated typedEvent = typed(event);
-          merged = UserData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, previousData.profile);
           break;
         }
 
@@ -65,7 +65,7 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
           final UserCredentialAdded typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
           previousData.credentials.add(credential);
-          merged = UserData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
           break;
         }
 
@@ -73,7 +73,7 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
           final UserCredentialRemoved typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
           previousData.credentials.remove(credential);
-          merged = UserData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
           break;
         }
 
@@ -81,14 +81,14 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
           final UserCredentialReplaced typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
           previousData.credentials.add(credential);
-          merged = UserData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
           break;
         }
 
         case UserProfileReplaced: {
           final UserProfileReplaced typedEvent = typed(event);
           final ProfileData profile = ProfileData.from(typedEvent.profile);
-          merged = UserData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, profile);
+          merged = UserRegistrationData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, profile);
           break;
         }
 

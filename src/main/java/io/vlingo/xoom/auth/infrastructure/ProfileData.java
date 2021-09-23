@@ -21,8 +21,12 @@ public class ProfileData {
       return ProfileData.empty();
     } else {
       final PersonNameData name = profile.name != null ? PersonNameData.from(profile.name) : null;
-      return from(profile.emailAddress, name, profile.phone);
+      return from(name, profile.emailAddress, profile.phone);
     }
+  }
+
+  public static ProfileData from(final PersonNameData name, final String emailAddress, final String phone) {
+    return new ProfileData(emailAddress, name, phone);
   }
 
   public static ProfileData from(final String emailAddress, final PersonNameData name, final String phone) {

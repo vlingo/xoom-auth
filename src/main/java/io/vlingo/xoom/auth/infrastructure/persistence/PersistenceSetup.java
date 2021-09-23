@@ -1,5 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
+import io.vlingo.xoom.auth.infrastructure.*;
 import io.vlingo.xoom.turbo.annotation.persistence.Persistence;
 import io.vlingo.xoom.turbo.annotation.persistence.Persistence.StorageType;
 import io.vlingo.xoom.turbo.annotation.persistence.Projections;
@@ -9,36 +10,24 @@ import io.vlingo.xoom.turbo.annotation.persistence.Adapters;
 import io.vlingo.xoom.turbo.annotation.persistence.EnableQueries;
 import io.vlingo.xoom.turbo.annotation.persistence.QueriesEntry;
 import io.vlingo.xoom.turbo.annotation.persistence.DataObjects;
-import io.vlingo.xoom.auth.infrastructure.ConstraintData;
 import io.vlingo.xoom.auth.model.role.GroupUnassignedFromRole;
-import io.vlingo.xoom.auth.model.tenant.TenantState;
 import io.vlingo.xoom.auth.model.tenant.TenantDeactivated;
-import io.vlingo.xoom.auth.infrastructure.GroupData;
 import io.vlingo.xoom.auth.model.user.UserRegistered;
 import io.vlingo.xoom.auth.model.permission.PermissionProvisioned;
 import io.vlingo.xoom.auth.model.tenant.TenantActivated;
 import io.vlingo.xoom.auth.model.role.RolePermissionDetached;
-import io.vlingo.xoom.auth.model.permission.PermissionState;
-import io.vlingo.xoom.auth.model.group.GroupState;
 import io.vlingo.xoom.auth.model.user.UserCredentialReplaced;
 import io.vlingo.xoom.auth.model.role.GroupAssignedToRole;
-import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.model.permission.PermissionDescriptionChanged;
-import io.vlingo.xoom.auth.model.role.RoleState;
 import io.vlingo.xoom.auth.model.permission.PermissionConstraintReplacementEnforced;
-import io.vlingo.xoom.auth.infrastructure.ProfileData;
 import io.vlingo.xoom.auth.model.user.UserCredentialRemoved;
 import io.vlingo.xoom.auth.model.permission.PermissionConstraintForgotten;
-import io.vlingo.xoom.auth.infrastructure.TenantData;
 import io.vlingo.xoom.auth.model.role.UserAssignedToRole;
 import io.vlingo.xoom.auth.model.group.GroupDescriptionChanged;
-import io.vlingo.xoom.auth.infrastructure.UserData;
-import io.vlingo.xoom.auth.infrastructure.PersonNameData;
-import io.vlingo.xoom.auth.infrastructure.CredentialData;
+import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
 import io.vlingo.xoom.auth.model.tenant.TenantSubscribed;
 import io.vlingo.xoom.auth.model.group.UserAssignedToGroup;
 import io.vlingo.xoom.auth.model.tenant.TenantNameChanged;
-import io.vlingo.xoom.auth.model.user.UserState;
 import io.vlingo.xoom.auth.model.group.GroupProvisioned;
 import io.vlingo.xoom.auth.model.role.UserUnassignedFromRole;
 import io.vlingo.xoom.auth.model.user.UserActivated;
@@ -47,7 +36,6 @@ import io.vlingo.xoom.auth.model.group.GroupAssignedToGroup;
 import io.vlingo.xoom.auth.model.role.RoleDescriptionChanged;
 import io.vlingo.xoom.auth.model.user.UserProfileReplaced;
 import io.vlingo.xoom.auth.model.user.UserCredentialAdded;
-import io.vlingo.xoom.auth.infrastructure.RoleData;
 import io.vlingo.xoom.auth.model.user.UserDeactivated;
 import io.vlingo.xoom.auth.model.role.RolePermissionAttached;
 import io.vlingo.xoom.auth.model.permission.PermissionConstraintEnforced;
@@ -104,7 +92,7 @@ import io.vlingo.xoom.auth.model.group.UserUnassignedFromGroup;
   @QueriesEntry(protocol = UserQueries.class, actor = UserQueriesActor.class),
   @QueriesEntry(protocol = PermissionQueries.class, actor = PermissionQueriesActor.class),
 })
-@DataObjects({CredentialData.class, ConstraintData.class, UserData.class, TenantData.class, PersonNameData.class, ProfileData.class, PermissionData.class, RoleData.class, GroupData.class})
+@DataObjects({CredentialData.class, ConstraintData.class, UserRegistrationData.class, TenantData.class, PersonNameData.class, ProfileData.class, PermissionData.class, RoleData.class, GroupData.class})
 public class PersistenceSetup {
 
 

@@ -9,9 +9,9 @@ package io.vlingo.xoom.auth.infrastructure.resource;
 
 import io.vlingo.xoom.actors.Definition;
 import io.vlingo.xoom.actors.World;
+import io.vlingo.xoom.auth.infrastructure.*;
 import io.vlingo.xoom.auth.infrastructure.resource.TestResponseChannelConsumer.Progress;
 import io.vlingo.xoom.auth.infrastructure.resource.TestResponseChannelConsumer.TestResponseChannelConsumerInstantiator;
-import io.vlingo.xoom.auth.model.Tenant;
 import io.vlingo.xoom.http.Response;
 import io.vlingo.xoom.http.resource.Server;
 import io.vlingo.xoom.wire.channel.ResponseChannelConsumer;
@@ -22,10 +22,11 @@ import io.vlingo.xoom.wire.message.Converters;
 import io.vlingo.xoom.wire.node.Address;
 import io.vlingo.xoom.wire.node.AddressType;
 import io.vlingo.xoom.wire.node.Host;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -44,7 +45,7 @@ public abstract class ResourceTest {
   protected int serverPort;
   protected World world;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     world = World.start("resource-test");
 
@@ -61,7 +62,7 @@ public abstract class ResourceTest {
     client = new NettyClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240);
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
     client.close();
 
@@ -103,9 +104,9 @@ public abstract class ResourceTest {
     return TenantData.from(name, description, active);
   }
 
-  protected TenantData tenantData(final Tenant tenant, final boolean withId) {
-    return TenantData.from(withId ? tenant.tenantId().value : null, tenant.name(), tenant.description(), tenant.isActive());
-  }
+//  protected TenantData tenantData(final Tenant tenant, final boolean withId) {
+//    return TenantData.from(withId ? tenant.tenantId().value : null, tenant.name(), tenant.description(), tenant.isActive());
+//  }
 
   protected UserRegistrationData userRegistrationData(final String tenantId) {
     return UserRegistrationData.from(
@@ -196,19 +197,19 @@ public abstract class ResourceTest {
   }
 
   protected Response postProvisionGroup(final String tenantId, final String name, final String description) {
-    final String body = serialized(GroupData.from(name, description));
+    final String body = serialized(GroupData.from(null, name, description, tenantId));
     final String request = "POST /tenants/" + tenantId + "/groups HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
   protected Response postProvisionPermission(String tenantId, String name, String description) {
-    final String body = serialized(PermissionData.from(name, description));
+    final String body = serialized(PermissionData.from(null, Collections.emptySet(), name, description, tenantId));
     final String request = "POST /tenants/" + tenantId + "/permissions HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
   protected Response postProvisionRole(final String tenantId, final String name, final String description) {
-    final String body = serialized(RoleData.from(name, description));
+    final String body = serialized(RoleData.from(null, tenantId, name, description));
     final String request = "POST /tenants/" + tenantId + "/roles HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }

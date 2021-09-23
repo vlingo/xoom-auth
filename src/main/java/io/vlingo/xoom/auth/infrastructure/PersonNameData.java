@@ -36,6 +36,10 @@ public class PersonNameData {
     return correspondingObjects == null ? Collections.emptyList() : correspondingObjects.stream().map(PersonNameData::from).collect(Collectors.toList());
   }
 
+  public static PersonNameData of(String given, String second, String family) {
+    return from(given, family, second);
+  }
+
   private PersonNameData (final String given, final String family, final String second) {
     this.given = given;
     this.family = family;

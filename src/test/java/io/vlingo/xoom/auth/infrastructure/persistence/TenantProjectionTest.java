@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import java.time.LocalDateTime;
 import io.vlingo.xoom.auth.model.tenant.*;
 import io.vlingo.xoom.auth.infrastructure.*;
 
@@ -62,25 +61,25 @@ public class TenantProjectionTest {
     final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
     assertEquals(2, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-    assertEquals(1, valueOfProjectionIdFor(secondData.id, confirmations));
+    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
+    assertEquals(1, valueOfProjectionIdFor(secondData.tenantId, confirmations));
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.tenantId, TenantData.class, interest);
+    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
 
-    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "1");
     assertEquals(item.name, "first-tenant-name");
     assertEquals(item.description, "first-tenant-description");
     assertEquals(item.active, true);
 
     interest = new CountingReadResultInterest();
     interestAccess = interest.afterCompleting(1);
-    stateStore.read(secondData.id, TenantData.class, interest);
-    item = interestAccess.readFrom("item", secondData.id);
-    assertEquals(secondData.id, item.id);
-    assertEquals(item.id, "2");
+    stateStore.read(secondData.tenantId, TenantData.class, interest);
+    item = interestAccess.readFrom("item", secondData.tenantId);
+    assertEquals(secondData.tenantId, item.tenantId);
+    assertEquals(item.tenantId, "2");
     assertEquals(item.name, "second-tenant-name");
     assertEquals(item.description, "second-tenant-description");
     assertEquals(item.active, true);
@@ -98,14 +97,14 @@ public class TenantProjectionTest {
     final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
     assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.tenantId, TenantData.class, interest);
+    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
 
-    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "1");
   }
 
   @Test
@@ -120,14 +119,14 @@ public class TenantProjectionTest {
     final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
     assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.tenantId, TenantData.class, interest);
+    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
 
-    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "1");
   }
 
   @Test
@@ -142,14 +141,14 @@ public class TenantProjectionTest {
     final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
     assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.tenantId, TenantData.class, interest);
+    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
 
-    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "1");
     assertEquals(item.name, "first-tenant-name");
   }
 
@@ -165,14 +164,14 @@ public class TenantProjectionTest {
     final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
     assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
 
     CountingReadResultInterest interest = new CountingReadResultInterest();
     AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.id);
+    stateStore.read(firstData.tenantId, TenantData.class, interest);
+    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
 
-    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "1");
     assertEquals(item.description, "first-tenant-description");
   }
 

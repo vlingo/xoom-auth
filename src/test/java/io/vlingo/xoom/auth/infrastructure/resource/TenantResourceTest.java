@@ -7,26 +7,21 @@
 
 package io.vlingo.xoom.auth.infrastructure.resource;
 
-import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
-import static io.vlingo.xoom.common.serialization.JsonSerialization.deserializedList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.google.gson.reflect.TypeToken;
+import io.vlingo.xoom.auth.infrastructure.*;
+import io.vlingo.xoom.http.Response;
+import io.vlingo.xoom.http.ResponseHeader;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Properties;
 
-import org.junit.Test;
+import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
+import static io.vlingo.xoom.common.serialization.JsonSerialization.deserializedList;
+import static org.junit.jupiter.api.Assertions.*;
 
-import com.google.gson.reflect.TypeToken;
-
-import io.vlingo.xoom.http.Response;
-import io.vlingo.xoom.http.ResponseHeader;
-
-public class TenantResourceTest extends io.vlingo.xoom.auth.infrastructure.resource.ResourceTest {
+public class TenantResourceTest extends ResourceTest {
 
   @Test
   public void testThatTenantSubscribes() {
@@ -190,10 +185,10 @@ public class TenantResourceTest extends io.vlingo.xoom.auth.infrastructure.resou
     assertEquals(userRegData.profile.name.family, userRegistrateredData.profile.name.family);
     assertEquals(userRegData.profile.emailAddress, userRegistrateredData.profile.emailAddress);
     assertEquals(userRegData.profile.phone, userRegistrateredData.profile.phone);
-    assertEquals(userRegData.credential.authority, userRegistrateredData.credential.authority);
-    assertEquals(userRegData.credential.id, userRegistrateredData.credential.id);
-    assertNotEquals(userRegData.credential.secret, userRegistrateredData.credential.secret);
-    assertEquals("VLINGO", userRegistrateredData.credential.type);
+    assertEquals(userRegData.credentials.stream().findFirst().get().authority, userRegistrateredData.credentials.stream().findFirst().get().authority);
+    assertEquals(userRegData.credentials.stream().findFirst().get().id, userRegistrateredData.credentials.stream().findFirst().get().id);
+    assertNotEquals(userRegData.credentials.stream().findFirst().get().secret, userRegistrateredData.credentials.stream().findFirst().get().secret);
+    assertEquals("VLINGO", userRegistrateredData.credentials.stream().findFirst().get().type);
     assertTrue(userRegistrateredData.active);
   }
 

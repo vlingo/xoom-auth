@@ -81,12 +81,12 @@ public class TestProperties {
 
     properties.setProperty("action.permission.enforce.method", "PATCH");
     properties.setProperty("action.permission.enforce.uri", "/tenants/{tenantId}/permissions/{permissionName}/constraints");
-    properties.setProperty("action.permission.enforce.to", "enforce(String tenantId, String permissionName, body:io.vlingo.xoom.auth.infrastructure.resource.ConstraintData constraintData)");
+    properties.setProperty("action.permission.enforce.to", "enforce(String tenantId, String permissionName, body:io.vlingo.xoom.auth.infrastructure.ConstraintData constraintData)");
     properties.setProperty("action.permission.enforce.permission", "io.vlingo.xoom.auth.Administrator");
 
     properties.setProperty("action.permission.enforceReplacement.method", "PATCH");
     properties.setProperty("action.permission.enforceReplacement.uri", "/tenants/{tenantId}/permissions/{permissionName}/constraints/{constraintName}");
-    properties.setProperty("action.permission.enforceReplacement.to", "enforceReplacement(String tenantId, String permissionName, String constraintName, body:io.vlingo.xoom.auth.infrastructure.resource.ConstraintData constraintData)");
+    properties.setProperty("action.permission.enforceReplacement.to", "enforceReplacement(String tenantId, String permissionName, String constraintName, body:io.vlingo.xoom.auth.infrastructure.ConstraintData constraintData)");
     properties.setProperty("action.permission.enforceReplacement.permission", "io.vlingo.xoom.auth.Administrator");
 
     properties.setProperty("action.permission.forget.method", "DELETE");
@@ -191,7 +191,7 @@ public class TestProperties {
 
     properties.setProperty("action.tenant.subscribe.method", "POST");
     properties.setProperty("action.tenant.subscribe.uri", "/tenants");
-    properties.setProperty("action.tenant.subscribe.to", "subscribeFor(body:io.vlingo.xoom.auth.infrastructure.resource.TenantData tenantData)");
+    properties.setProperty("action.tenant.subscribe.to", "subscribeFor(body:io.vlingo.xoom.auth.infrastructure.TenantData tenantData)");
     properties.setProperty("action.tenant.subscribe.permission", "io.vlingo.xoom.auth.TenantRepresentative");
 
     properties.setProperty("action.tenant.activate.method", "PATCH");
@@ -216,22 +216,22 @@ public class TestProperties {
 
     properties.setProperty("action.tenant.provisionGroup.method", "POST");
     properties.setProperty("action.tenant.provisionGroup.uri", "/tenants/{tenantId}/groups");
-    properties.setProperty("action.tenant.provisionGroup.to", "provisionGroup(String tenantId, body:io.vlingo.xoom.auth.infrastructure.resource.GroupData groupData)");
+    properties.setProperty("action.tenant.provisionGroup.to", "provisionGroup(String tenantId, body:io.vlingo.xoom.auth.infrastructure.GroupData groupData)");
     properties.setProperty("action.tenant.provisionGroup.permission", "io.vlingo.xoom.auth.TenantRepresentative");
 
     properties.setProperty("action.tenant.provisionPermission.method", "POST");
     properties.setProperty("action.tenant.provisionPermission.uri", "/tenants/{tenantId}/permissions");
-    properties.setProperty("action.tenant.provisionPermission.to", "provisionPermission(String tenantId, body:io.vlingo.xoom.auth.infrastructure.resource.PermissionData permissionData)");
+    properties.setProperty("action.tenant.provisionPermission.to", "provisionPermission(String tenantId, body:io.vlingo.xoom.auth.infrastructure.PermissionData permissionData)");
     properties.setProperty("action.tenant.provisionPermission.permission", "io.vlingo.xoom.auth.TenantRepresentative");
 
     properties.setProperty("action.tenant.provisionRole.method", "POST");
     properties.setProperty("action.tenant.provisionRole.uri", "/tenants/{tenantId}/roles");
-    properties.setProperty("action.tenant.provisionRole.to", "provisionRole(String tenantId, body:io.vlingo.xoom.auth.infrastructure.resource.RoleData roleData)");
+    properties.setProperty("action.tenant.provisionRole.to", "provisionRole(String tenantId, body:io.vlingo.xoom.auth.infrastructure.RoleData roleData)");
     properties.setProperty("action.tenant.provisionRole.permission", "io.vlingo.xoom.auth.TenantRepresentative");
 
     properties.setProperty("action.tenant.registerUser.method", "POST");
     properties.setProperty("action.tenant.registerUser.uri", "/tenants/{tenantId}/users");
-    properties.setProperty("action.tenant.registerUser.to", "registerUser(String tenantId, body:io.vlingo.xoom.auth.infrastructure.resource.UserRegistrationData userData)");
+    properties.setProperty("action.tenant.registerUser.to", "registerUser(String tenantId, body:io.vlingo.xoom.auth.infrastructure.UserRegistrationData userData)");
     properties.setProperty("action.tenant.registerUser.permission", "io.vlingo.xoom.auth.TenantRepresentative");
 
     properties.setProperty("action.tenant.queryTenant.method", "GET");
@@ -280,7 +280,7 @@ public class TestProperties {
 
     properties.setProperty("action.user.addCredential.method", "PUT");
     properties.setProperty("action.user.addCredential.uri", "/tenants/{tenantId}/users/{username}/credentials");
-    properties.setProperty("action.user.addCredential.to", "addCredential(String tenantId, String username, body:io.vlingo.xoom.auth.infrastructure.resource.CredentialData credentialData)");
+    properties.setProperty("action.user.addCredential.to", "addCredential(String tenantId, String username, body:io.vlingo.xoom.auth.infrastructure.CredentialData credentialData)");
     properties.setProperty("action.user.addCredential.permission", "io.vlingo.xoom.auth.Administrator");
 
     properties.setProperty("action.user.removeCredential.method", "DELETE");
@@ -290,12 +290,12 @@ public class TestProperties {
 
     properties.setProperty("action.user.replaceCredential.method", "PATCH");
     properties.setProperty("action.user.replaceCredential.uri", "/tenants/{tenantId}/users/{username}/credentials/{authority}");
-    properties.setProperty("action.user.replaceCredential.to", "replaceCredential(String tenantId, String username, String authority, body:io.vlingo.xoom.auth.infrastructure.resource.CredentialData credentialData)");
+    properties.setProperty("action.user.replaceCredential.to", "replaceCredential(String tenantId, String username, String authority, body:io.vlingo.xoom.auth.infrastructure.CredentialData credentialData)");
     properties.setProperty("action.user.replaceCredential.permission", "io.vlingo.xoom.auth.Administrator");
 
     properties.setProperty("action.user.profile.method", "PATCH");
     properties.setProperty("action.user.profile.uri", "/tenants/{tenantId}/users/{username}/profile");
-    properties.setProperty("action.user.profile.to", "profile(String tenantId, String username, body:io.vlingo.xoom.auth.infrastructure.resource.ProfileData profileData)");
+    properties.setProperty("action.user.profile.to", "profile(String tenantId, String username, body:io.vlingo.xoom.auth.infrastructure.ProfileData profileData)");
     properties.setProperty("action.user.profile.permission", "io.vlingo.xoom.auth.Administrator");
 
     properties.setProperty("action.user.queryUser.method", "GET");

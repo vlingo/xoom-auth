@@ -25,6 +25,10 @@ public class CredentialData {
     }
   }
 
+  public static CredentialData from(final String authority, final String id, final String secret) {
+    return from(authority, id, secret, null);
+  }
+
   public static CredentialData from(final String authority, final String id, final String secret, final String type) {
     return new CredentialData(authority, id, secret, type);
   }
