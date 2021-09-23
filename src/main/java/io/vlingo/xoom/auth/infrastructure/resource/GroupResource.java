@@ -41,10 +41,10 @@ public interface GroupResource {
   @ResponseAdapter(handler = GroupResourceHandlers.ADAPT_STATE)
   Completes<Response> unassignUser(@Id final String id, @Body final GroupData data);
 
-  @Route(method = GET, handler = GroupResourceHandlers.GROUPS)
+  @Route(method = GET, path = "/{tenantId}/groups", handler = GroupResourceHandlers.GROUPS)
   Completes<Response> groups();
 
-  @Route(method = GET, path = "/{id}", handler = GroupResourceHandlers.GROUP_OF)
+  @Route(method = GET, path = "/{tenantId}/groups/{id}", handler = GroupResourceHandlers.GROUP_OF)
   Completes<Response> groupOf(final String id);
 
 }

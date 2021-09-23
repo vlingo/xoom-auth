@@ -45,10 +45,10 @@ public interface UserResource {
   @ResponseAdapter(handler = UserResourceHandlers.ADAPT_STATE)
   Completes<Response> replaceProfile(@Id final String id, @Body final UserRegistrationData data);
 
-  @Route(method = GET, handler = UserResourceHandlers.USERS)
+  @Route(method = GET, path = "/{tenantId}/users", handler = UserResourceHandlers.USERS)
   Completes<Response> users();
 
-  @Route(method = GET, path = "/{id}", handler = UserResourceHandlers.USER_OF)
+  @Route(method = GET, path = "/{tenantId}/users/{id}", handler = UserResourceHandlers.USER_OF)
   Completes<Response> userOf(final String id);
 
 }

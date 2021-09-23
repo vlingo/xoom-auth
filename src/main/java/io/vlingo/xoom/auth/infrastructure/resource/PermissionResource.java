@@ -37,10 +37,10 @@ public interface PermissionResource {
   @ResponseAdapter(handler = PermissionResourceHandlers.ADAPT_STATE)
   Completes<Response> changeDescription(@Id final String id, @Body final PermissionData data);
 
-  @Route(method = GET, handler = PermissionResourceHandlers.PERMISSIONS)
+  @Route(method = GET, path = "/{tenantId}/permissions", handler = PermissionResourceHandlers.PERMISSIONS)
   Completes<Response> permissions();
 
-  @Route(method = GET, path = "/{id}", handler = PermissionResourceHandlers.PERMISSION_OF)
+  @Route(method = GET, path = "/{tenantId}/permissions/{id}", handler = PermissionResourceHandlers.PERMISSION_OF)
   Completes<Response> permissionOf(final String id);
 
 }

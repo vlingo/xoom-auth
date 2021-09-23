@@ -49,10 +49,10 @@ public interface RoleResource {
   @ResponseAdapter(handler = RoleResourceHandlers.ADAPT_STATE)
   Completes<Response> detach(@Id final String id, @Body final RoleData data);
 
-  @Route(method = GET, handler = RoleResourceHandlers.ROLES)
+  @Route(method = GET, path = "/{tenantId}/roles", handler = RoleResourceHandlers.ROLES)
   Completes<Response> roles();
 
-  @Route(method = GET, path = "/{id}", handler = RoleResourceHandlers.ROLE_OF)
+  @Route(method = GET, path = "/{tenantId}/roles/{id}", handler = RoleResourceHandlers.ROLE_OF)
   Completes<Response> roleOf(final String id);
 
 }
