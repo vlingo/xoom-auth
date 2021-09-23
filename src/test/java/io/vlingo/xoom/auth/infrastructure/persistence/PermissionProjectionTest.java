@@ -90,14 +90,14 @@ public class PermissionProjectionTest {
     }
 
 
-  private Projectable createPermissionConstraintEnforced(PermissionState data) {
-    final PermissionConstraintEnforced eventData = new PermissionConstraintEnforced(data.id, data.constraints);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintEnforced.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
+//  private Projectable createPermissionConstraintEnforced(PermissionState data) {
+//    final PermissionConstraintEnforced eventData = new PermissionConstraintEnforced(data.id, data.constraints);
+//    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintEnforced.class, 1,
+//    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+//    final String projectionId = UUID.randomUUID().toString();
+//    valueToProjectionId.put(data.id, projectionId);
+//    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+//  }
 
     @Test
     public void enforce() {
@@ -107,7 +107,7 @@ public class PermissionProjectionTest {
 
       final CountingProjectionControl control = new CountingProjectionControl();
       final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createPermissionConstraintEnforced(firstData.toPermissionState()), control);
+//      projection.projectWith(createPermissionConstraintEnforced(firstData.toPermissionState()), control);
       final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
       assertEquals(1, confirmations.size());
@@ -120,14 +120,14 @@ public class PermissionProjectionTest {
     }
 
 
-  private Projectable createPermissionConstraintReplacementEnforced(PermissionState data) {
-    final PermissionConstraintReplacementEnforced eventData = new PermissionConstraintReplacementEnforced(data.id, data.constraints);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintReplacementEnforced.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
+//  private Projectable createPermissionConstraintReplacementEnforced(PermissionState data) {
+//    final PermissionConstraintReplacementEnforced eventData = new PermissionConstraintReplacementEnforced(data.id, data.constraints);
+//    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintReplacementEnforced.class, 1,
+//    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+//    final String projectionId = UUID.randomUUID().toString();
+//    valueToProjectionId.put(data.id, projectionId);
+//    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+//  }
 
     @Test
     public void enforceReplacement() {
@@ -137,7 +137,7 @@ public class PermissionProjectionTest {
 
       final CountingProjectionControl control = new CountingProjectionControl();
       final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createPermissionConstraintReplacementEnforced(firstData.toPermissionState()), control);
+//      projection.projectWith(createPermissionConstraintReplacementEnforced(firstData.toPermissionState()), control);
       final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
       assertEquals(1, confirmations.size());
@@ -150,14 +150,14 @@ public class PermissionProjectionTest {
     }
 
 
-  private Projectable createPermissionConstraintForgotten(PermissionState data) {
-    final PermissionConstraintForgotten eventData = new PermissionConstraintForgotten(data.id, data.constraints);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintForgotten.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
+//  private Projectable createPermissionConstraintForgotten(PermissionState data) {
+//    final PermissionConstraintForgotten eventData = new PermissionConstraintForgotten(data.id, data.constraints);
+//    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintForgotten.class, 1,
+//    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+//    final String projectionId = UUID.randomUUID().toString();
+//    valueToProjectionId.put(data.id, projectionId);
+//    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+//  }
 
     @Test
     public void forget() {
@@ -167,7 +167,7 @@ public class PermissionProjectionTest {
 
       final CountingProjectionControl control = new CountingProjectionControl();
       final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createPermissionConstraintForgotten(firstData.toPermissionState()), control);
+//      projection.projectWith(createPermissionConstraintForgotten(firstData.toPermissionState()), control);
       final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
       assertEquals(1, confirmations.size());
