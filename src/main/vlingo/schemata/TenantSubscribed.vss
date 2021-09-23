@@ -1,0 +1,7 @@
+event TenantSubscribed {
+  version semanticVersion
+  string id
+  string name
+  string description
+  boolean active
+}

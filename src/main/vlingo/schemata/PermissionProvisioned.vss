@@ -1,0 +1,8 @@
+event PermissionProvisioned {
+  version semanticVersion
+  string id
+  data.Constraint:1.0.0[] constraints
+  string description
+  string name
+  string tenantId
+}

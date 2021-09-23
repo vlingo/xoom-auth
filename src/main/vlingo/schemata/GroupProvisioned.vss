@@ -1,0 +1,7 @@
+event GroupProvisioned {
+  version semanticVersion
+  string id
+  string name
+  string description
+  string tenantId
+}

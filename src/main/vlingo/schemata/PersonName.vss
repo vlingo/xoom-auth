@@ -1,0 +1,6 @@
+data PersonName {
+  version semanticVersion
+  string given
+  string family
+  string second
+}

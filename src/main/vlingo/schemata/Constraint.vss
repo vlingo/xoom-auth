@@ -1,0 +1,7 @@
+data Constraint {
+  version semanticVersion
+  string description
+  string name
+  string type
+  string value
+}

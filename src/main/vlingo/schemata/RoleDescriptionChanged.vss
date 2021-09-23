@@ -1,0 +1,7 @@
+event RoleDescriptionChanged {
+  version semanticVersion
+  string id
+  string tenantId
+  string name
+  string description
+}

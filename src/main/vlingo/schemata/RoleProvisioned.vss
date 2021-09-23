@@ -1,0 +1,7 @@
+event RoleProvisioned {
+  version semanticVersion
+  string id
+  string tenantId
+  string name
+  string description
+}

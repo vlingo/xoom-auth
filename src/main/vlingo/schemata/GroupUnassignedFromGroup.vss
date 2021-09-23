@@ -1,0 +1,5 @@
+event GroupUnassignedFromGroup {
+  version semanticVersion
+  string id
+  string tenantId
+}

@@ -1,0 +1,6 @@
+data Profile {
+  version semanticVersion
+  string emailAddress
+  data.PersonName:1.0.0 name
+  string phone
+}

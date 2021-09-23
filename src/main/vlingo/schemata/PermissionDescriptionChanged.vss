@@ -1,0 +1,6 @@
+event PermissionDescriptionChanged {
+  version semanticVersion
+  string id
+  string description
+  string tenantId
+}

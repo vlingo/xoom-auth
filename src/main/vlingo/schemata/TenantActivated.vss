@@ -1,0 +1,4 @@
+event TenantActivated {
+  version semanticVersion
+  string id
+}

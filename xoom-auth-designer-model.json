@@ -1,0 +1,1340 @@
+{
+  "context": {
+    "groupId": "io.vlingo.xoom",
+    "artifactId": "xoom-auth",
+    "artifactVersion": "1.8.2",
+    "packageName": "io.vlingo.xoom.auth"
+  },
+  "model": {
+    "persistenceSettings": {
+      "storageType": "JOURNAL",
+      "useCQRS": true,
+      "projections": "EVENT_BASED",
+      "database": "IN_MEMORY",
+      "commandModelDatabase": "IN_MEMORY",
+      "queryModelDatabase": "IN_MEMORY"
+    },
+    "aggregateSettings": [
+      {
+        "api": {
+          "rootPath": "/tenants",
+          "routes": [
+            {
+              "path": "/{tenantId}/groups",
+              "httpMethod": "POST",
+              "aggregateMethod": "provisionGroup",
+              "requireEntityLoad": false
+            },
+            {
+              "path": "/{tenantId}/groups/{groupName}/description",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "changeDescription",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/groups/{groupName}/groups/{innerGroupName}",
+              "httpMethod": "PUT",
+              "aggregateMethod": "assignGroup",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/groups/{groupName}/groups/{innerGroupName}",
+              "httpMethod": "DELETE",
+              "aggregateMethod": "unassignGroup",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/groups/{groupName}/users/{username}",
+              "httpMethod": "PUT",
+              "aggregateMethod": "assignUser",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/groups/{groupName}/users/{username}",
+              "httpMethod": "DELETE",
+              "aggregateMethod": "unassignUser",
+              "requireEntityLoad": true
+            }
+          ]
+        },
+        "aggregateName": "Group",
+        "stateFields": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "description",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "tenantId",
+            "type": "String",
+            "collectionType": ""
+          }
+        ],
+        "methods": [
+          {
+            "name": "provisionGroup",
+            "parameters": [
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "description",
+                "parameterName": "description",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": true,
+            "event": "GroupProvisioned"
+          },
+          {
+            "name": "changeDescription",
+            "parameters": [
+              {
+                "stateField": "description",
+                "parameterName": "description",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "GroupDescriptionChanged"
+          },
+          {
+            "name": "assignGroup",
+            "parameters": [
+              {
+                "stateField": "id",
+                "parameterName": "id",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "GroupAssignedToGroup"
+          },
+          {
+            "name": "unassignGroup",
+            "parameters": [
+              {
+                "stateField": "id",
+                "parameterName": "id",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "GroupUnassignedFromGroup"
+          },
+          {
+            "name": "assignUser",
+            "parameters": [
+              {
+                "stateField": "id",
+                "parameterName": "id",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "UserAssignedToGroup"
+          },
+          {
+            "name": "unassignUser",
+            "parameters": [
+              {
+                "stateField": "id",
+                "parameterName": "id",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "UserUnassignedFromGroup"
+          }
+        ],
+        "events": [
+          {
+            "name": "GroupProvisioned",
+            "fields": [
+              "id",
+              "name",
+              "description",
+              "tenantId"
+            ]
+          },
+          {
+            "name": "GroupDescriptionChanged",
+            "fields": [
+              "id",
+              "description",
+              "tenantId"
+            ]
+          },
+          {
+            "name": "GroupAssignedToGroup",
+            "fields": [
+              "id",
+              "tenantId"
+            ]
+          },
+          {
+            "name": "GroupUnassignedFromGroup",
+            "fields": [
+              "id",
+              "tenantId"
+            ]
+          },
+          {
+            "name": "UserAssignedToGroup",
+            "fields": [
+              "id",
+              "tenantId"
+            ]
+          },
+          {
+            "name": "UserUnassignedFromGroup",
+            "fields": [
+              "id",
+              "tenantId"
+            ]
+          }
+        ],
+        "consumerExchange": {
+          "exchangeName": "",
+          "receivers": []
+        },
+        "producerExchange": {
+          "exchangeName": "xoom-auth",
+          "schemaGroup": "vlingo:xoom:auth",
+          "outgoingEvents": [
+            "GroupProvisioned",
+            "GroupDescriptionChanged",
+            "GroupAssignedToGroup",
+            "GroupUnassignedFromGroup",
+            "UserAssignedToGroup",
+            "UserUnassignedFromGroup"
+          ]
+        }
+      },
+      {
+        "api": {
+          "rootPath": "/tenants",
+          "routes": [
+            {
+              "path": "/{tenantId}/roles",
+              "httpMethod": "POST",
+              "aggregateMethod": "provisionRole",
+              "requireEntityLoad": false
+            },
+            {
+              "path": "/{tenantId}/roles/{roleName}/description",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "changeDescription",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/roles/{roleName}/groups",
+              "httpMethod": "PUT",
+              "aggregateMethod": "assignGroup",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/roles/{roleName}/groups/{groupName}",
+              "httpMethod": "DELETE",
+              "aggregateMethod": "unassignGroup",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/roles/{roleName}/users",
+              "httpMethod": "PUT",
+              "aggregateMethod": "assignUser",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/roles/{roleName}/users/{username}",
+              "httpMethod": "DELETE",
+              "aggregateMethod": "unassignUser",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/roles/{roleName}/permissions",
+              "httpMethod": "PUT",
+              "aggregateMethod": "attach",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/roles/{roleName}/permissions/{permissionName}",
+              "httpMethod": "DELETE",
+              "aggregateMethod": "detach",
+              "requireEntityLoad": true
+            }
+          ]
+        },
+        "aggregateName": "Role",
+        "stateFields": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "tenantId",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "name",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "description",
+            "type": "String",
+            "collectionType": ""
+          }
+        ],
+        "methods": [
+          {
+            "name": "provisionRole",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "description",
+                "parameterName": "description",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": true,
+            "event": "RoleProvisioned"
+          },
+          {
+            "name": "changeDescription",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "description",
+                "parameterName": "description",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "RoleDescriptionChanged"
+          },
+          {
+            "name": "assignGroup",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "GroupAssignedToRole"
+          },
+          {
+            "name": "unassignGroup",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "GroupUnassignedFromRole"
+          },
+          {
+            "name": "assignUser",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "UserAssignedToRole"
+          },
+          {
+            "name": "unassignUser",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "UserUnassignedFromRole"
+          },
+          {
+            "name": "attach",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "RolePermissionAttached"
+          },
+          {
+            "name": "detach",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "RolePermissionDetached"
+          }
+        ],
+        "events": [
+          {
+            "name": "RoleProvisioned",
+            "fields": [
+              "id",
+              "tenantId",
+              "name",
+              "description"
+            ]
+          },
+          {
+            "name": "RoleDescriptionChanged",
+            "fields": [
+              "id",
+              "tenantId",
+              "name",
+              "description"
+            ]
+          },
+          {
+            "name": "GroupAssignedToRole",
+            "fields": [
+              "id",
+              "tenantId",
+              "name"
+            ]
+          },
+          {
+            "name": "GroupUnassignedFromRole",
+            "fields": [
+              "id",
+              "tenantId",
+              "name"
+            ]
+          },
+          {
+            "name": "UserAssignedToRole",
+            "fields": [
+              "id",
+              "tenantId",
+              "name"
+            ]
+          },
+          {
+            "name": "UserUnassignedFromRole",
+            "fields": [
+              "id",
+              "tenantId",
+              "name"
+            ]
+          },
+          {
+            "name": "RolePermissionAttached",
+            "fields": [
+              "id",
+              "tenantId",
+              "name"
+            ]
+          },
+          {
+            "name": "RolePermissionDetached",
+            "fields": [
+              "id",
+              "tenantId",
+              "name"
+            ]
+          }
+        ],
+        "consumerExchange": {
+          "exchangeName": "",
+          "receivers": []
+        },
+        "producerExchange": {
+          "exchangeName": "xoom-auth",
+          "schemaGroup": "vlingo:xoom:auth",
+          "outgoingEvents": [
+            "RoleProvisioned",
+            "RoleDescriptionChanged",
+            "GroupAssignedToRole",
+            "GroupUnassignedFromRole",
+            "UserUnassignedFromRole",
+            "UserAssignedToRole",
+            "RolePermissionAttached",
+            "RolePermissionDetached"
+          ]
+        }
+      },
+      {
+        "api": {
+          "rootPath": "/tenants",
+          "routes": [
+            {
+              "path": "/{tenantId}/users",
+              "httpMethod": "POST",
+              "aggregateMethod": "registerUser",
+              "requireEntityLoad": false
+            },
+            {
+              "path": "/{tenantId}/users/{username}/activate",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "activate",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/users/{username}/deactivate",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "deactivate",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/users/{username}/credentials",
+              "httpMethod": "PUT",
+              "aggregateMethod": "addCredential",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/users/{username}/credentials/{authority}",
+              "httpMethod": "DELETE",
+              "aggregateMethod": "removeCredential",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/users/{username}/credentials/{authority}",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "replaceCredential",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/users/{username}/profile",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "replaceProfile",
+              "requireEntityLoad": true
+            }
+          ]
+        },
+        "aggregateName": "User",
+        "stateFields": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "tenantId",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "username",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "active",
+            "type": "boolean",
+            "collectionType": ""
+          },
+          {
+            "name": "credentials",
+            "type": "Credential",
+            "collectionType": "Set"
+          },
+          {
+            "name": "profile",
+            "type": "Profile",
+            "collectionType": ""
+          }
+        ],
+        "methods": [
+          {
+            "name": "registerUser",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "username",
+                "parameterName": "username",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "active",
+                "parameterName": "active",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "profile",
+                "parameterName": "profile",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": true,
+            "event": "UserRegistered"
+          },
+          {
+            "name": "activate",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "username",
+                "parameterName": "username",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "UserActivated"
+          },
+          {
+            "name": "deactivate",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "username",
+                "parameterName": "username",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "UserDeactivated"
+          },
+          {
+            "name": "addCredential",
+            "parameters": [
+              {
+                "stateField": "credentials",
+                "parameterName": "credential",
+                "multiplicity": "+"
+              }
+            ],
+            "useFactory": false,
+            "event": "UserCredentialAdded"
+          },
+          {
+            "name": "removeCredential",
+            "parameters": [
+              {
+                "stateField": "credentials",
+                "parameterName": "credential",
+                "multiplicity": "-"
+              }
+            ],
+            "useFactory": false,
+            "event": "UserCredentialRemoved"
+          },
+          {
+            "name": "replaceCredential",
+            "parameters": [
+              {
+                "stateField": "credentials",
+                "parameterName": "credential",
+                "multiplicity": "+"
+              }
+            ],
+            "useFactory": false,
+            "event": "UserCredentialReplaced"
+          },
+          {
+            "name": "replaceProfile",
+            "parameters": [
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "username",
+                "parameterName": "username",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "profile",
+                "parameterName": "profile",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "UserProfileReplaced"
+          }
+        ],
+        "events": [
+          {
+            "name": "UserRegistered",
+            "fields": [
+              "id",
+              "tenantId",
+              "username",
+              "active",
+              "profile"
+            ]
+          },
+          {
+            "name": "UserActivated",
+            "fields": [
+              "id",
+              "tenantId",
+              "username"
+            ]
+          },
+          {
+            "name": "UserDeactivated",
+            "fields": [
+              "id",
+              "tenantId",
+              "username"
+            ]
+          },
+          {
+            "name": "UserCredentialAdded",
+            "fields": [
+              "id",
+              "tenantId",
+              "username",
+              "credentials"
+            ]
+          },
+          {
+            "name": "UserCredentialRemoved",
+            "fields": [
+              "id",
+              "tenantId",
+              "username",
+              "credentials"
+            ]
+          },
+          {
+            "name": "UserCredentialReplaced",
+            "fields": [
+              "id",
+              "tenantId",
+              "username",
+              "credentials"
+            ]
+          },
+          {
+            "name": "UserProfileReplaced",
+            "fields": [
+              "id",
+              "tenantId",
+              "username",
+              "profile"
+            ]
+          }
+        ],
+        "consumerExchange": {
+          "exchangeName": "",
+          "receivers": []
+        },
+        "producerExchange": {
+          "exchangeName": "xoom-auth",
+          "schemaGroup": "vlingo:xoom:auth",
+          "outgoingEvents": [
+            "UserRegistered",
+            "UserActivated",
+            "UserDeactivated",
+            "UserCredentialAdded",
+            "UserCredentialRemoved",
+            "UserCredentialReplaced",
+            "UserProfileReplaced"
+          ]
+        }
+      },
+      {
+        "api": {
+          "rootPath": "/tenants",
+          "routes": [
+            {
+              "path": "*",
+              "httpMethod": "POST",
+              "aggregateMethod": "subscribeFor",
+              "requireEntityLoad": false
+            },
+            {
+              "path": "/{id}/activate",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "activate",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{id}/deactivate",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "deactivate",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{id}/description",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "changeDescription",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{id}/name",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "changeName",
+              "requireEntityLoad": true
+            }
+          ]
+        },
+        "aggregateName": "Tenant",
+        "stateFields": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "description",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "active",
+            "type": "boolean",
+            "collectionType": ""
+          }
+        ],
+        "methods": [
+          {
+            "name": "subscribeFor",
+            "parameters": [],
+            "useFactory": true,
+            "event": "TenantSubscribed"
+          },
+          {
+            "name": "activate",
+            "parameters": [
+              {
+                "stateField": "id",
+                "parameterName": "id",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "TenantActivated"
+          },
+          {
+            "name": "deactivate",
+            "parameters": [
+              {
+                "stateField": "id",
+                "parameterName": "id",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "TenantDeactivated"
+          },
+          {
+            "name": "changeName",
+            "parameters": [
+              {
+                "stateField": "id",
+                "parameterName": "id",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "TenantNameChanged"
+          },
+          {
+            "name": "changeDescription",
+            "parameters": [
+              {
+                "stateField": "id",
+                "parameterName": "id",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "description",
+                "parameterName": "description",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "TenantDescriptionChanged"
+          }
+        ],
+        "events": [
+          {
+            "name": "TenantActivated",
+            "fields": [
+              "id"
+            ]
+          },
+          {
+            "name": "TenantDeactivated",
+            "fields": [
+              "id"
+            ]
+          },
+          {
+            "name": "TenantDescriptionChanged",
+            "fields": [
+              "id",
+              "description"
+            ]
+          },
+          {
+            "name": "TenantNameChanged",
+            "fields": [
+              "id",
+              "name"
+            ]
+          },
+          {
+            "name": "TenantSubscribed",
+            "fields": [
+              "id",
+              "name",
+              "description",
+              "active"
+            ]
+          }
+        ],
+        "consumerExchange": {
+          "exchangeName": "",
+          "receivers": []
+        },
+        "producerExchange": {
+          "exchangeName": "xoom-auth",
+          "schemaGroup": "vlingo:xoom:auth",
+          "outgoingEvents": [
+            "TenantActivated",
+            "TenantDeactivated",
+            "TenantDescriptionChanged",
+            "TenantNameChanged",
+            "TenantSubscribed"
+          ]
+        }
+      },
+      {
+        "api": {
+          "rootPath": "/tenants",
+          "routes": [
+            {
+              "path": "/{tenantId}/permissions",
+              "httpMethod": "POST",
+              "aggregateMethod": "provisionPermission",
+              "requireEntityLoad": false
+            },
+            {
+              "path": "/{tenantId}/permissions/{permissionName}/constraints",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "enforce",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/permissions/{permissionName}/constraints/{constraintName}",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "enforceReplacement",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/permissions/{permissionName}/constraints/{constraintName}",
+              "httpMethod": "DELETE",
+              "aggregateMethod": "forget",
+              "requireEntityLoad": true
+            },
+            {
+              "path": "/{tenantId}/permissions/{permissionName}/description",
+              "httpMethod": "PATCH",
+              "aggregateMethod": "changeDescription",
+              "requireEntityLoad": true
+            }
+          ]
+        },
+        "aggregateName": "Permission",
+        "stateFields": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "constraints",
+            "type": "Constraint",
+            "collectionType": "Set"
+          },
+          {
+            "name": "description",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "name",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "tenantId",
+            "type": "String",
+            "collectionType": ""
+          }
+        ],
+        "methods": [
+          {
+            "name": "provisionPermission",
+            "parameters": [
+              {
+                "stateField": "description",
+                "parameterName": "description",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "name",
+                "parameterName": "name",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": true,
+            "event": "PermissionProvisioned"
+          },
+          {
+            "name": "enforce",
+            "parameters": [
+              {
+                "stateField": "constraints",
+                "parameterName": "constraint",
+                "multiplicity": "+"
+              }
+            ],
+            "useFactory": false,
+            "event": "PermissionConstraintEnforced"
+          },
+          {
+            "name": "enforceReplacement",
+            "parameters": [
+              {
+                "stateField": "constraints",
+                "parameterName": "constraint",
+                "multiplicity": "+"
+              }
+            ],
+            "useFactory": false,
+            "event": "PermissionConstraintReplacementEnforced"
+          },
+          {
+            "name": "forget",
+            "parameters": [
+              {
+                "stateField": "constraints",
+                "parameterName": "constraint",
+                "multiplicity": "+"
+              }
+            ],
+            "useFactory": false,
+            "event": "PermissionConstraintForgotten"
+          },
+          {
+            "name": "changeDescription",
+            "parameters": [
+              {
+                "stateField": "description",
+                "parameterName": "description",
+                "multiplicity": ""
+              },
+              {
+                "stateField": "tenantId",
+                "parameterName": "tenantId",
+                "multiplicity": ""
+              }
+            ],
+            "useFactory": false,
+            "event": "PermissionDescriptionChanged"
+          }
+        ],
+        "events": [
+          {
+            "name": "PermissionProvisioned",
+            "fields": [
+              "id",
+              "constraints",
+              "description",
+              "name",
+              "tenantId"
+            ]
+          },
+          {
+            "name": "PermissionConstraintEnforced",
+            "fields": [
+              "id",
+              "constraints",
+              "tenantId"
+            ]
+          },
+          {
+            "name": "PermissionConstraintReplacementEnforced",
+            "fields": [
+              "id",
+              "constraints",
+              "tenantId"
+            ]
+          },
+          {
+            "name": "PermissionConstraintForgotten",
+            "fields": [
+              "id",
+              "constraints",
+              "tenantId"
+            ]
+          },
+          {
+            "name": "PermissionDescriptionChanged",
+            "fields": [
+              "id",
+              "description",
+              "tenantId"
+            ]
+          }
+        ],
+        "consumerExchange": {
+          "exchangeName": "",
+          "receivers": []
+        },
+        "producerExchange": {
+          "exchangeName": "xoom-auth",
+          "schemaGroup": "vlingo:xoom:auth",
+          "outgoingEvents": [
+            "PermissionProvisioned",
+            "PermissionConstraintEnforced",
+            "PermissionConstraintReplacementEnforced",
+            "PermissionConstraintForgotten",
+            "PermissionDescriptionChanged"
+          ]
+        }
+      }
+    ],
+    "valueObjectSettings": [
+      {
+        "name": "Constraint",
+        "fields": [
+          {
+            "name": "description",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "name",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "type",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "value",
+            "type": "String",
+            "collectionType": ""
+          }
+        ]
+      },
+      {
+        "name": "Credential",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "id",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "secret",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "type",
+            "type": "String",
+            "collectionType": ""
+          }
+        ]
+      },
+      {
+        "name": "PersonName",
+        "fields": [
+          {
+            "name": "given",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "family",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "second",
+            "type": "String",
+            "collectionType": ""
+          }
+        ]
+      },
+      {
+        "name": "Profile",
+        "fields": [
+          {
+            "name": "emailAddress",
+            "type": "String",
+            "collectionType": ""
+          },
+          {
+            "name": "name",
+            "type": "PersonName",
+            "collectionType": ""
+          },
+          {
+            "name": "phone",
+            "type": "String",
+            "collectionType": ""
+          }
+        ]
+      }
+    ]
+  },
+  "deployment": {
+    "type": "NONE",
+    "dockerImage": "",
+    "kubernetesImage": "",
+    "kubernetesPod": "",
+    "clusterTotalNodes": 3,
+    "clusterPort": 38001,
+    "producerExchangePort": 37001,
+    "httpServerPort": 8080,
+    "pullSchemas": false
+  },
+  "schemata": {
+    "host": "xoom-schemata",
+    "port": 9019
+  },
+  "projectDirectory": "/designer/VLINGO-XOOM/io.vlingo.xoom/xoom-auth12",
+  "useAnnotations": true,
+  "useAutoDispatch": true,
+  "generateUIWith": "ReactJS",
+  "generateUI": false
+}

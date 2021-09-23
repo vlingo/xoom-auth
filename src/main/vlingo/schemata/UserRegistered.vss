@@ -1,0 +1,8 @@
+event UserRegistered {
+  version semanticVersion
+  string id
+  string tenantId
+  string username
+  boolean active
+  data.Profile:1.0.0 profile
+}

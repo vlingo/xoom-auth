@@ -1,0 +1,6 @@
+event RolePermissionDetached {
+  version semanticVersion
+  string id
+  string tenantId
+  string name
+}

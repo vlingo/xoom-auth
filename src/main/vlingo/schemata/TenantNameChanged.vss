@@ -1,0 +1,5 @@
+event TenantNameChanged {
+  version semanticVersion
+  string id
+  string name
+}

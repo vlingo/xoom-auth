@@ -1,0 +1,6 @@
+event GroupDescriptionChanged {
+  version semanticVersion
+  string id
+  string description
+  string tenantId
+}

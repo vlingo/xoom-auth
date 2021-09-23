@@ -1,0 +1,5 @@
+event UserAssignedToGroup {
+  version semanticVersion
+  string id
+  string tenantId
+}
