@@ -51,7 +51,6 @@ public class GroupProjectionTest {
     projection.projectWith(createGroupProvisioned(secondData), control);
   }
 
-
   private Projectable createGroupProvisioned(GroupState data) {
     final GroupProvisioned eventData = new GroupProvisioned(data.id, data.name, data.description, data.tenantId);
 
@@ -62,32 +61,39 @@ public class GroupProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void provisionGroup() {
-      final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-      final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(2);
-      projection.projectWith(createGroupProvisioned(firstData.toGroupState()), control);
-      projection.projectWith(createGroupProvisioned(secondData.toGroupState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+  @Test
+  public void provisionGroup() {
+    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
+    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(2);
+    projection.projectWith(createGroupProvisioned(firstData.toGroupState()), control);
+    projection.projectWith(createGroupProvisioned(secondData.toGroupState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(2, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-      assertEquals(1, valueOfProjectionIdFor(secondData.id, confirmations));
+    assertEquals(2, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, valueOfProjectionIdFor(secondData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, GroupData.class, interest);
-      GroupData item = interestAccess.readFrom("item", firstData.id);
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, GroupData.class, interest);
+    GroupData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.name, "first-group-name");
+    assertEquals(item.description, "first-group-description");
+    assertEquals(item.tenantId, "first-group-tenantId");
 
-        interest = new CountingReadResultInterest();
-        interestAccess = interest.afterCompleting(1);
-        stateStore.read(secondData.id, GroupData.class, interest);
-        item = interestAccess.readFrom("item", secondData.id);
-        assertEquals(secondData.id, item.id);
-    }
-
+    interest = new CountingReadResultInterest();
+    interestAccess = interest.afterCompleting(1);
+    stateStore.read(secondData.id, GroupData.class, interest);
+    item = interestAccess.readFrom("item", secondData.id);
+    assertEquals(secondData.id, item.id);
+    assertEquals(item.id, "2");
+    assertEquals(item.name, "second-group-name");
+    assertEquals(item.description, "second-group-description");
+    assertEquals(item.tenantId, "second-group-tenantId");
+  }
 
   private Projectable createGroupDescriptionChanged(GroupState data) {
     final GroupDescriptionChanged eventData = new GroupDescriptionChanged(data.id, data.description, data.tenantId);
@@ -98,26 +104,28 @@ public class GroupProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void changeDescription() {
-        final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-        final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
-      registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
+  @Test
+  public void changeDescription() {
+    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
+    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createGroupDescriptionChanged(firstData.toGroupState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createGroupDescriptionChanged(firstData.toGroupState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, GroupData.class, interest);
-      GroupData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, GroupData.class, interest);
+    GroupData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.description, "first-group-description");
+    assertEquals(item.tenantId, "first-group-tenantId");
+  }
 
   private Projectable createGroupAssignedToGroup(GroupState data) {
     final GroupAssignedToGroup eventData = new GroupAssignedToGroup(data.id, data.tenantId);
@@ -128,26 +136,27 @@ public class GroupProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void assignGroup() {
-        final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-        final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
-      registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
+  @Test
+  public void assignGroup() {
+    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
+    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createGroupAssignedToGroup(firstData.toGroupState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createGroupAssignedToGroup(firstData.toGroupState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, GroupData.class, interest);
-      GroupData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, GroupData.class, interest);
+    GroupData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-group-tenantId");
+  }
 
   private Projectable createGroupUnassignedFromGroup(GroupState data) {
     final GroupUnassignedFromGroup eventData = new GroupUnassignedFromGroup(data.id, data.tenantId);
@@ -158,26 +167,27 @@ public class GroupProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void unassignGroup() {
-        final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-        final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
-      registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
+  @Test
+  public void unassignGroup() {
+    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
+    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createGroupUnassignedFromGroup(firstData.toGroupState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createGroupUnassignedFromGroup(firstData.toGroupState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, GroupData.class, interest);
-      GroupData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, GroupData.class, interest);
+    GroupData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-group-tenantId");
+  }
 
   private Projectable createUserAssignedToGroup(GroupState data) {
     final UserAssignedToGroup eventData = new UserAssignedToGroup(data.id, data.tenantId);
@@ -188,26 +198,27 @@ public class GroupProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void assignUser() {
-        final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-        final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
-      registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
+  @Test
+  public void assignUser() {
+    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
+    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createUserAssignedToGroup(firstData.toGroupState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createUserAssignedToGroup(firstData.toGroupState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, GroupData.class, interest);
-      GroupData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, GroupData.class, interest);
+    GroupData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-group-tenantId");
+  }
 
   private Projectable createUserUnassignedFromGroup(GroupState data) {
     final UserUnassignedFromGroup eventData = new UserUnassignedFromGroup(data.id, data.tenantId);
@@ -218,25 +229,27 @@ public class GroupProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void unassignUser() {
-        final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-        final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
-      registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
+  @Test
+  public void unassignUser() {
+    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
+    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createUserUnassignedFromGroup(firstData.toGroupState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createUserUnassignedFromGroup(firstData.toGroupState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, GroupData.class, interest);
-      GroupData item = interestAccess.readFrom("item", firstData.id);
-    }
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, GroupData.class, interest);
+    GroupData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-group-tenantId");
+  }
 
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
     return confirmations.get(valueToProjectionId.get(valueText));

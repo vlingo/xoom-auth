@@ -17,8 +17,12 @@ public class ProfileData {
   public final String phone;
 
   public static ProfileData from(final Profile profile) {
-    final PersonNameData name = profile.name != null ? PersonNameData.from(profile.name) : null;
-    return from(profile.emailAddress, name, profile.phone);
+    if (profile == null) {
+      return ProfileData.empty();
+    } else {
+      final PersonNameData name = profile.name != null ? PersonNameData.from(profile.name) : null;
+      return from(profile.emailAddress, name, profile.phone);
+    }
   }
 
   public static ProfileData from(final String emailAddress, final PersonNameData name, final String phone) {
@@ -42,6 +46,10 @@ public class ProfileData {
   public Profile toProfile() {
     final PersonName name = PersonName.from(this.name.given, this.name.family, this.name.second);
     return Profile.from(emailAddress, name, phone);
+  }
+
+  public static ProfileData empty() {
+    return new ProfileData(null, null, null);
   }
 
   @Override

@@ -51,7 +51,6 @@ public class RoleProjectionTest {
     projection.projectWith(createRoleProvisioned(secondData), control);
   }
 
-
   private Projectable createRoleProvisioned(RoleState data) {
     final RoleProvisioned eventData = new RoleProvisioned(data.id, data.tenantId, data.name, data.description);
 
@@ -62,32 +61,39 @@ public class RoleProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void provisionRole() {
-      final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-      final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(2);
-      projection.projectWith(createRoleProvisioned(firstData.toRoleState()), control);
-      projection.projectWith(createRoleProvisioned(secondData.toRoleState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+  @Test
+  public void provisionRole() {
+    final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
+    final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(2);
+    projection.projectWith(createRoleProvisioned(firstData.toRoleState()), control);
+    projection.projectWith(createRoleProvisioned(secondData.toRoleState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(2, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-      assertEquals(1, valueOfProjectionIdFor(secondData.id, confirmations));
+    assertEquals(2, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, valueOfProjectionIdFor(secondData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, RoleData.class, interest);
-      RoleData item = interestAccess.readFrom("item", firstData.id);
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, RoleData.class, interest);
+    RoleData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-role-tenantId");
+    assertEquals(item.name, "first-role-name");
+    assertEquals(item.description, "first-role-description");
 
-        interest = new CountingReadResultInterest();
-        interestAccess = interest.afterCompleting(1);
-        stateStore.read(secondData.id, RoleData.class, interest);
-        item = interestAccess.readFrom("item", secondData.id);
-        assertEquals(secondData.id, item.id);
-    }
-
+    interest = new CountingReadResultInterest();
+    interestAccess = interest.afterCompleting(1);
+    stateStore.read(secondData.id, RoleData.class, interest);
+    item = interestAccess.readFrom("item", secondData.id);
+    assertEquals(secondData.id, item.id);
+    assertEquals(item.id, "2");
+    assertEquals(item.tenantId, "second-role-tenantId");
+    assertEquals(item.name, "second-role-name");
+    assertEquals(item.description, "second-role-description");
+  }
 
   private Projectable createRoleDescriptionChanged(RoleState data) {
     final RoleDescriptionChanged eventData = new RoleDescriptionChanged(data.id, data.tenantId, data.name, data.description);
@@ -98,26 +104,29 @@ public class RoleProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void changeDescription() {
-        final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-        final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
-      registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
+  @Test
+  public void changeDescription() {
+    final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
+    final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
+    registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createRoleDescriptionChanged(firstData.toRoleState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createRoleDescriptionChanged(firstData.toRoleState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, RoleData.class, interest);
-      RoleData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, RoleData.class, interest);
+    RoleData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-role-tenantId");
+    assertEquals(item.name, "first-role-name");
+    assertEquals(item.description, "first-role-description");
+  }
 
   private Projectable createGroupAssignedToRole(RoleState data) {
     final GroupAssignedToRole eventData = new GroupAssignedToRole(data.id, data.tenantId, data.name);
@@ -128,26 +137,28 @@ public class RoleProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void assignGroup() {
-        final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-        final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
-      registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
+  @Test
+  public void assignGroup() {
+    final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
+    final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
+    registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createGroupAssignedToRole(firstData.toRoleState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createGroupAssignedToRole(firstData.toRoleState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, RoleData.class, interest);
-      RoleData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, RoleData.class, interest);
+    RoleData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-role-tenantId");
+    assertEquals(item.name, "first-role-name");
+  }
 
   private Projectable createGroupUnassignedFromRole(RoleState data) {
     final GroupUnassignedFromRole eventData = new GroupUnassignedFromRole(data.id, data.tenantId, data.name);
@@ -158,26 +169,28 @@ public class RoleProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void unassignGroup() {
-        final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-        final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
-      registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
+  @Test
+  public void unassignGroup() {
+    final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
+    final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
+    registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createGroupUnassignedFromRole(firstData.toRoleState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createGroupUnassignedFromRole(firstData.toRoleState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, RoleData.class, interest);
-      RoleData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, RoleData.class, interest);
+    RoleData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-role-tenantId");
+    assertEquals(item.name, "first-role-name");
+  }
 
   private Projectable createUserAssignedToRole(RoleState data) {
     final UserAssignedToRole eventData = new UserAssignedToRole(data.id, data.tenantId, data.name);
@@ -188,26 +201,28 @@ public class RoleProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void assignUser() {
-        final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-        final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
-      registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
+  @Test
+  public void assignUser() {
+    final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
+    final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
+    registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createUserAssignedToRole(firstData.toRoleState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createUserAssignedToRole(firstData.toRoleState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, RoleData.class, interest);
-      RoleData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, RoleData.class, interest);
+    RoleData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-role-tenantId");
+    assertEquals(item.name, "first-role-name");
+  }
 
   private Projectable createUserUnassignedFromRole(RoleState data) {
     final UserUnassignedFromRole eventData = new UserUnassignedFromRole(data.id, data.tenantId, data.name);
@@ -218,26 +233,28 @@ public class RoleProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void unassignUser() {
-        final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-        final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
-      registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
+  @Test
+  public void unassignUser() {
+    final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
+    final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
+    registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createUserUnassignedFromRole(firstData.toRoleState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createUserUnassignedFromRole(firstData.toRoleState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, RoleData.class, interest);
-      RoleData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, RoleData.class, interest);
+    RoleData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-role-tenantId");
+    assertEquals(item.name, "first-role-name");
+  }
 
   private Projectable createRolePermissionAttached(RoleState data) {
     final RolePermissionAttached eventData = new RolePermissionAttached(data.id, data.tenantId, data.name);
@@ -248,26 +265,28 @@ public class RoleProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void attach() {
-        final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-        final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
-      registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
+  @Test
+  public void attach() {
+    final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
+    final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
+    registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createRolePermissionAttached(firstData.toRoleState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createRolePermissionAttached(firstData.toRoleState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, RoleData.class, interest);
-      RoleData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, RoleData.class, interest);
+    RoleData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-role-tenantId");
+    assertEquals(item.name, "first-role-name");
+  }
 
   private Projectable createRolePermissionDetached(RoleState data) {
     final RolePermissionDetached eventData = new RolePermissionDetached(data.id, data.tenantId, data.name);
@@ -278,25 +297,28 @@ public class RoleProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void detach() {
-        final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-        final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
-      registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
+  @Test
+  public void detach() {
+    final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
+    final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
+    registerExampleRole(firstData.toRoleState(), secondData.toRoleState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createRolePermissionDetached(firstData.toRoleState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createRolePermissionDetached(firstData.toRoleState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, RoleData.class, interest);
-      RoleData item = interestAccess.readFrom("item", firstData.id);
-    }
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, RoleData.class, interest);
+    RoleData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.tenantId, "first-role-tenantId");
+    assertEquals(item.name, "first-role-name");
+  }
 
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
     return confirmations.get(valueToProjectionId.get(valueText));

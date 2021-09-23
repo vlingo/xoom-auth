@@ -102,6 +102,7 @@
                 <clientOrganization>vlingo</clientOrganization>
                 <clientUnit>xoom</clientUnit>
                 <hierarchicalCascade>true</hierarchicalCascade>
+                <skipPrompt>true</skipPrompt>
               </schemataService>
               <schemata>
                 <schema>
@@ -119,30 +120,6 @@
                 <schema>
                   <ref>vlingo:xoom:auth:Profile:1.0.0</ref>
                   <src>Profile.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:GroupProvisioned:1.0.0</ref>
-                  <src>GroupProvisioned.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:GroupDescriptionChanged:1.0.0</ref>
-                  <src>GroupDescriptionChanged.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:GroupAssignedToGroup:1.0.0</ref>
-                  <src>GroupAssignedToGroup.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:GroupUnassignedFromGroup:1.0.0</ref>
-                  <src>GroupUnassignedFromGroup.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:UserAssignedToGroup:1.0.0</ref>
-                  <src>UserAssignedToGroup.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:UserUnassignedFromGroup:1.0.0</ref>
-                  <src>UserUnassignedFromGroup.vss</src>
                 </schema>
                 <schema>
                   <ref>vlingo:xoom:auth:RoleProvisioned:1.0.0</ref>
@@ -177,6 +154,50 @@
                   <src>RolePermissionDetached.vss</src>
                 </schema>
                 <schema>
+                  <ref>vlingo:xoom:auth:TenantActivated:1.0.0</ref>
+                  <src>TenantActivated.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:TenantDeactivated:1.0.0</ref>
+                  <src>TenantDeactivated.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:TenantDescriptionChanged:1.0.0</ref>
+                  <src>TenantDescriptionChanged.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:TenantNameChanged:1.0.0</ref>
+                  <src>TenantNameChanged.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:TenantSubscribed:1.0.0</ref>
+                  <src>TenantSubscribed.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupProvisioned:1.0.0</ref>
+                  <src>GroupProvisioned.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupDescriptionChanged:1.0.0</ref>
+                  <src>GroupDescriptionChanged.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupAssignedToGroup:1.0.0</ref>
+                  <src>GroupAssignedToGroup.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupUnassignedFromGroup:1.0.0</ref>
+                  <src>GroupUnassignedFromGroup.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserAssignedToGroup:1.0.0</ref>
+                  <src>UserAssignedToGroup.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserUnassignedFromGroup:1.0.0</ref>
+                  <src>UserUnassignedFromGroup.vss</src>
+                </schema>
+                <schema>
                   <ref>vlingo:xoom:auth:UserRegistered:1.0.0</ref>
                   <src>UserRegistered.vss</src>
                 </schema>
@@ -203,26 +224,6 @@
                 <schema>
                   <ref>vlingo:xoom:auth:UserProfileReplaced:1.0.0</ref>
                   <src>UserProfileReplaced.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:TenantActivated:1.0.0</ref>
-                  <src>TenantActivated.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:TenantDeactivated:1.0.0</ref>
-                  <src>TenantDeactivated.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:TenantDescriptionChanged:1.0.0</ref>
-                  <src>TenantDescriptionChanged.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:TenantNameChanged:1.0.0</ref>
-                  <src>TenantNameChanged.vss</src>
-                </schema>
-                <schema>
-                  <ref>vlingo:xoom:auth:TenantSubscribed:1.0.0</ref>
-                  <src>TenantSubscribed.vss</src>
                 </schema>
                 <schema>
                   <ref>vlingo:xoom:auth:PermissionProvisioned:1.0.0</ref>

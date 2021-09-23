@@ -18,7 +18,11 @@ public class ConstraintData {
   public final String value;
 
   public static ConstraintData from(final Constraint constraint) {
-    return from(constraint.description, constraint.name, constraint.type, constraint.value);
+    if (constraint == null) {
+      return ConstraintData.empty();
+    } else {
+      return from(constraint.description, constraint.name, constraint.type, constraint.value);
+    }
   }
 
   public static ConstraintData from(final String description, final String name, final String type, final String value) {
@@ -42,6 +46,10 @@ public class ConstraintData {
 
   public Constraint toConstraint() {
     return Constraint.from(description, name, type, value);
+  }
+
+  public static ConstraintData empty() {
+    return new ConstraintData(null, null, null, null);
   }
 
   @Override

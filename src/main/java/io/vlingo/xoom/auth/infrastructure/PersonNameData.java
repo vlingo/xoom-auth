@@ -17,7 +17,11 @@ public class PersonNameData {
   public final String second;
 
   public static PersonNameData from(final PersonName personName) {
-    return from(personName.given, personName.family, personName.second);
+    if (personName == null) {
+      return PersonNameData.empty();
+    } else {
+      return from(personName.given, personName.family, personName.second);
+    }
   }
 
   public static PersonNameData from(final String given, final String family, final String second) {
@@ -40,6 +44,10 @@ public class PersonNameData {
 
   public PersonName toPersonName() {
     return PersonName.from(given, family, second);
+  }
+
+  public static PersonNameData empty() {
+    return new PersonNameData(null, null, null);
   }
 
   @Override

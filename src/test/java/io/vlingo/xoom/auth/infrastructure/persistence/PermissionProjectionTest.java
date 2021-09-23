@@ -52,7 +52,6 @@ public class PermissionProjectionTest {
     projection.projectWith(createPermissionProvisioned(secondData), control);
   }
 
-
   private Projectable createPermissionProvisioned(PermissionState data) {
     final PermissionProvisioned eventData = new PermissionProvisioned(data.id, data.description, data.name, data.tenantId);
 
@@ -63,122 +62,132 @@ public class PermissionProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void provisionPermission() {
-      final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
-      final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(2);
-      projection.projectWith(createPermissionProvisioned(firstData.toPermissionState()), control);
-      projection.projectWith(createPermissionProvisioned(secondData.toPermissionState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+  @Test
+  public void provisionPermission() {
+    final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
+    final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(2);
+    projection.projectWith(createPermissionProvisioned(firstData.toPermissionState()), control);
+    projection.projectWith(createPermissionProvisioned(secondData.toPermissionState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(2, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-      assertEquals(1, valueOfProjectionIdFor(secondData.id, confirmations));
+    assertEquals(2, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, valueOfProjectionIdFor(secondData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, PermissionData.class, interest);
-      PermissionData item = interestAccess.readFrom("item", firstData.id);
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, PermissionData.class, interest);
+    PermissionData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.description, "first-permission-description");
+    assertEquals(item.name, "first-permission-name");
+    assertEquals(item.tenantId, "first-permission-tenantId");
 
-        interest = new CountingReadResultInterest();
-        interestAccess = interest.afterCompleting(1);
-        stateStore.read(secondData.id, PermissionData.class, interest);
-        item = interestAccess.readFrom("item", secondData.id);
-        assertEquals(secondData.id, item.id);
-    }
+    interest = new CountingReadResultInterest();
+    interestAccess = interest.afterCompleting(1);
+    stateStore.read(secondData.id, PermissionData.class, interest);
+    item = interestAccess.readFrom("item", secondData.id);
+    assertEquals(secondData.id, item.id);
+    assertEquals(item.id, "2");
+    assertEquals(item.description, "second-permission-description");
+    assertEquals(item.name, "second-permission-name");
+    assertEquals(item.tenantId, "second-permission-tenantId");
+  }
 
+  private Projectable createPermissionConstraintEnforced(PermissionState data) {
+    final PermissionConstraintEnforced eventData = new PermissionConstraintEnforced(data.id, data.constraints.stream().findFirst().orElse(null));
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintEnforced.class, 1,
+    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
 
-//  private Projectable createPermissionConstraintEnforced(PermissionState data) {
-//    final PermissionConstraintEnforced eventData = new PermissionConstraintEnforced(data.id, data.constraints);
-//    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintEnforced.class, 1,
-//    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-//    final String projectionId = UUID.randomUUID().toString();
-//    valueToProjectionId.put(data.id, projectionId);
-//    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-//  }
+  @Test
+  public void enforce() {
+    final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
+    final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
+    registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
 
-    @Test
-    public void enforce() {
-        final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
-        final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
-      registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createPermissionConstraintEnforced(firstData.toPermissionState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-//      projection.projectWith(createPermissionConstraintEnforced(firstData.toPermissionState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, PermissionData.class, interest);
+    PermissionData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertNotNull(item.constraints);
+  }
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, PermissionData.class, interest);
-      PermissionData item = interestAccess.readFrom("item", firstData.id);
-    }
+  private Projectable createPermissionConstraintReplacementEnforced(PermissionState data) {
+    final PermissionConstraintReplacementEnforced eventData = new PermissionConstraintReplacementEnforced(data.id, data.constraints.stream().findFirst().orElse(null));
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintReplacementEnforced.class, 1,
+    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
 
+  @Test
+  public void enforceReplacement() {
+    final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
+    final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
+    registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
 
-//  private Projectable createPermissionConstraintReplacementEnforced(PermissionState data) {
-//    final PermissionConstraintReplacementEnforced eventData = new PermissionConstraintReplacementEnforced(data.id, data.constraints);
-//    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintReplacementEnforced.class, 1,
-//    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-//    final String projectionId = UUID.randomUUID().toString();
-//    valueToProjectionId.put(data.id, projectionId);
-//    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-//  }
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createPermissionConstraintReplacementEnforced(firstData.toPermissionState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-    @Test
-    public void enforceReplacement() {
-        final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
-        final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
-      registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-//      projection.projectWith(createPermissionConstraintReplacementEnforced(firstData.toPermissionState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, PermissionData.class, interest);
+    PermissionData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertNotNull(item.constraints);
+  }
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+  private Projectable createPermissionConstraintForgotten(PermissionState data) {
+    final PermissionConstraintForgotten eventData = new PermissionConstraintForgotten(data.id, data.constraints.stream().findFirst().orElse(null));
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintForgotten.class, 1,
+    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, PermissionData.class, interest);
-      PermissionData item = interestAccess.readFrom("item", firstData.id);
-    }
+  @Test
+  public void forget() {
+    final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
+    final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
+    registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
 
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createPermissionConstraintForgotten(firstData.toPermissionState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-//  private Projectable createPermissionConstraintForgotten(PermissionState data) {
-//    final PermissionConstraintForgotten eventData = new PermissionConstraintForgotten(data.id, data.constraints);
-//    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintForgotten.class, 1,
-//    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-//    final String projectionId = UUID.randomUUID().toString();
-//    valueToProjectionId.put(data.id, projectionId);
-//    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-//  }
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-    @Test
-    public void forget() {
-        final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
-        final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
-      registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
-
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-//      projection.projectWith(createPermissionConstraintForgotten(firstData.toPermissionState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
-
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, PermissionData.class, interest);
-      PermissionData item = interestAccess.readFrom("item", firstData.id);
-    }
-
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, PermissionData.class, interest);
+    PermissionData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertNotNull(item.constraints);
+  }
 
   private Projectable createPermissionDescriptionChanged(PermissionState data) {
     final PermissionDescriptionChanged eventData = new PermissionDescriptionChanged(data.id, data.description, data.tenantId);
@@ -189,25 +198,28 @@ public class PermissionProjectionTest {
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
-    @Test
-    public void changeDescription() {
-        final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
-        final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
-      registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
+  @Test
+  public void changeDescription() {
+    final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
+    final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
+    registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
 
-      final CountingProjectionControl control = new CountingProjectionControl();
-      final AccessSafely access = control.afterCompleting(1);
-      projection.projectWith(createPermissionDescriptionChanged(firstData.toPermissionState()), control);
-      final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    final CountingProjectionControl control = new CountingProjectionControl();
+    final AccessSafely access = control.afterCompleting(1);
+    projection.projectWith(createPermissionDescriptionChanged(firstData.toPermissionState()), control);
+    final Map<String, Integer> confirmations = access.readFrom("confirmations");
 
-      assertEquals(1, confirmations.size());
-      assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
+    assertEquals(1, confirmations.size());
+    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
 
-      CountingReadResultInterest interest = new CountingReadResultInterest();
-      AccessSafely interestAccess = interest.afterCompleting(1);
-      stateStore.read(firstData.id, PermissionData.class, interest);
-      PermissionData item = interestAccess.readFrom("item", firstData.id);
-    }
+    CountingReadResultInterest interest = new CountingReadResultInterest();
+    AccessSafely interestAccess = interest.afterCompleting(1);
+    stateStore.read(firstData.id, PermissionData.class, interest);
+    PermissionData item = interestAccess.readFrom("item", firstData.id);
+    assertEquals(item.id, "1");
+    assertEquals(item.description, "first-permission-description");
+    assertEquals(item.tenantId, "first-permission-tenantId");
+  }
 
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
     return confirmations.get(valueToProjectionId.get(valueText));

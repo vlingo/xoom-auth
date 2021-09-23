@@ -18,7 +18,11 @@ public class CredentialData {
   public final String type;
 
   public static CredentialData from(final Credential credential) {
-    return from(credential.authority, credential.id, credential.secret, credential.type);
+    if (credential == null) {
+      return CredentialData.empty();
+    } else {
+      return from(credential.authority, credential.id, credential.secret, credential.type);
+    }
   }
 
   public static CredentialData from(final String authority, final String id, final String secret, final String type) {
@@ -42,6 +46,10 @@ public class CredentialData {
 
   public Credential toCredential() {
     return Credential.from(authority, id, secret, type);
+  }
+
+  public static CredentialData empty() {
+    return new CredentialData(null, null, null, null);
   }
 
   @Override
