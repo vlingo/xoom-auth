@@ -15,6 +15,7 @@ import io.vlingo.xoom.http.Header;
 import io.vlingo.xoom.http.Request;
 import io.vlingo.xoom.http.Response;
 import io.vlingo.xoom.http.ResponseHeader;
+import io.vlingo.xoom.turbo.ComponentRegistry;
 import io.vlingo.xoom.wire.message.ByteBufferAllocator;
 import io.vlingo.xoom.wire.message.Converters;
 import org.junit.jupiter.api.AfterEach;
@@ -50,6 +51,7 @@ public abstract class ResourceTest {
   public void tearDown() throws Exception {
     xoom.stopServer();
     xoom.terminateWorld();
+    ComponentRegistry.clear();
   }
 
   protected ByteBuffer toByteBuffer(final String requestContent) {
