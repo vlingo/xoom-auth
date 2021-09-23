@@ -246,7 +246,7 @@ public class UserProjectionTest {
   }
 
   private Projectable createUserRegistered(UserState data) {
-    final UserRegistered eventData = new UserRegistered(data.id, data.tenantId, data.username, data.active, data.profile);
+    final UserRegistered eventData = new UserRegistered(data.id, data.tenantId, data.username, data.active, data.credentials, data.profile);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserRegistered.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
 

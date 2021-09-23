@@ -59,11 +59,12 @@ public class UserEntityTest {
   private static final String USERNAME_FOR_REGISTER_USER_TEST = "user-username";
   private static final boolean ACTIVE_FOR_REGISTER_USER_TEST = true;
   private static final Profile PROFILE_FOR_REGISTER_USER_TEST = Profile.from("user-profile-emailAddress", PersonName.from("user-profile-name-given", "user-profile-name-family", "user-profile-name-second"), "user-profile-phone");
+  private static final Set<Credential> CREDENTIALS_FOR_REGISTER_USER_TEST = Collections.singleton(Credential.from("user-credential-authority", "user-credential-id", "user-credential-secret", "user-credential-type"));
 
   @Test
   public void registerUser() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final UserState state = user.registerUser(TENANT_ID_FOR_REGISTER_USER_TEST, USERNAME_FOR_REGISTER_USER_TEST, ACTIVE_FOR_REGISTER_USER_TEST, PROFILE_FOR_REGISTER_USER_TEST).await();
+    final UserState state = user.registerUser(TENANT_ID_FOR_REGISTER_USER_TEST, USERNAME_FOR_REGISTER_USER_TEST, ACTIVE_FOR_REGISTER_USER_TEST, CREDENTIALS_FOR_REGISTER_USER_TEST, PROFILE_FOR_REGISTER_USER_TEST).await();
 
     assertEquals(state.tenantId, "user-tenantId");
     assertEquals(state.username, "user-username");
@@ -73,6 +74,10 @@ public class UserEntityTest {
     assertEquals(state.profile.name.family, "user-profile-name-family");
     assertEquals(state.profile.name.second, "user-profile-name-second");
     assertEquals(state.profile.phone, "user-profile-phone");
+    assertEquals(state.credentials.stream().findFirst().get().id, "user-credential-id");
+    assertEquals(state.credentials.stream().findFirst().get().authority, "user-credential-authority");
+    assertEquals(state.credentials.stream().findFirst().get().secret, "user-credential-secret");
+    assertEquals(state.credentials.stream().findFirst().get().type, "user-credential-type");
     assertEquals(1, (int) dispatcherAccess.readFrom("entriesCount"));
     assertEquals(UserRegistered.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 0)).typeName());
   }
@@ -208,8 +213,9 @@ public class UserEntityTest {
   private static final String USERNAME_FOR_ENTITY_CREATION = "user-username";
   private static final boolean ACTIVE_FOR_ENTITY_CREATION = true;
   private static final Profile PROFILE_FOR_ENTITY_CREATION = Profile.from("user-profile-emailAddress", PersonName.from("user-profile-name-given", "user-profile-name-family", "user-profile-name-second"), "user-profile-phone");
+  private static final Set<Credential> CREDENTIALS_FOR_ENTITY_CREATION = Collections.singleton(Credential.from("user-credential-authority", "user-credential-id", "user-credential-secret", "user-credential-type"));
 
   private void _createEntity() {
-    user.registerUser(TENANT_ID_FOR_ENTITY_CREATION, USERNAME_FOR_ENTITY_CREATION, ACTIVE_FOR_ENTITY_CREATION, PROFILE_FOR_ENTITY_CREATION).await();
+    user.registerUser(TENANT_ID_FOR_ENTITY_CREATION, USERNAME_FOR_ENTITY_CREATION, ACTIVE_FOR_ENTITY_CREATION, CREDENTIALS_FOR_ENTITY_CREATION, PROFILE_FOR_ENTITY_CREATION).await();
   }
 }

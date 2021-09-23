@@ -12,6 +12,8 @@ import io.vlingo.xoom.auth.model.value.*;
 import io.vlingo.xoom.auth.model.user.UserState;
 import io.vlingo.xoom.auth.infrastructure.*;
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UserResourceHandlers {
 
@@ -30,7 +32,8 @@ public class UserResourceHandlers {
           HandlerEntry.of(REGISTER_USER, ($stage, data) -> {
               final PersonName name = PersonName.from(data.profile.name.given, data.profile.name.family, data.profile.name.second);
               final Profile profile = Profile.from(data.profile.emailAddress, name, data.profile.phone);
-              return User.registerUser($stage, data.tenantId, data.username, data.active, profile);
+              final Set<Credential> credentials = data.credentials.stream().map(CredentialData::toCredential).collect(Collectors.toSet());
+              return User.registerUser($stage, data.tenantId, data.username, data.active, credentials, profile);
           });
 
   public static final HandlerEntry<Three<Completes<UserState>, User, UserRegistrationData>> ACTIVATE_HANDLER =

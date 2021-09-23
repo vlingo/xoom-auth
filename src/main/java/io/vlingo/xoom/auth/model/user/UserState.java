@@ -25,9 +25,8 @@ public final class UserState {
     this.profile = profile;
   }
 
-  public UserState registerUser(final String tenantId, final String username, final boolean active, final Profile profile) {
-    //TODO: Implement command logic.
-    return new UserState(this.id, tenantId, username, active, this.credentials, profile);
+  public UserState registerUser(final String tenantId, final String username, final boolean active, final Set<Credential> credentials, final Profile profile) {
+    return new UserState(this.id, tenantId, username, active, credentials, profile);
   }
 
   public UserState activate(final String tenantId, final String username) {

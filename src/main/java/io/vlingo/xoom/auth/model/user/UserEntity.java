@@ -28,11 +28,8 @@ public final class UserEntity extends EventSourced implements User {
   }
 
   @Override
-  public Completes<UserState> registerUser(final String tenantId, final String username, final boolean active, final Profile profile) {
-    /**
-     * TODO: Implement command logic. See {@link UserState#registerUser()}
-     */
-    return apply(new UserRegistered(state.id, tenantId, username, active, profile), () -> state);
+  public Completes<UserState> registerUser(final String tenantId, final String username, final boolean active, final Set<Credential> credentials, final Profile profile) {
+    return apply(new UserRegistered(state.id, tenantId, username, active, credentials, profile), () -> state);
   }
 
   @Override
@@ -84,7 +81,7 @@ public final class UserEntity extends EventSourced implements User {
   }
 
   private void applyUserRegistered(final UserRegistered event) {
-    state = state.registerUser(event.tenantId, event.username, event.active, event.profile);
+    state = state.registerUser(event.tenantId, event.username, event.active, event.credentials, event.profile);
   }
 
   private void applyUserActivated(final UserActivated event) {

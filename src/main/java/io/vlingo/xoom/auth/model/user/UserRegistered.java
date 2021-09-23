@@ -5,6 +5,8 @@ import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
 
 import io.vlingo.xoom.auth.model.value.*;
 
+import java.util.Set;
+
 /**
  * See
  * <a href="https://docs.vlingo.io/xoom-lattice/entity-cqrs#commands-domain-events-and-identified-domain-events">
@@ -17,14 +19,16 @@ public final class UserRegistered extends IdentifiedDomainEvent {
   public final String tenantId;
   public final String username;
   public final boolean active;
+  public final Set<Credential> credentials;
   public final Profile profile;
 
-  public UserRegistered(final String id, final String tenantId, final String username, final boolean active, final Profile profile) {
+  public UserRegistered(final String id, final String tenantId, final String username, final boolean active, final Set<Credential> credentials, final Profile profile) {
     super(SemanticVersion.from("1.0.0").toValue());
     this.id = id;
     this.tenantId = tenantId;
     this.username = username;
     this.active = active;
+    this.credentials = credentials;
     this.profile = profile;
   }
 
