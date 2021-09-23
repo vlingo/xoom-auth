@@ -49,13 +49,13 @@ public class TenantProjectionActor extends StateStoreProjectionActor<TenantData>
 
         case TenantActivated: {
           final TenantActivated typedEvent = typed(event);
-          merged = TenantData.from(typedEvent.id, previousData.name, previousData.description, previousData.active);
+          merged = TenantData.from(typedEvent.id, previousData.name, previousData.description, true);
           break;
         }
 
         case TenantDeactivated: {
           final TenantDeactivated typedEvent = typed(event);
-          merged = TenantData.from(typedEvent.id, previousData.name, previousData.description, previousData.active);
+          merged = TenantData.from(typedEvent.id, previousData.name, previousData.description, false);
           break;
         }
 

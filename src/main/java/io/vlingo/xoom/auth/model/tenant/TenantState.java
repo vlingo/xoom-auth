@@ -24,13 +24,11 @@ public final class TenantState {
   }
 
   public TenantState activate() {
-    //TODO: Implement command logic.
-    return new TenantState(this.id, this.name, this.description, this.active);
+    return new TenantState(this.id, this.name, this.description, true);
   }
 
   public TenantState deactivate() {
-    //TODO: Implement command logic.
-    return new TenantState(this.id, this.name, this.description, this.active);
+    return new TenantState(this.id, this.name, this.description, false);
   }
 
   public TenantState changeName(final String name) {

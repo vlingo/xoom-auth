@@ -30,18 +30,12 @@ public final class TenantEntity extends EventSourced implements Tenant {
 
   @Override
   public Completes<TenantState> activate() {
-    /**
-     * TODO: Implement command logic. See {@link TenantState#activate()}
-     */
-    return apply(new TenantActivated(state.id), () -> state);
+    return apply(new TenantActivated(state.id), () -> state.activate());
   }
 
   @Override
   public Completes<TenantState> deactivate() {
-    /**
-     * TODO: Implement command logic. See {@link TenantState#deactivate()}
-     */
-    return apply(new TenantDeactivated(state.id), () -> state);
+    return apply(new TenantDeactivated(state.id), () -> state.deactivate());
   }
 
   @Override
