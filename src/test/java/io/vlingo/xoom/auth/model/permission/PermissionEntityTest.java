@@ -58,7 +58,7 @@ public class PermissionEntityTest {
   @Test
   public void provisionPermission() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final PermissionState state = permission.provisionPermission(DESCRIPTION_FOR_PROVISION_PERMISSION_TEST, NAME_FOR_PROVISION_PERMISSION_TEST, TENANT_ID_FOR_PROVISION_PERMISSION_TEST).await();
+    final PermissionState state = permission.provisionPermission(NAME_FOR_PROVISION_PERMISSION_TEST, DESCRIPTION_FOR_PROVISION_PERMISSION_TEST, TENANT_ID_FOR_PROVISION_PERMISSION_TEST).await();
 
     assertEquals(state.description, "permission-description");
     assertEquals(state.name, "permission-name");
@@ -136,6 +136,6 @@ public class PermissionEntityTest {
   private static final String TENANT_ID_FOR_ENTITY_CREATION = "permission-tenantId";
 
   private void _createEntity() {
-    permission.provisionPermission(DESCRIPTION_FOR_ENTITY_CREATION, NAME_FOR_ENTITY_CREATION, TENANT_ID_FOR_ENTITY_CREATION).await();
+    permission.provisionPermission(NAME_FOR_ENTITY_CREATION, DESCRIPTION_FOR_ENTITY_CREATION, TENANT_ID_FOR_ENTITY_CREATION).await();
   }
 }

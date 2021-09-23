@@ -44,7 +44,7 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
       switch (Events.valueOf(event.typeName())) {
         case PermissionProvisioned: {
           final PermissionProvisioned typedEvent = typed(event);
-          merged = PermissionData.from(typedEvent.id, new HashSet<>(), typedEvent.description, typedEvent.name, typedEvent.tenantId);
+          merged = PermissionData.from(typedEvent.id, new HashSet<>(), typedEvent.name, typedEvent.description, typedEvent.tenantId);
           break;
         }
 
@@ -52,7 +52,7 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
           final PermissionConstraintEnforced typedEvent = typed(event);
           final ConstraintData constraint = ConstraintData.from(typedEvent.constraint);
           previousData.constraints.add(constraint);
-          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.description, previousData.name, previousData.tenantId);
+          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.name, previousData.description, previousData.tenantId);
           break;
         }
 
@@ -60,7 +60,7 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
           final PermissionConstraintReplacementEnforced typedEvent = typed(event);
           final ConstraintData constraint = ConstraintData.from(typedEvent.constraint);
           previousData.constraints.add(constraint);
-          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.description, previousData.name, previousData.tenantId);
+          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.name, previousData.description, previousData.tenantId);
           break;
         }
 
@@ -68,13 +68,13 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
           final PermissionConstraintForgotten typedEvent = typed(event);
           final ConstraintData constraint = ConstraintData.from(typedEvent.constraint);
           previousData.constraints.add(constraint);
-          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.description, previousData.name, previousData.tenantId);
+          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.name, previousData.description, previousData.tenantId);
           break;
         }
 
         case PermissionDescriptionChanged: {
           final PermissionDescriptionChanged typedEvent = typed(event);
-          merged = PermissionData.from(typedEvent.id, previousData.constraints, typedEvent.description, previousData.name, typedEvent.tenantId);
+          merged = PermissionData.from(typedEvent.id, previousData.constraints, previousData.name, typedEvent.description, typedEvent.tenantId);
           break;
         }
 

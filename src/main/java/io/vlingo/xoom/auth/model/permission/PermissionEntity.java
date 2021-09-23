@@ -26,11 +26,11 @@ public final class PermissionEntity extends EventSourced implements Permission {
   }
 
   @Override
-  public Completes<PermissionState> provisionPermission(final String description, final String name, final String tenantId) {
+  public Completes<PermissionState> provisionPermission(final String name, final String description, final String tenantId) {
     /**
      * TODO: Implement command logic. See {@link PermissionState#provisionPermission()}
      */
-    return apply(new PermissionProvisioned(state.id, description, name, tenantId), () -> state);
+    return apply(new PermissionProvisioned(state.id, name, description, tenantId), () -> state);
   }
 
   @Override

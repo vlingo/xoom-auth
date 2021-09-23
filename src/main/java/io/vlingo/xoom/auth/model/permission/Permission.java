@@ -8,12 +8,12 @@ import io.vlingo.xoom.actors.Stage;
 
 public interface Permission {
 
-  Completes<PermissionState> provisionPermission(final String description, final String name, final String tenantId);
+  Completes<PermissionState> provisionPermission(final String name, final String description, final String tenantId);
 
   static Completes<PermissionState> provisionPermission(final Stage stage, final String description, final String name, final String tenantId) {
     final io.vlingo.xoom.actors.Address _address = stage.addressFactory().uniquePrefixedWith("g-");
     final Permission _permission = stage.actorFor(Permission.class, Definition.has(PermissionEntity.class, Definition.parameters(_address.idString())), _address);
-    return _permission.provisionPermission(description, name, tenantId);
+    return _permission.provisionPermission(name, description, tenantId);
   }
 
   Completes<PermissionState> enforce(final Constraint constraint);

@@ -158,8 +158,8 @@ public class PermissionProjectionTest {
 
   @Test
   public void changeDescription() {
-    final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
-    final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
+    final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-name", "first-permission-description", "first-permission-tenantId");
+    final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-name", "second-permission-description", "second-permission-tenantId");
     registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
 
     final CountingProjectionControl control = new CountingProjectionControl();

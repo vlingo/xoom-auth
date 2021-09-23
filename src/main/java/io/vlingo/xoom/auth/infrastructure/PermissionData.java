@@ -13,16 +13,16 @@ import io.vlingo.xoom.auth.model.permission.PermissionState;
 public class PermissionData {
   public final String id;
   public final Set<ConstraintData> constraints = new HashSet<>();
-  public final String description;
   public final String name;
+  public final String description;
   public final String tenantId;
 
   public static PermissionData from(final PermissionState permissionState) {
     final Set<ConstraintData> constraints = permissionState.constraints != null ? permissionState.constraints.stream().map(ConstraintData::from).collect(java.util.stream.Collectors.toSet()) : new HashSet<>();
-    return from(permissionState.id, constraints, permissionState.description, permissionState.name, permissionState.tenantId);
+    return from(permissionState.id, constraints, permissionState.name, permissionState.description, permissionState.tenantId);
   }
 
-  public static PermissionData from(final String id, final Set<ConstraintData> constraints, final String description, final String name, final String tenantId) {
+  public static PermissionData from(final String id, final Set<ConstraintData> constraints, final String name, final String description, final String tenantId) {
     return new PermissionData(id, constraints, description, name, tenantId);
   }
 
@@ -34,11 +34,11 @@ public class PermissionData {
     return from(PermissionState.identifiedBy(""));
   }
 
-  private PermissionData (final String id, final Set<ConstraintData> constraints, final String description, final String name, final String tenantId) {
+  private PermissionData(final String id, final Set<ConstraintData> constraints, final String name, final String description, final String tenantId) {
     this.id = id;
     this.constraints.addAll(constraints);
-    this.description = description;
     this.name = name;
+    this.description = description;
     this.tenantId = tenantId;
   }
 
