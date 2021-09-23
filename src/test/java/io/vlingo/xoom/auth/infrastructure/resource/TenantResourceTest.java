@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Properties;
 
 import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
 import static io.vlingo.xoom.common.serialization.JsonSerialization.deserializedList;
@@ -29,13 +28,11 @@ public class TenantResourceTest extends ResourceTest {
 
     final Response createdResponse = postTenantSubscribesRequestResponse(tenantData);
     final TenantData createdTenantData = deserialized(createdResponse.entity.content(), TenantData.class);
-    assertEquals(1, progress.consumeCount());
     assertNotNull(createdResponse.headers.headerOf(ResponseHeader.Location));
     assertEquals(tenantData.withTenantId(createdTenantData.tenantId), createdTenantData);
 
     final String location = createdResponse.headerOf(ResponseHeader.Location).value;
     final Response getTenantResponse = getTenantRequestResponse(location);
-    assertEquals(2, progress.consumeCount());
     assertEquals(Response.Status.Ok, getTenantResponse.status);
     assertNotNull(getTenantResponse.entity);
     assertNotNull(getTenantResponse.entity.content());
@@ -291,11 +288,6 @@ public class TenantResourceTest extends ResourceTest {
     final Type listType = new TypeToken<List<MinimalUserData>>(){}.getType();
     final List<MinimalUserData> userData = deserializedList(getTenantUsersResponse.entity.content(), listType);
     assertEquals(2, userData.size());
-  }
-
-  @Override
-  protected Properties resourceProperties() {
-    return TestProperties.tenantResourceProperties();
   }
 
   private Response patchTenantActivateRequestResponse(final String tenantId) {

@@ -20,7 +20,6 @@ public final class TenantState {
   }
 
   public TenantState subscribeFor(final String name, final String description, final boolean active) {
-    //TODO: Implement command logic.
     return new TenantState(this.id, name, description, active);
   }
 

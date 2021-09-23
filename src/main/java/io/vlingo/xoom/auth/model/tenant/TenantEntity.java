@@ -25,10 +25,7 @@ public final class TenantEntity extends EventSourced implements Tenant {
 
   @Override
   public Completes<TenantState> subscribeFor(final String name, final String description, final boolean active) {
-    /**
-     * TODO: Implement command logic. See {@link TenantState#subscribeFor()}
-     */
-    return apply(new TenantSubscribed(state.id, name, description, active), () -> state);
+    return apply(new TenantSubscribed(state.id, name, description, active), () -> state.subscribeFor(name, description, active));
   }
 
   @Override

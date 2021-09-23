@@ -7,29 +7,26 @@
 
 package io.vlingo.xoom.auth.infrastructure.resource;
 
-import io.vlingo.xoom.actors.Definition;
-import io.vlingo.xoom.actors.World;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.http.ContentType;
 import io.vlingo.xoom.auth.infrastructure.*;
-import io.vlingo.xoom.auth.infrastructure.resource.TestResponseChannelConsumer.Progress;
-import io.vlingo.xoom.auth.infrastructure.resource.TestResponseChannelConsumer.TestResponseChannelConsumerInstantiator;
+import io.vlingo.xoom.http.Header;
+import io.vlingo.xoom.http.Request;
 import io.vlingo.xoom.http.Response;
-import io.vlingo.xoom.http.resource.Server;
-import io.vlingo.xoom.wire.channel.ResponseChannelConsumer;
-import io.vlingo.xoom.wire.fdx.bidirectional.ClientRequestResponseChannel;
-import io.vlingo.xoom.wire.fdx.bidirectional.netty.client.NettyClientRequestResponseChannel;
+import io.vlingo.xoom.http.ResponseHeader;
 import io.vlingo.xoom.wire.message.ByteBufferAllocator;
 import io.vlingo.xoom.wire.message.Converters;
-import io.vlingo.xoom.wire.node.Address;
-import io.vlingo.xoom.wire.node.AddressType;
-import io.vlingo.xoom.wire.node.Host;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static io.restassured.RestAssured.given;
 import static io.vlingo.xoom.common.serialization.JsonSerialization.serialized;
 
 public abstract class ResourceTest {
@@ -37,45 +34,23 @@ public abstract class ResourceTest {
 
   private final ByteBuffer buffer = ByteBufferAllocator.allocate(65535);
 
-  protected ResponseChannelConsumer consumer;
-  protected ClientRequestResponseChannel client;
-  protected Progress progress;
-  protected Properties properties;
-  protected Server server;
+  protected XoomInitializer xoom;
   protected int serverPort;
-  protected World world;
 
   @BeforeEach
   public void setUp() throws Exception {
-    world = World.start("resource-test");
-
     serverPort = baseServerPort.getAndIncrement();
 
-    properties = resourceProperties();
-    properties.setProperty("server.http.port", "" + serverPort);
-
-    server = Server.startWith(world.stage(), properties);
-    Thread.sleep(10); // delay for server startup
-
-    consumer = world.actorFor(ResponseChannelConsumer.class, Definition.has(TestResponseChannelConsumer.class, new TestResponseChannelConsumerInstantiator(progress)));
-
-    client = new NettyClientRequestResponseChannel(Address.from(Host.of("localhost"), serverPort, AddressType.NONE), consumer, 100, 10240);
+    XoomInitializer.main(new String[]{"-Dport=" + serverPort});
+    xoom = XoomInitializer.instance();
+    xoom.server().startUp().await(100);
   }
 
   @AfterEach
-  public void tearDown() {
-    client.close();
-
-    server.stop();
-
-    world.terminate();
+  public void tearDown() throws Exception {
+    xoom.stopServer();
+    xoom.terminateWorld();
   }
-
-  protected ResourceTest() {
-    progress = new Progress(0);
-  }
-
-  protected abstract Properties resourceProperties();
 
   protected ByteBuffer toByteBuffer(final String requestContent) {
     buffer.clear();
@@ -226,18 +201,27 @@ public abstract class ResourceTest {
   }
 
   protected Response requestResponse(final String request) {
-    progress.resetTimes(1);
+    return requestResponse(Request.from(toByteBuffer(request)));
+  }
 
-    client.requestWith(toByteBuffer(request));
-
-    while (progress.remaining() > 0) {
-      client.probeChannel();
-    }
-
-    progress.completes();
-
-    final Response response = progress.responses().poll();
-
-    return response;
+  private Response requestResponse(Request request) {
+    final io.restassured.response.Response response = given()
+            .port(serverPort)
+            .accept(ContentType.JSON)
+            .contentType(ContentType.JSON)
+            .filter(new RequestLoggingFilter())
+            .filter(new ResponseLoggingFilter())
+            .when()
+            .headers(request.headers.stream().filter(h -> !h.name.equals("Content-Length")).collect(Collectors.toMap(h -> h.name, h -> h.value)))
+            .body(request.body.content())
+            .request(request.method.name, request.uri.getPath())
+            .andReturn();
+    final Stream<ResponseHeader> headers = response.headers().asList().stream().map(h -> ResponseHeader.of(h.getName(), h.getValue()));
+    final Response.Status statusCode = Response.Status.valueOfRawState(response.statusLine().replaceFirst("HTTP/1.1 ", ""));
+    return Response.of(
+            statusCode,
+            Header.Headers.of(headers.toArray(ResponseHeader[]::new)),
+            response.body().asString()
+    );
   }
 }
