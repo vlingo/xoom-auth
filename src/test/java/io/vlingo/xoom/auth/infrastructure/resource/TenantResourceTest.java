@@ -307,7 +307,8 @@ public class TenantResourceTest extends ResourceTest {
   }
 
   private Response patchTenantNameRequestResponse(final String tenantId, final String name) {
-    final String request = "PATCH /tenants/" + tenantId + "/name HTTP/1.1\nHost: vlingo.io\nContent-Length: " + name.length() + "\n\n" + name;
+    final String body = String.format("{\"name\":\"%s\"}", name);
+    final String request = "PATCH /tenants/" + tenantId + "/name HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 }
