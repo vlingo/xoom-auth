@@ -25,17 +25,17 @@ public final class TenantEntity extends EventSourced implements Tenant {
 
   @Override
   public Completes<TenantState> subscribeFor(final String name, final String description, final boolean active) {
-    return apply(new TenantSubscribed(state.id, name, description, active), () -> state.subscribeFor(name, description, active));
+    return apply(new TenantSubscribed(state.id, name, description, active), () -> state);
   }
 
   @Override
   public Completes<TenantState> activate() {
-    return apply(new TenantActivated(state.id), () -> state.activate());
+    return apply(new TenantActivated(state.id), () -> state);
   }
 
   @Override
   public Completes<TenantState> deactivate() {
-    return apply(new TenantDeactivated(state.id), () -> state.deactivate());
+    return apply(new TenantDeactivated(state.id), () -> state);
   }
 
   @Override
