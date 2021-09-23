@@ -23,47 +23,47 @@ public class ExchangeBootstrap implements ExchangeInitializer {
   public void init(final Grid stage) {
     ExchangeSettings.load(Settings.properties());
 
-    final ConnectionSettings xoomAuthSettings =
-                ExchangeSettings.of("xoom-auth").mapToConnection();
+    final ConnectionSettings xoomAuthTopicSettings =
+                ExchangeSettings.of("xoom-auth-topic").mapToConnection();
 
-    final Exchange xoomAuth =
-                ExchangeFactory.fanOutInstanceQuietly(xoomAuthSettings, "xoom-auth", true);
+    final Exchange xoomAuthTopic =
+                ExchangeFactory.fanOutInstanceQuietly(xoomAuthTopicSettings, "xoom-auth-topic", true);
 
     try {
-      xoomAuth.register(Covey.of(
-          new MessageSender(xoomAuth.connection()),
+      xoomAuthTopic.register(Covey.of(
+          new MessageSender(xoomAuthTopic.connection()),
           received -> {},
           new RoleProducerAdapter(),
           IdentifiedDomainEvent.class,
           IdentifiedDomainEvent.class,
           Message.class));
 
-      xoomAuth.register(Covey.of(
-          new MessageSender(xoomAuth.connection()),
+      xoomAuthTopic.register(Covey.of(
+          new MessageSender(xoomAuthTopic.connection()),
           received -> {},
           new TenantProducerAdapter(),
           IdentifiedDomainEvent.class,
           IdentifiedDomainEvent.class,
           Message.class));
 
-      xoomAuth.register(Covey.of(
-          new MessageSender(xoomAuth.connection()),
+      xoomAuthTopic.register(Covey.of(
+          new MessageSender(xoomAuthTopic.connection()),
           received -> {},
           new PermissionProducerAdapter(),
           IdentifiedDomainEvent.class,
           IdentifiedDomainEvent.class,
           Message.class));
 
-      xoomAuth.register(Covey.of(
-          new MessageSender(xoomAuth.connection()),
+      xoomAuthTopic.register(Covey.of(
+          new MessageSender(xoomAuthTopic.connection()),
           received -> {},
           new UserProducerAdapter(),
           IdentifiedDomainEvent.class,
           IdentifiedDomainEvent.class,
           Message.class));
 
-      xoomAuth.register(Covey.of(
-          new MessageSender(xoomAuth.connection()),
+      xoomAuthTopic.register(Covey.of(
+          new MessageSender(xoomAuthTopic.connection()),
           received -> {},
           new GroupProducerAdapter(),
           IdentifiedDomainEvent.class,
@@ -71,14 +71,14 @@ public class ExchangeBootstrap implements ExchangeInitializer {
           Message.class));
 
     } catch (final InactiveBrokerExchangeException exception) {
-      stage.world().defaultLogger().error("Unable to register covey(s) for exchange xoom-auth");
+      stage.world().defaultLogger().error("Unable to register covey(s) for exchange xoom-auth-topic");
       stage.world().defaultLogger().warn(exception.getMessage());
     }
 
-    this.dispatcher = new ExchangeDispatcher(xoomAuth);
+    this.dispatcher = new ExchangeDispatcher(xoomAuthTopic);
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        xoomAuth.close();
+        xoomAuthTopic.close();
 
         System.out.println("\n");
         System.out.println("==================");

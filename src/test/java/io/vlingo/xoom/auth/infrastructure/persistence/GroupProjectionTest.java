@@ -15,11 +15,10 @@ import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.time.LocalDateTime;
 import io.vlingo.xoom.auth.model.group.*;
 import io.vlingo.xoom.auth.infrastructure.*;
 
@@ -51,20 +50,11 @@ public class GroupProjectionTest {
     projection.projectWith(createGroupProvisioned(secondData), control);
   }
 
-  private Projectable createGroupProvisioned(GroupState data) {
-    final GroupProvisioned eventData = new GroupProvisioned(data.id, data.name, data.description, data.tenantId);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupProvisioned.class, 1,
-    JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
   @Test
   public void provisionGroup() {
     final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
     final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+
     final CountingProjectionControl control = new CountingProjectionControl();
     final AccessSafely access = control.afterCompleting(2);
     projection.projectWith(createGroupProvisioned(firstData.toGroupState()), control);
@@ -79,6 +69,7 @@ public class GroupProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.name, "first-group-name");
     assertEquals(item.description, "first-group-description");
@@ -93,15 +84,6 @@ public class GroupProjectionTest {
     assertEquals(item.name, "second-group-name");
     assertEquals(item.description, "second-group-description");
     assertEquals(item.tenantId, "second-group-tenantId");
-  }
-
-  private Projectable createGroupDescriptionChanged(GroupState data) {
-    final GroupDescriptionChanged eventData = new GroupDescriptionChanged(data.id, data.description, data.tenantId);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupDescriptionChanged.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -122,18 +104,10 @@ public class GroupProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.description, "first-group-description");
     assertEquals(item.tenantId, "first-group-tenantId");
-  }
-
-  private Projectable createGroupAssignedToGroup(GroupState data) {
-    final GroupAssignedToGroup eventData = new GroupAssignedToGroup(data.id, data.tenantId);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupAssignedToGroup.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -154,17 +128,9 @@ public class GroupProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-group-tenantId");
-  }
-
-  private Projectable createGroupUnassignedFromGroup(GroupState data) {
-    final GroupUnassignedFromGroup eventData = new GroupUnassignedFromGroup(data.id, data.tenantId);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupUnassignedFromGroup.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -185,17 +151,9 @@ public class GroupProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-group-tenantId");
-  }
-
-  private Projectable createUserAssignedToGroup(GroupState data) {
-    final UserAssignedToGroup eventData = new UserAssignedToGroup(data.id, data.tenantId);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserAssignedToGroup.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -216,17 +174,9 @@ public class GroupProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-group-tenantId");
-  }
-
-  private Projectable createUserUnassignedFromGroup(GroupState data) {
-    final UserUnassignedFromGroup eventData = new UserUnassignedFromGroup(data.id, data.tenantId);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserUnassignedFromGroup.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -247,6 +197,7 @@ public class GroupProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-group-tenantId");
   }
@@ -254,4 +205,71 @@ public class GroupProjectionTest {
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
     return confirmations.get(valueToProjectionId.get(valueText));
   }
+
+  private Projectable createGroupProvisioned(GroupState data) {
+    final GroupProvisioned eventData = new GroupProvisioned(data.id, data.name, data.description, data.tenantId);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupProvisioned.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createGroupDescriptionChanged(GroupState data) {
+    final GroupDescriptionChanged eventData = new GroupDescriptionChanged(data.id, data.description, data.tenantId);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupDescriptionChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createGroupAssignedToGroup(GroupState data) {
+    final GroupAssignedToGroup eventData = new GroupAssignedToGroup(data.id, data.tenantId);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupAssignedToGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createGroupUnassignedFromGroup(GroupState data) {
+    final GroupUnassignedFromGroup eventData = new GroupUnassignedFromGroup(data.id, data.tenantId);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupUnassignedFromGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserAssignedToGroup(GroupState data) {
+    final UserAssignedToGroup eventData = new UserAssignedToGroup(data.id, data.tenantId);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserAssignedToGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserUnassignedFromGroup(GroupState data) {
+    final UserUnassignedFromGroup eventData = new UserUnassignedFromGroup(data.id, data.tenantId);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserUnassignedFromGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
 }

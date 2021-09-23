@@ -23,7 +23,7 @@ public class TenantData {
     return new TenantData(id, name, description, active);
   }
 
-  public static List<TenantData> from(final List<TenantState> states) {
+  public static List<TenantData> fromAll(final List<TenantState> states) {
     return states.stream().map(TenantData::from).collect(Collectors.toList());
   }
 

@@ -15,11 +15,10 @@ import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.time.LocalDateTime;
 import io.vlingo.xoom.auth.model.permission.*;
 import java.util.*;
 import io.vlingo.xoom.auth.infrastructure.*;
@@ -52,20 +51,11 @@ public class PermissionProjectionTest {
     projection.projectWith(createPermissionProvisioned(secondData), control);
   }
 
-  private Projectable createPermissionProvisioned(PermissionState data) {
-    final PermissionProvisioned eventData = new PermissionProvisioned(data.id, data.description, data.name, data.tenantId);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionProvisioned.class, 1,
-    JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
   @Test
   public void provisionPermission() {
     final PermissionData firstData = PermissionData.from("1", new HashSet<>(), "first-permission-description", "first-permission-name", "first-permission-tenantId");
     final PermissionData secondData = PermissionData.from("2", new HashSet<>(), "second-permission-description", "second-permission-name", "second-permission-tenantId");
+
     final CountingProjectionControl control = new CountingProjectionControl();
     final AccessSafely access = control.afterCompleting(2);
     projection.projectWith(createPermissionProvisioned(firstData.toPermissionState()), control);
@@ -80,6 +70,7 @@ public class PermissionProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, PermissionData.class, interest);
     PermissionData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.description, "first-permission-description");
     assertEquals(item.name, "first-permission-name");
@@ -94,15 +85,6 @@ public class PermissionProjectionTest {
     assertEquals(item.description, "second-permission-description");
     assertEquals(item.name, "second-permission-name");
     assertEquals(item.tenantId, "second-permission-tenantId");
-  }
-
-  private Projectable createPermissionConstraintEnforced(PermissionState data) {
-    final PermissionConstraintEnforced eventData = new PermissionConstraintEnforced(data.id, data.constraints.stream().findFirst().orElse(null));
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintEnforced.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -123,17 +105,9 @@ public class PermissionProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, PermissionData.class, interest);
     PermissionData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertNotNull(item.constraints);
-  }
-
-  private Projectable createPermissionConstraintReplacementEnforced(PermissionState data) {
-    final PermissionConstraintReplacementEnforced eventData = new PermissionConstraintReplacementEnforced(data.id, data.constraints.stream().findFirst().orElse(null));
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintReplacementEnforced.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -154,17 +128,9 @@ public class PermissionProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, PermissionData.class, interest);
     PermissionData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertNotNull(item.constraints);
-  }
-
-  private Projectable createPermissionConstraintForgotten(PermissionState data) {
-    final PermissionConstraintForgotten eventData = new PermissionConstraintForgotten(data.id, data.constraints.stream().findFirst().orElse(null));
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintForgotten.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -185,17 +151,9 @@ public class PermissionProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, PermissionData.class, interest);
     PermissionData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertNotNull(item.constraints);
-  }
-
-  private Projectable createPermissionDescriptionChanged(PermissionState data) {
-    final PermissionDescriptionChanged eventData = new PermissionDescriptionChanged(data.id, data.description, data.tenantId);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionDescriptionChanged.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -216,6 +174,7 @@ public class PermissionProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, PermissionData.class, interest);
     PermissionData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.description, "first-permission-description");
     assertEquals(item.tenantId, "first-permission-tenantId");
@@ -224,4 +183,60 @@ public class PermissionProjectionTest {
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
     return confirmations.get(valueToProjectionId.get(valueText));
   }
+
+  private Projectable createPermissionProvisioned(PermissionState data) {
+    final PermissionProvisioned eventData = new PermissionProvisioned(data.id, data.description, data.name, data.tenantId);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionProvisioned.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createPermissionConstraintEnforced(PermissionState data) {
+    final PermissionConstraintEnforced eventData = new PermissionConstraintEnforced(data.id, data.constraints.stream().findFirst().orElse(null));
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintEnforced.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createPermissionConstraintReplacementEnforced(PermissionState data) {
+    final PermissionConstraintReplacementEnforced eventData = new PermissionConstraintReplacementEnforced(data.id, data.constraints.stream().findFirst().orElse(null));
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintReplacementEnforced.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createPermissionConstraintForgotten(PermissionState data) {
+    final PermissionConstraintForgotten eventData = new PermissionConstraintForgotten(data.id, data.constraints.stream().findFirst().orElse(null));
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintForgotten.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createPermissionDescriptionChanged(PermissionState data) {
+    final PermissionDescriptionChanged eventData = new PermissionDescriptionChanged(data.id, data.description, data.tenantId);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionDescriptionChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
 }

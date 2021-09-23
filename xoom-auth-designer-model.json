@@ -2,7 +2,7 @@
   "context": {
     "groupId": "io.vlingo.xoom",
     "artifactId": "xoom-auth",
-    "artifactVersion": "1.8.2",
+    "artifactVersion": "1.8.6",
     "packageName": "io.vlingo.xoom.auth"
   },
   "model": {
@@ -308,11 +308,11 @@
           }
         ],
         "consumerExchange": {
-          "exchangeName": "",
+          "exchangeName": "xoom-auth-topic",
           "receivers": []
         },
         "producerExchange": {
-          "exchangeName": "xoom-auth",
+          "exchangeName": "xoom-auth-topic",
           "schemaGroup": "vlingo:xoom:auth",
           "outgoingEvents": [
             "RoleProvisioned",
@@ -482,11 +482,11 @@
           }
         ],
         "consumerExchange": {
-          "exchangeName": "",
+          "exchangeName": "xoom-auth-topic",
           "receivers": []
         },
         "producerExchange": {
-          "exchangeName": "xoom-auth",
+          "exchangeName": "xoom-auth-topic",
           "schemaGroup": "vlingo:xoom:auth",
           "outgoingEvents": [
             "TenantActivated",
@@ -698,11 +698,11 @@
           }
         ],
         "consumerExchange": {
-          "exchangeName": "",
+          "exchangeName": "xoom-auth-topic",
           "receivers": []
         },
         "producerExchange": {
-          "exchangeName": "xoom-auth",
+          "exchangeName": "xoom-auth-topic",
           "schemaGroup": "vlingo:xoom:auth",
           "outgoingEvents": [
             "GroupProvisioned",
@@ -974,11 +974,11 @@
           }
         ],
         "consumerExchange": {
-          "exchangeName": "",
+          "exchangeName": "xoom-auth-topic",
           "receivers": []
         },
         "producerExchange": {
-          "exchangeName": "xoom-auth",
+          "exchangeName": "xoom-auth-topic",
           "schemaGroup": "vlingo:xoom:auth",
           "outgoingEvents": [
             "UserRegistered",
@@ -1172,11 +1172,11 @@
           }
         ],
         "consumerExchange": {
-          "exchangeName": "",
+          "exchangeName": "xoom-auth-topic",
           "receivers": []
         },
         "producerExchange": {
-          "exchangeName": "xoom-auth",
+          "exchangeName": "xoom-auth-topic",
           "schemaGroup": "vlingo:xoom:auth",
           "outgoingEvents": [
             "PermissionProvisioned",

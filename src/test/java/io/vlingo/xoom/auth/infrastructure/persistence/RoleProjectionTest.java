@@ -15,11 +15,10 @@ import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.time.LocalDateTime;
 import io.vlingo.xoom.auth.model.role.*;
 import io.vlingo.xoom.auth.infrastructure.*;
 
@@ -51,20 +50,11 @@ public class RoleProjectionTest {
     projection.projectWith(createRoleProvisioned(secondData), control);
   }
 
-  private Projectable createRoleProvisioned(RoleState data) {
-    final RoleProvisioned eventData = new RoleProvisioned(data.id, data.tenantId, data.name, data.description);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RoleProvisioned.class, 1,
-    JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
   @Test
   public void provisionRole() {
     final RoleData firstData = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
     final RoleData secondData = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
+
     final CountingProjectionControl control = new CountingProjectionControl();
     final AccessSafely access = control.afterCompleting(2);
     projection.projectWith(createRoleProvisioned(firstData.toRoleState()), control);
@@ -79,6 +69,7 @@ public class RoleProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, RoleData.class, interest);
     RoleData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-role-tenantId");
     assertEquals(item.name, "first-role-name");
@@ -93,15 +84,6 @@ public class RoleProjectionTest {
     assertEquals(item.tenantId, "second-role-tenantId");
     assertEquals(item.name, "second-role-name");
     assertEquals(item.description, "second-role-description");
-  }
-
-  private Projectable createRoleDescriptionChanged(RoleState data) {
-    final RoleDescriptionChanged eventData = new RoleDescriptionChanged(data.id, data.tenantId, data.name, data.description);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RoleDescriptionChanged.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -122,19 +104,11 @@ public class RoleProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, RoleData.class, interest);
     RoleData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-role-tenantId");
     assertEquals(item.name, "first-role-name");
     assertEquals(item.description, "first-role-description");
-  }
-
-  private Projectable createGroupAssignedToRole(RoleState data) {
-    final GroupAssignedToRole eventData = new GroupAssignedToRole(data.id, data.tenantId, data.name);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupAssignedToRole.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -155,18 +129,10 @@ public class RoleProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, RoleData.class, interest);
     RoleData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-role-tenantId");
     assertEquals(item.name, "first-role-name");
-  }
-
-  private Projectable createGroupUnassignedFromRole(RoleState data) {
-    final GroupUnassignedFromRole eventData = new GroupUnassignedFromRole(data.id, data.tenantId, data.name);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupUnassignedFromRole.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -187,18 +153,10 @@ public class RoleProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, RoleData.class, interest);
     RoleData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-role-tenantId");
     assertEquals(item.name, "first-role-name");
-  }
-
-  private Projectable createUserAssignedToRole(RoleState data) {
-    final UserAssignedToRole eventData = new UserAssignedToRole(data.id, data.tenantId, data.name);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserAssignedToRole.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -219,18 +177,10 @@ public class RoleProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, RoleData.class, interest);
     RoleData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-role-tenantId");
     assertEquals(item.name, "first-role-name");
-  }
-
-  private Projectable createUserUnassignedFromRole(RoleState data) {
-    final UserUnassignedFromRole eventData = new UserUnassignedFromRole(data.id, data.tenantId, data.name);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserUnassignedFromRole.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -251,18 +201,10 @@ public class RoleProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, RoleData.class, interest);
     RoleData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-role-tenantId");
     assertEquals(item.name, "first-role-name");
-  }
-
-  private Projectable createRolePermissionAttached(RoleState data) {
-    final RolePermissionAttached eventData = new RolePermissionAttached(data.id, data.tenantId, data.name);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RolePermissionAttached.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -283,18 +225,10 @@ public class RoleProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, RoleData.class, interest);
     RoleData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-role-tenantId");
     assertEquals(item.name, "first-role-name");
-  }
-
-  private Projectable createRolePermissionDetached(RoleState data) {
-    final RolePermissionDetached eventData = new RolePermissionDetached(data.id, data.tenantId, data.name);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RolePermissionDetached.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -315,6 +249,7 @@ public class RoleProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, RoleData.class, interest);
     RoleData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-role-tenantId");
     assertEquals(item.name, "first-role-name");
@@ -323,4 +258,93 @@ public class RoleProjectionTest {
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
     return confirmations.get(valueToProjectionId.get(valueText));
   }
+
+  private Projectable createRoleProvisioned(RoleState data) {
+    final RoleProvisioned eventData = new RoleProvisioned(data.id, data.tenantId, data.name, data.description);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RoleProvisioned.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createRoleDescriptionChanged(RoleState data) {
+    final RoleDescriptionChanged eventData = new RoleDescriptionChanged(data.id, data.tenantId, data.name, data.description);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RoleDescriptionChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createGroupAssignedToRole(RoleState data) {
+    final GroupAssignedToRole eventData = new GroupAssignedToRole(data.id, data.tenantId, data.name);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupAssignedToRole.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createGroupUnassignedFromRole(RoleState data) {
+    final GroupUnassignedFromRole eventData = new GroupUnassignedFromRole(data.id, data.tenantId, data.name);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupUnassignedFromRole.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserAssignedToRole(RoleState data) {
+    final UserAssignedToRole eventData = new UserAssignedToRole(data.id, data.tenantId, data.name);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserAssignedToRole.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserUnassignedFromRole(RoleState data) {
+    final UserUnassignedFromRole eventData = new UserUnassignedFromRole(data.id, data.tenantId, data.name);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserUnassignedFromRole.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createRolePermissionAttached(RoleState data) {
+    final RolePermissionAttached eventData = new RolePermissionAttached(data.id, data.tenantId, data.name);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RolePermissionAttached.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createRolePermissionDetached(RoleState data) {
+    final RolePermissionDetached eventData = new RolePermissionDetached(data.id, data.tenantId, data.name);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RolePermissionDetached.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
 }

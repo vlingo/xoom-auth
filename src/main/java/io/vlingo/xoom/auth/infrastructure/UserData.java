@@ -28,7 +28,7 @@ public class UserData {
     return new UserData(id, tenantId, username, active, credentials, profile);
   }
 
-  public static List<UserData> from(final List<UserState> states) {
+  public static List<UserData> fromAll(final List<UserState> states) {
     return states.stream().map(UserData::from).collect(Collectors.toList());
   }
 

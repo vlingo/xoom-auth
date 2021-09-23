@@ -28,11 +28,11 @@ public class PersonNameData {
     return new PersonNameData(given, family, second);
   }
 
-  public static Set<PersonNameData> from(final Set<PersonName> correspondingObjects) {
+  public static Set<PersonNameData> fromAll(final Set<PersonName> correspondingObjects) {
     return correspondingObjects == null ? Collections.emptySet() : correspondingObjects.stream().map(PersonNameData::from).collect(Collectors.toSet());
   }
 
-  public static List<PersonNameData> from(final List<PersonName> correspondingObjects) {
+  public static List<PersonNameData> fromAll(final List<PersonName> correspondingObjects) {
     return correspondingObjects == null ? Collections.emptyList() : correspondingObjects.stream().map(PersonNameData::from).collect(Collectors.toList());
   }
 
@@ -67,7 +67,7 @@ public class PersonNameData {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    PersonName another = (PersonName) other;
+    PersonNameData another = (PersonNameData) other;
     return new EqualsBuilder()
               .append(this.given, another.given)
               .append(this.family, another.family)

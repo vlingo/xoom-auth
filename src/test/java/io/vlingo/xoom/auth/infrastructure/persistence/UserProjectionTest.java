@@ -15,11 +15,10 @@ import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import io.vlingo.xoom.auth.infrastructure.*;
 import io.vlingo.xoom.auth.model.user.*;
@@ -52,20 +51,11 @@ public class UserProjectionTest {
     projection.projectWith(createUserRegistered(secondData), control);
   }
 
-  private Projectable createUserRegistered(UserState data) {
-    final UserRegistered eventData = new UserRegistered(data.id, data.tenantId, data.username, data.active, data.profile);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserRegistered.class, 1,
-    JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
   @Test
   public void registerUser() {
     final UserData firstData = UserData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"));
     final UserData secondData = UserData.from("2", "second-user-tenantId", "second-user-username", true, new HashSet<>(), ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"));
+
     final CountingProjectionControl control = new CountingProjectionControl();
     final AccessSafely access = control.afterCompleting(2);
     projection.projectWith(createUserRegistered(firstData.toUserState()), control);
@@ -80,6 +70,7 @@ public class UserProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, UserData.class, interest);
     UserData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-user-tenantId");
     assertEquals(item.username, "first-user-username");
@@ -106,15 +97,6 @@ public class UserProjectionTest {
     assertEquals(item.profile.phone, "second-user-profile-phone");
   }
 
-  private Projectable createUserActivated(UserState data) {
-    final UserActivated eventData = new UserActivated(data.id, data.tenantId, data.username);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserActivated.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
   @Test
   public void activate() {
     final UserData firstData = UserData.from("1", "first-user-tenantId", "first-user-username", true, new HashSet<>(), ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"));
@@ -133,18 +115,10 @@ public class UserProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, UserData.class, interest);
     UserData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-user-tenantId");
     assertEquals(item.username, "first-user-username");
-  }
-
-  private Projectable createUserDeactivated(UserState data) {
-    final UserDeactivated eventData = new UserDeactivated(data.id, data.tenantId, data.username);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserDeactivated.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -165,18 +139,10 @@ public class UserProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, UserData.class, interest);
     UserData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-user-tenantId");
     assertEquals(item.username, "first-user-username");
-  }
-
-  private Projectable createUserCredentialAdded(UserState data) {
-    final UserCredentialAdded eventData = new UserCredentialAdded(data.id, data.credentials.stream().findFirst().orElse(null));
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialAdded.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -197,17 +163,9 @@ public class UserProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, UserData.class, interest);
     UserData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertNotNull(item.credentials);
-  }
-
-  private Projectable createUserCredentialRemoved(UserState data) {
-    final UserCredentialRemoved eventData = new UserCredentialRemoved(data.id, data.credentials.stream().findFirst().orElse(null));
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialRemoved.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -228,17 +186,9 @@ public class UserProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, UserData.class, interest);
     UserData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertNotNull(item.credentials);
-  }
-
-  private Projectable createUserCredentialReplaced(UserState data) {
-    final UserCredentialReplaced eventData = new UserCredentialReplaced(data.id, data.credentials.stream().findFirst().orElse(null));
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialReplaced.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -259,17 +209,9 @@ public class UserProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, UserData.class, interest);
     UserData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertNotNull(item.credentials);
-  }
-
-  private Projectable createUserProfileReplaced(UserState data) {
-    final UserProfileReplaced eventData = new UserProfileReplaced(data.id, data.tenantId, data.username, data.profile);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserProfileReplaced.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -290,6 +232,7 @@ public class UserProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, UserData.class, interest);
     UserData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.tenantId, "first-user-tenantId");
     assertEquals(item.username, "first-user-username");
@@ -303,4 +246,82 @@ public class UserProjectionTest {
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
     return confirmations.get(valueToProjectionId.get(valueText));
   }
+
+  private Projectable createUserRegistered(UserState data) {
+    final UserRegistered eventData = new UserRegistered(data.id, data.tenantId, data.username, data.active, data.profile);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserRegistered.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserActivated(UserState data) {
+    final UserActivated eventData = new UserActivated(data.id, data.tenantId, data.username);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserActivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserDeactivated(UserState data) {
+    final UserDeactivated eventData = new UserDeactivated(data.id, data.tenantId, data.username);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserDeactivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserCredentialAdded(UserState data) {
+    final UserCredentialAdded eventData = new UserCredentialAdded(data.id, data.credentials.stream().findFirst().orElse(null));
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialAdded.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserCredentialRemoved(UserState data) {
+    final UserCredentialRemoved eventData = new UserCredentialRemoved(data.id, data.credentials.stream().findFirst().orElse(null));
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialRemoved.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserCredentialReplaced(UserState data) {
+    final UserCredentialReplaced eventData = new UserCredentialReplaced(data.id, data.credentials.stream().findFirst().orElse(null));
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialReplaced.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createUserProfileReplaced(UserState data) {
+    final UserProfileReplaced eventData = new UserProfileReplaced(data.id, data.tenantId, data.username, data.profile);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserProfileReplaced.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
 }

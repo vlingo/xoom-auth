@@ -29,11 +29,11 @@ public class CredentialData {
     return new CredentialData(authority, id, secret, type);
   }
 
-  public static Set<CredentialData> from(final Set<Credential> correspondingObjects) {
+  public static Set<CredentialData> fromAll(final Set<Credential> correspondingObjects) {
     return correspondingObjects == null ? Collections.emptySet() : correspondingObjects.stream().map(CredentialData::from).collect(Collectors.toSet());
   }
 
-  public static List<CredentialData> from(final List<Credential> correspondingObjects) {
+  public static List<CredentialData> fromAll(final List<Credential> correspondingObjects) {
     return correspondingObjects == null ? Collections.emptyList() : correspondingObjects.stream().map(CredentialData::from).collect(Collectors.toList());
   }
 
@@ -70,7 +70,7 @@ public class CredentialData {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Credential another = (Credential) other;
+    CredentialData another = (CredentialData) other;
     return new EqualsBuilder()
               .append(this.authority, another.authority)
               .append(this.id, another.id)

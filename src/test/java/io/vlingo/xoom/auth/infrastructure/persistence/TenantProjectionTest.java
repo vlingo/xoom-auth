@@ -15,11 +15,10 @@ import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.time.LocalDateTime;
 import io.vlingo.xoom.auth.model.tenant.*;
 import io.vlingo.xoom.auth.infrastructure.*;
 
@@ -51,20 +50,11 @@ public class TenantProjectionTest {
     projection.projectWith(createTenantSubscribed(secondData), control);
   }
 
-  private Projectable createTenantSubscribed(TenantState data) {
-    final TenantSubscribed eventData = new TenantSubscribed(data.id, data.name, data.description, data.active);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantSubscribed.class, 1,
-    JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
   @Test
   public void subscribeFor() {
     final TenantData firstData = TenantData.from("1", "first-tenant-name", "first-tenant-description", true);
     final TenantData secondData = TenantData.from("2", "second-tenant-name", "second-tenant-description", true);
+
     final CountingProjectionControl control = new CountingProjectionControl();
     final AccessSafely access = control.afterCompleting(2);
     projection.projectWith(createTenantSubscribed(firstData.toTenantState()), control);
@@ -79,6 +69,7 @@ public class TenantProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, TenantData.class, interest);
     TenantData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.name, "first-tenant-name");
     assertEquals(item.description, "first-tenant-description");
@@ -93,15 +84,6 @@ public class TenantProjectionTest {
     assertEquals(item.name, "second-tenant-name");
     assertEquals(item.description, "second-tenant-description");
     assertEquals(item.active, true);
-  }
-
-  private Projectable createTenantActivated(TenantState data) {
-    final TenantActivated eventData = new TenantActivated(data.id);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantActivated.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -122,16 +104,8 @@ public class TenantProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, TenantData.class, interest);
     TenantData item = interestAccess.readFrom("item", firstData.id);
-    assertEquals(item.id, "1");
-  }
 
-  private Projectable createTenantDeactivated(TenantState data) {
-    final TenantDeactivated eventData = new TenantDeactivated(data.id);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDeactivated.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+    assertEquals(item.id, "1");
   }
 
   @Test
@@ -152,16 +126,8 @@ public class TenantProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, TenantData.class, interest);
     TenantData item = interestAccess.readFrom("item", firstData.id);
-    assertEquals(item.id, "1");
-  }
 
-  private Projectable createTenantNameChanged(TenantState data) {
-    final TenantNameChanged eventData = new TenantNameChanged(data.id, data.name);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantNameChanged.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+    assertEquals(item.id, "1");
   }
 
   @Test
@@ -182,17 +148,9 @@ public class TenantProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, TenantData.class, interest);
     TenantData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.name, "first-tenant-name");
-  }
-
-  private Projectable createTenantDescriptionChanged(TenantState data) {
-    final TenantDescriptionChanged eventData = new TenantDescriptionChanged(data.id, data.description);
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDescriptionChanged.class, 1,
-    JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   @Test
@@ -213,6 +171,7 @@ public class TenantProjectionTest {
     AccessSafely interestAccess = interest.afterCompleting(1);
     stateStore.read(firstData.id, TenantData.class, interest);
     TenantData item = interestAccess.readFrom("item", firstData.id);
+
     assertEquals(item.id, "1");
     assertEquals(item.description, "first-tenant-description");
   }
@@ -220,4 +179,60 @@ public class TenantProjectionTest {
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
     return confirmations.get(valueToProjectionId.get(valueText));
   }
+
+  private Projectable createTenantSubscribed(TenantState data) {
+    final TenantSubscribed eventData = new TenantSubscribed(data.id, data.name, data.description, data.active);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantSubscribed.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createTenantActivated(TenantState data) {
+    final TenantActivated eventData = new TenantActivated(data.id);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantActivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createTenantDeactivated(TenantState data) {
+    final TenantDeactivated eventData = new TenantDeactivated(data.id);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDeactivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createTenantNameChanged(TenantState data) {
+    final TenantNameChanged eventData = new TenantNameChanged(data.id, data.name);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantNameChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
+  private Projectable createTenantDescriptionChanged(TenantState data) {
+    final TenantDescriptionChanged eventData = new TenantDescriptionChanged(data.id, data.description);
+
+    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDescriptionChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
+
+    final String projectionId = UUID.randomUUID().toString();
+    valueToProjectionId.put(data.id, projectionId);
+
+    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  }
+
 }

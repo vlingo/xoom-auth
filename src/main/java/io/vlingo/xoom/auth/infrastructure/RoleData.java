@@ -23,7 +23,7 @@ public class RoleData {
     return new RoleData(id, tenantId, name, description);
   }
 
-  public static List<RoleData> from(final List<RoleState> states) {
+  public static List<RoleData> fromAll(final List<RoleState> states) {
     return states.stream().map(RoleData::from).collect(Collectors.toList());
   }
 

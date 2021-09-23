@@ -44,8 +44,7 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
       switch (Events.valueOf(event.typeName())) {
         case UserRegistered: {
           final UserRegistered typedEvent = typed(event);
-          final PersonNameData name = PersonNameData.from(typedEvent.profile.name.given, typedEvent.profile.name.family, typedEvent.profile.name.second);
-          final ProfileData profile = ProfileData.from(typedEvent.profile.emailAddress, name, typedEvent.profile.phone);
+          final ProfileData profile = ProfileData.from(typedEvent.profile);
           merged = UserData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, typedEvent.active, new HashSet<>(), profile);
           break;
         }
@@ -88,8 +87,7 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserData> {
 
         case UserProfileReplaced: {
           final UserProfileReplaced typedEvent = typed(event);
-          final PersonNameData name = PersonNameData.from(typedEvent.profile.name.given, typedEvent.profile.name.family, typedEvent.profile.name.second);
-          final ProfileData profile = ProfileData.from(typedEvent.profile.emailAddress, name, typedEvent.profile.phone);
+          final ProfileData profile = ProfileData.from(typedEvent.profile);
           merged = UserData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, profile);
           break;
         }

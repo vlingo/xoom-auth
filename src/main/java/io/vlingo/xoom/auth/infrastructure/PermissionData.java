@@ -26,7 +26,7 @@ public class PermissionData {
     return new PermissionData(id, constraints, description, name, tenantId);
   }
 
-  public static List<PermissionData> from(final List<PermissionState> states) {
+  public static List<PermissionData> fromAll(final List<PermissionState> states) {
     return states.stream().map(PermissionData::from).collect(Collectors.toList());
   }
 

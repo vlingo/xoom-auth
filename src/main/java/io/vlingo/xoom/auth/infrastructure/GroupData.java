@@ -23,7 +23,7 @@ public class GroupData {
     return new GroupData(id, name, description, tenantId);
   }
 
-  public static List<GroupData> from(final List<GroupState> states) {
+  public static List<GroupData> fromAll(final List<GroupState> states) {
     return states.stream().map(GroupData::from).collect(Collectors.toList());
   }
 

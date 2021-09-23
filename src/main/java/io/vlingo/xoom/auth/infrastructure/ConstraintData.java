@@ -29,11 +29,11 @@ public class ConstraintData {
     return new ConstraintData(description, name, type, value);
   }
 
-  public static Set<ConstraintData> from(final Set<Constraint> correspondingObjects) {
+  public static Set<ConstraintData> fromAll(final Set<Constraint> correspondingObjects) {
     return correspondingObjects == null ? Collections.emptySet() : correspondingObjects.stream().map(ConstraintData::from).collect(Collectors.toSet());
   }
 
-  public static List<ConstraintData> from(final List<Constraint> correspondingObjects) {
+  public static List<ConstraintData> fromAll(final List<Constraint> correspondingObjects) {
     return correspondingObjects == null ? Collections.emptyList() : correspondingObjects.stream().map(ConstraintData::from).collect(Collectors.toList());
   }
 
@@ -70,7 +70,7 @@ public class ConstraintData {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Constraint another = (Constraint) other;
+    ConstraintData another = (ConstraintData) other;
     return new EqualsBuilder()
               .append(this.description, another.description)
               .append(this.name, another.name)

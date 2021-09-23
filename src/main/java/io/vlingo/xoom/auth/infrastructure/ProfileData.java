@@ -29,11 +29,11 @@ public class ProfileData {
     return new ProfileData(emailAddress, name, phone);
   }
 
-  public static Set<ProfileData> from(final Set<Profile> correspondingObjects) {
+  public static Set<ProfileData> fromAll(final Set<Profile> correspondingObjects) {
     return correspondingObjects == null ? Collections.emptySet() : correspondingObjects.stream().map(ProfileData::from).collect(Collectors.toSet());
   }
 
-  public static List<ProfileData> from(final List<Profile> correspondingObjects) {
+  public static List<ProfileData> fromAll(final List<Profile> correspondingObjects) {
     return correspondingObjects == null ? Collections.emptyList() : correspondingObjects.stream().map(ProfileData::from).collect(Collectors.toList());
   }
 
@@ -69,7 +69,7 @@ public class ProfileData {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Profile another = (Profile) other;
+    ProfileData another = (ProfileData) other;
     return new EqualsBuilder()
               .append(this.emailAddress, another.emailAddress)
               .append(this.name, another.name)
