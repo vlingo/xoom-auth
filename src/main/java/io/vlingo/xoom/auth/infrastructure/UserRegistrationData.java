@@ -50,6 +50,15 @@ public class UserRegistrationData {
     this.profile = profile;
   }
 
+  public CredentialData credentialOf(final String authority) {
+    for (final CredentialData credential : credentials) {
+      if (credential.authority.equals(authority)) {
+        return credential;
+      }
+    }
+    return null;
+  }
+
   public UserState toUserState() {
     final PersonName name = PersonName.from(this.profile.name.given, this.profile.name.family, this.profile.name.second);
     final Profile profile = Profile.from(this.profile.emailAddress, name, this.profile.phone);
