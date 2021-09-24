@@ -5,7 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-package io.vlingo.xoom.auth.infra.resource;
+package io.vlingo.xoom.auth.infrastructure.resource;
 
 import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
 import static org.junit.Assert.assertEquals;

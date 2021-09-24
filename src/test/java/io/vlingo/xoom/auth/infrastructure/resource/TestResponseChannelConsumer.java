@@ -5,7 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-package io.vlingo.xoom.auth.infra.resource;
+package io.vlingo.xoom.auth.infrastructure.resource;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;

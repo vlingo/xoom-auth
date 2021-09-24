@@ -5,12 +5,12 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-package io.vlingo.xoom.auth.infra.resource;
+package io.vlingo.xoom.auth.infrastructure.resource;
 
 import io.vlingo.xoom.actors.Definition;
 import io.vlingo.xoom.actors.World;
-import io.vlingo.xoom.auth.infra.resource.TestResponseChannelConsumer.Progress;
-import io.vlingo.xoom.auth.infra.resource.TestResponseChannelConsumer.TestResponseChannelConsumerInstantiator;
+import io.vlingo.xoom.auth.infrastructure.resource.TestResponseChannelConsumer.Progress;
+import io.vlingo.xoom.auth.infrastructure.resource.TestResponseChannelConsumer.TestResponseChannelConsumerInstantiator;
 import io.vlingo.xoom.auth.model.Tenant;
 import io.vlingo.xoom.http.Response;
 import io.vlingo.xoom.http.resource.Server;
