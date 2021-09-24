@@ -10,8 +10,7 @@ package io.vlingo.xoom.auth.infrastructure.resource;
 import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
 import static org.junit.Assert.assertEquals;
 
-import java.util.Properties;
-
+import io.vlingo.xoom.auth.infrastructure.*;
 import org.junit.Test;
 
 import io.vlingo.xoom.http.Response;
@@ -166,14 +165,6 @@ public class GroupResourceTest extends ResourceTest {
     assertEquals(userData.profile.name.given, queriedUser.name.given);
     assertEquals(userData.profile.name.second, queriedUser.name.second);
     assertEquals(userData.profile.name.family, queriedUser.name.family);
-  }
-
-  @Override
-  protected Properties resourceProperties() {
-    return TestProperties.groupResourceProperties(
-               TestProperties.permissionResourceProperties(
-                   TestProperties.roleResourceProperties(
-                       TestProperties.tenantResourceProperties())));
   }
 
   private Response patchGroupChangeDescriptionRequestResponse(final GroupData groupData, final String description) {
