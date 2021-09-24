@@ -9,15 +9,15 @@ package io.vlingo.xoom.auth.infrastructure.resource;
 
 import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
 import static io.vlingo.xoom.common.serialization.JsonSerialization.serialized;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.vlingo.xoom.auth.infrastructure.ConstraintData;
 import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.infrastructure.TenantData;
-import org.junit.Test;
 
 import io.vlingo.xoom.http.Response;
+import org.junit.jupiter.api.Test;
 
 public class PermissionResourceTest extends ResourceTest {
   private PermissionData permissionData;

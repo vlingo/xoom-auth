@@ -8,12 +8,12 @@
 package io.vlingo.xoom.auth.infrastructure.resource;
 
 import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.vlingo.xoom.auth.infrastructure.*;
-import org.junit.Test;
 
 import io.vlingo.xoom.http.Response;
+import org.junit.jupiter.api.Test;
 
 public class RoleResourceTest extends ResourceTest {
   private GroupData groupData;
