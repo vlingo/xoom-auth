@@ -12,8 +12,9 @@ import static io.vlingo.xoom.common.serialization.JsonSerialization.serialized;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Properties;
-
+import io.vlingo.xoom.auth.infrastructure.ConstraintData;
+import io.vlingo.xoom.auth.infrastructure.PermissionData;
+import io.vlingo.xoom.auth.infrastructure.TenantData;
 import org.junit.Test;
 
 import io.vlingo.xoom.http.Response;
@@ -104,11 +105,6 @@ public class PermissionResourceTest extends ResourceTest {
     assertEquals(permissionData2.name, queriedPermissionData2.name);
     assertEquals(permissionData2.description, queriedPermissionData2.description);
     assertTrue(permissionData2.constraints.isEmpty());
-  }
-
-  @Override
-  protected Properties resourceProperties() {
-    return TestProperties.permissionResourceProperties(TestProperties.tenantResourceProperties());
   }
 
   private ConstraintData constraintData(final int value) {
