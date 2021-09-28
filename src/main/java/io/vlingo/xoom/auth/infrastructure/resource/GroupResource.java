@@ -25,7 +25,7 @@ public interface GroupResource {
   @ResponseAdapter(handler = GroupResourceHandlers.ADAPT_STATE)
   Completes<Response> changeDescription(@Id final String id, @Body final GroupData data);
 
-  @Route(method = PUT, path = "/{tenantId}/groups/{groupName}/groups/{innerGroupName}", handler = GroupResourceHandlers.ASSIGN_GROUP)
+  @Route(method = PUT, path = "/{tenantId}/groups/{groupName}/groups", handler = GroupResourceHandlers.ASSIGN_GROUP)
   @ResponseAdapter(handler = GroupResourceHandlers.ADAPT_STATE)
   Completes<Response> assignGroup(@Id final String id, @Body final GroupData data);
 

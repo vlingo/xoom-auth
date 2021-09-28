@@ -176,7 +176,8 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   private Response putGroupGroupRequestResponse(final GroupData groupData, final String groupName) {
-    final String request = "PUT /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/groups HTTP/1.1\nHost: vlingo.io\nContent-Length: " + groupName.length() + "\n\n" + groupName;
+    final String body = String.format("{\"name\":\"%s\"}", groupName);
+    final String request = "PUT /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/groups HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
