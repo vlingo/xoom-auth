@@ -119,7 +119,8 @@ public class PermissionResourceTest extends ResourceTest {
   }
 
   private Response patchPermissionChangeDescriptionRequestResponse(final PermissionData permissionData, final String description) {
-    final String request = "PATCH /tenants/" + permissionData.tenantId + "/permissions/" + permissionData.name + "/description HTTP/1.1\nHost: vlingo.io\nContent-Length: " + description.length() + "\n\n" + description;
+    final String body = String.format("{\"description\":\"%s\"}", description);
+    final String request = "PATCH /tenants/" + permissionData.tenantId + "/permissions/" + permissionData.name + "/description HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
