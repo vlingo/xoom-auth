@@ -17,8 +17,10 @@ import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.infrastructure.TenantData;
 
 import io.vlingo.xoom.http.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class PermissionResourceTest extends ResourceTest {
   private PermissionData permissionData;
   private TenantData tenantData;

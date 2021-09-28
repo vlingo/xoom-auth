@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import io.vlingo.xoom.auth.infrastructure.*;
 import io.vlingo.xoom.http.Response;
 import io.vlingo.xoom.http.ResponseHeader;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -164,6 +165,7 @@ public class TenantResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatTenantRegistersUsers() {
     final TenantData tenantData = tenantData();
 
