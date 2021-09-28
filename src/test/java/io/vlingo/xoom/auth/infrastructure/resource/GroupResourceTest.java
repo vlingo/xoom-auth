@@ -168,7 +168,8 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   private Response patchGroupChangeDescriptionRequestResponse(final GroupData groupData, final String description) {
-    final String request = "PATCH /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/description HTTP/1.1\nHost: vlingo.io\nContent-Length: " + description.length() + "\n\n" + description;
+    final String body = String.format("{\"description\":\"%s\"}", description);
+    final String request = "PATCH /tenants/" + groupData.tenantId + "/groups/" + groupData.name + "/description HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
