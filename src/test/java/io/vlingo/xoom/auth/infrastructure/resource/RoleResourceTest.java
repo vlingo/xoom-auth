@@ -163,7 +163,8 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   private Response patchRoleChangeDescriptionRequestResponse(final RoleData roleData, final String description) {
-    final String request = "PATCH /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/description HTTP/1.1\nHost: vlingo.io\nContent-Length: " + description.length() + "\n\n" + description;
+    final String body = String.format("{\"description\":\"%s\"}", description);
+    final String request = "PATCH /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/description HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
