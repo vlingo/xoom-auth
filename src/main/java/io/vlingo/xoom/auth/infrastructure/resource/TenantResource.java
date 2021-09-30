@@ -1,46 +1,132 @@
 package io.vlingo.xoom.auth.infrastructure.resource;
 
+import io.vlingo.xoom.actors.Definition;
+import io.vlingo.xoom.actors.Address;
+import io.vlingo.xoom.turbo.ComponentRegistry;
 import io.vlingo.xoom.common.Completes;
-import io.vlingo.xoom.turbo.annotation.autodispatch.*;
+import io.vlingo.xoom.http.ContentType;
 import io.vlingo.xoom.http.Response;
-
-import io.vlingo.xoom.auth.infrastructure.persistence.TenantQueriesActor;
-import io.vlingo.xoom.auth.infrastructure.TenantData;
+import io.vlingo.xoom.http.ResponseHeader;
+import io.vlingo.xoom.http.resource.Resource;
+import io.vlingo.xoom.http.resource.DynamicResourceHandler;
+import io.vlingo.xoom.lattice.grid.Grid;
+import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
+import io.vlingo.xoom.auth.infrastructure.*;
 import io.vlingo.xoom.auth.model.tenant.TenantEntity;
 import io.vlingo.xoom.auth.infrastructure.persistence.TenantQueries;
 import io.vlingo.xoom.auth.model.tenant.Tenant;
 
-import static io.vlingo.xoom.http.Method.*;
+import static io.vlingo.xoom.common.serialization.JsonSerialization.serialized;
+import static io.vlingo.xoom.http.Response.Status.*;
+import static io.vlingo.xoom.http.ResponseHeader.Location;
+import static io.vlingo.xoom.http.resource.ResourceBuilder.resource;
 
-@AutoDispatch(path="/tenants", handlers=TenantResourceHandlers.class)
-@Queries(protocol = TenantQueries.class, actor = TenantQueriesActor.class)
-@Model(protocol = Tenant.class, actor = TenantEntity.class, data = TenantData.class)
-public interface TenantResource {
+/**
+ * See <a href="https://docs.vlingo.io/xoom-turbo/xoom-annotations#resourcehandlers">@ResourceHandlers</a>
+ */
+public class TenantResource extends DynamicResourceHandler {
+  private final Grid grid;
+  private final TenantQueries $queries;
 
-  @Route(method = POST, handler = TenantResourceHandlers.SUBSCRIBE_FOR)
-  @ResponseAdapter(handler = TenantResourceHandlers.ADAPT_STATE)
-  Completes<Response> subscribeFor(@Body final TenantData data);
+  public TenantResource(final Grid grid) {
+      super(grid.world().stage());
+      this.grid = grid;
+      this.$queries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).tenantQueries;
+  }
 
-  @Route(method = PATCH, path = "/{id}/activate", handler = TenantResourceHandlers.ACTIVATE)
-  @ResponseAdapter(handler = TenantResourceHandlers.ADAPT_STATE)
-  Completes<Response> activate(@Id final String id, @Body final TenantData data);
+  public Completes<Response> subscribeFor(final TenantData data) {
+    return Tenant.subscribeFor(grid, data.name, data.description, data.active)
+      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.id))), serialized(TenantData.from(state))))
+      .otherwise(arg -> Response.of(NotFound))
+      .recoverFrom(e -> Response.of(InternalServerError, e.getMessage())));
+  }
 
-  @Route(method = PATCH, path = "/{id}/deactivate", handler = TenantResourceHandlers.DEACTIVATE)
-  @ResponseAdapter(handler = TenantResourceHandlers.ADAPT_STATE)
-  Completes<Response> deactivate(@Id final String id, @Body final TenantData data);
+  public Completes<Response> activate(final String id) {
+    return resolve(id)
+            .andThenTo(tenant -> tenant.activate())
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(TenantData.from(state)))))
+            .otherwise(noGreeting -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
 
-  @Route(method = PATCH, path = "/{id}/description", handler = TenantResourceHandlers.CHANGE_DESCRIPTION)
-  @ResponseAdapter(handler = TenantResourceHandlers.ADAPT_STATE)
-  Completes<Response> changeDescription(@Id final String id, @Body final TenantData data);
+  public Completes<Response> deactivate(final String id) {
+    return resolve(id)
+            .andThenTo(tenant -> tenant.deactivate())
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(TenantData.from(state)))))
+            .otherwise(noGreeting -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
 
-  @Route(method = PATCH, path = "/{id}/name", handler = TenantResourceHandlers.CHANGE_NAME)
-  @ResponseAdapter(handler = TenantResourceHandlers.ADAPT_STATE)
-  Completes<Response> changeName(@Id final String id, @Body final TenantData data);
+  public Completes<Response> changeDescription(final String id, final TenantData data) {
+    return resolve(id)
+            .andThenTo(tenant -> tenant.changeDescription(data.description))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(TenantData.from(state)))))
+            .otherwise(noGreeting -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
 
-  @Route(method = GET, handler = TenantResourceHandlers.TENANTS)
-  Completes<Response> tenants();
+  public Completes<Response> changeName(final String id, final TenantData data) {
+    return resolve(id)
+            .andThenTo(tenant -> tenant.changeName(data.name))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(TenantData.from(state)))))
+            .otherwise(noGreeting -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
 
-  @Route(method = GET, path = "/{id}", handler = TenantResourceHandlers.TENANT_OF)
-  Completes<Response> tenantOf(final String id);
+  public Completes<Response> tenants() {
+    return $queries.tenants()
+            .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
+            .otherwise(arg -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
+
+  public Completes<Response> tenantOf(final String id) {
+    return $queries.tenantOf(id)
+            .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
+            .otherwise(arg -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
+
+  @Override
+  public Resource<?> routes() {
+     return resource("TenantResource",
+        io.vlingo.xoom.http.resource.ResourceBuilder.post("/tenants")
+            .body(TenantData.class)
+            .handle(this::subscribeFor),
+        io.vlingo.xoom.http.resource.ResourceBuilder.patch("/tenants/{id}/activate")
+            .param(String.class)
+            .handle(this::activate),
+        io.vlingo.xoom.http.resource.ResourceBuilder.patch("/tenants/{id}/deactivate")
+            .param(String.class)
+            .handle(this::deactivate),
+        io.vlingo.xoom.http.resource.ResourceBuilder.patch("/tenants/{id}/description")
+            .param(String.class)
+            .body(TenantData.class)
+            .handle(this::changeDescription),
+        io.vlingo.xoom.http.resource.ResourceBuilder.patch("/tenants/{id}/name")
+            .param(String.class)
+            .body(TenantData.class)
+            .handle(this::changeName),
+        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants")
+            .handle(this::tenants),
+        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{id}")
+            .param(String.class)
+            .handle(this::tenantOf)
+     );
+  }
+
+  @Override
+  protected ContentType contentType() {
+    return ContentType.of("application/json", "charset=UTF-8");
+  }
+
+  private String location(final String id) {
+    return "/tenants/" + id;
+  }
+
+  private Completes<Tenant> resolve(final String id) {
+    final Address address = grid.addressFactory().from(id);
+    return grid.actorOf(Tenant.class, address, Definition.has(TenantEntity.class, Definition.parameters(id)));
+  }
 
 }

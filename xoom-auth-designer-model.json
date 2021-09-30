@@ -1298,7 +1298,7 @@
   },
   "projectDirectory": "/designer/VLINGO-XOOM/io.vlingo.xoom/xoom-auth12",
   "useAnnotations": true,
-  "useAutoDispatch": true,
+  "useAutoDispatch": false,
   "generateUIWith": "ReactJS",
   "generateUI": false
 }
