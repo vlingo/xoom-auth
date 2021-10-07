@@ -12,17 +12,15 @@ import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
  */
 public final class UserAssignedToGroup extends IdentifiedDomainEvent {
 
-  public final String id;
-  public final String tenantId;
+  public final GroupId groupId;
 
-  public UserAssignedToGroup(final String id, final String tenantId) {
+  public UserAssignedToGroup(final GroupId groupId) {
     super(SemanticVersion.from("1.0.0").toValue());
-    this.id = id;
-    this.tenantId = tenantId;
+    this.groupId = groupId;
   }
 
   @Override
   public String identity() {
-    return id;
+    return groupId.idString();
   }
 }

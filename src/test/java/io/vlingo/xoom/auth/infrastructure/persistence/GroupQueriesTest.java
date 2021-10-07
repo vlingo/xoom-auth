@@ -1,6 +1,8 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.actors.World;
+import io.vlingo.xoom.auth.infrastructure.GroupData;
+import io.vlingo.xoom.auth.model.group.GroupId;
 import io.vlingo.xoom.common.Outcome;
 import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry;
 import io.vlingo.xoom.symbio.Source;
@@ -11,12 +13,12 @@ import io.vlingo.xoom.symbio.store.state.StateStore;
 import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.time.LocalDateTime;
-import io.vlingo.xoom.auth.infrastructure.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GroupQueriesTest {
 
@@ -32,51 +34,51 @@ public class GroupQueriesTest {
     queries = world.actorFor(GroupQueries.class, GroupQueriesActor.class, stateStore);
   }
 
-  private static final GroupData FIRST_QUERY_BY_ID_TEST_DATA = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-  private static final GroupData SECOND_QUERY_BY_ID_TEST_DATA = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+  private static final GroupData FIRST_QUERY_BY_ID_TEST_DATA = GroupData.from(GroupId.from("e79e02c5-735f-4998-b414-938479650be0", "first-group-name"), "first-group-name", "first-group-description");
+  private static final GroupData SECOND_QUERY_BY_ID_TEST_DATA = GroupData.from(GroupId.from("96bf1fd1-9bdc-4352-99b4-8089e28cfaa3", "second-group-name"), "second-group-name", "second-group-description");
 
   @Test
   public void queryById() {
-    stateStore.write("1", FIRST_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
-    stateStore.write("2", SECOND_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
+    stateStore.write(FIRST_QUERY_BY_ID_TEST_DATA.id, FIRST_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
+    stateStore.write(SECOND_QUERY_BY_ID_TEST_DATA.id, SECOND_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
 
-    final GroupData firstData = queries.groupOf("1").await();
+    final GroupData firstData = queries.groupOf("e79e02c5-735f-4998-b414-938479650be0:first-group-name").await();
 
-    assertEquals(firstData.id, "1");
+    assertEquals(firstData.id, "e79e02c5-735f-4998-b414-938479650be0:first-group-name");
     assertEquals(firstData.name, "first-group-name");
     assertEquals(firstData.description, "first-group-description");
-    assertEquals(firstData.tenantId, "first-group-tenantId");
+    assertEquals(firstData.tenantId, "e79e02c5-735f-4998-b414-938479650be0");
 
-    final GroupData secondData = queries.groupOf("2").await();
+    final GroupData secondData = queries.groupOf("96bf1fd1-9bdc-4352-99b4-8089e28cfaa3:second-group-name").await();
 
-    assertEquals(secondData.id, "2");
+    assertEquals(secondData.id, "96bf1fd1-9bdc-4352-99b4-8089e28cfaa3:second-group-name");
     assertEquals(secondData.name, "second-group-name");
     assertEquals(secondData.description, "second-group-description");
-    assertEquals(secondData.tenantId, "second-group-tenantId");
+    assertEquals(secondData.tenantId, "96bf1fd1-9bdc-4352-99b4-8089e28cfaa3");
   }
 
-  private static final GroupData FIRST_QUERY_ALL_TEST_DATA = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-  private static final GroupData SECOND_QUERY_ALL_TEST_DATA = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+  private static final GroupData FIRST_QUERY_ALL_TEST_DATA = GroupData.from(GroupId.from("28819da6-b36c-45a6-9193-727d41a94dde", "first-group-name"), "first-group-name", "first-group-description");
+  private static final GroupData SECOND_QUERY_ALL_TEST_DATA = GroupData.from(GroupId.from("d419a592-996a-41c2-979d-2a6972cf5c05", "second-group-name"), "second-group-name", "second-group-description");
 
   @Test
   public void queryAll() {
-    stateStore.write("1", FIRST_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
-    stateStore.write("2", SECOND_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
+    stateStore.write(FIRST_QUERY_ALL_TEST_DATA.id, FIRST_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
+    stateStore.write(SECOND_QUERY_BY_ID_TEST_DATA.id, SECOND_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
 
     final Collection<GroupData> results = queries.groups().await();
-    final GroupData firstData = results.stream().filter(data -> data.id.equals("1")).findFirst().orElseThrow(RuntimeException::new);
+    final GroupData firstData = results.stream().filter(data -> data.id.equals("28819da6-b36c-45a6-9193-727d41a94dde:first-group-name")).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(firstData.id, "1");
+    assertEquals(firstData.id, "28819da6-b36c-45a6-9193-727d41a94dde:first-group-name");
     assertEquals(firstData.name, "first-group-name");
     assertEquals(firstData.description, "first-group-description");
-    assertEquals(firstData.tenantId, "first-group-tenantId");
+    assertEquals(firstData.tenantId, "28819da6-b36c-45a6-9193-727d41a94dde");
 
-    final GroupData secondData = results.stream().filter(data -> data.id.equals("2")).findFirst().orElseThrow(RuntimeException::new);
+    final GroupData secondData = results.stream().filter(data -> data.id.equals("d419a592-996a-41c2-979d-2a6972cf5c05:second-group-name")).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(secondData.id, "2");
+    assertEquals(secondData.id, "d419a592-996a-41c2-979d-2a6972cf5c05:second-group-name");
     assertEquals(secondData.name, "second-group-name");
     assertEquals(secondData.description, "second-group-description");
-    assertEquals(secondData.tenantId, "second-group-tenantId");
+    assertEquals(secondData.tenantId, "d419a592-996a-41c2-979d-2a6972cf5c05");
   }
 
   @Test

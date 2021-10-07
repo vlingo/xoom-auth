@@ -16,7 +16,6 @@ import io.vlingo.xoom.http.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled
 public class GroupResourceTest extends ResourceTest {
   private GroupData groupData;
   private GroupData groupGroupData;
@@ -36,6 +35,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupGroupIsAssigned() {
     groupWithGroup("Group1", "Group 1 description.");
 
@@ -48,6 +48,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupGroupIsUnassigned() {
     groupWithGroup("Group1", "Group 1 description.");
 
@@ -60,6 +61,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupUserIsAssigned() {
     groupWithUser();
 
@@ -72,6 +74,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupUserIsUnassigned() {
     groupWithUser();
 
@@ -84,6 +87,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupHasRolePermission() {
     this.groupWithRoleWithPermission();
 
@@ -96,6 +100,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupQueries() {
     group();
 
@@ -108,6 +113,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupGroupQueries() {
     groupWithGroup("Group1", "Group 1 description.");
 
@@ -122,6 +128,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupPermissionQueries() {
     this.groupWithRoleWithPermission();
 
@@ -138,6 +145,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupRoleQueries() {
     this.groupWithRoleWithPermission();
 
@@ -154,6 +162,7 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatGroupUserQueries() {
     groupWithUser();
 

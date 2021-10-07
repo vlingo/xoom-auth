@@ -1,7 +1,7 @@
 package io.vlingo.xoom.auth.infrastructure;
 
+import io.vlingo.xoom.auth.model.group.GroupId;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.stream.Collectors;
@@ -16,11 +16,16 @@ public class GroupData {
   public final String tenantId;
 
   public static GroupData from(final GroupState groupState) {
-    return from(groupState.id, groupState.name, groupState.description, groupState.tenantId);
+    return from(groupState.id, groupState.name, groupState.description);
   }
 
+  @Deprecated
   public static GroupData from(final String id, final String name, final String description, final String tenantId) {
     return new GroupData(id, name, description, tenantId);
+  }
+
+  public static GroupData from(final GroupId id, final String name, final String description) {
+    return new GroupData(id, name, description);
   }
 
   public static List<GroupData> fromAll(final List<GroupState> states) {
@@ -28,18 +33,26 @@ public class GroupData {
   }
 
   public static GroupData empty() {
-    return from(GroupState.identifiedBy(""));
+    return from(GroupState.identifiedBy(GroupId.from("", "")));
   }
 
-  private GroupData (final String id, final String name, final String description, final String tenantId) {
-    this.id = id;
+  private GroupData(final GroupId groupId, final String name, final String description) {
+    this.id = groupId.idString();
+    this.name = name;
+    this.description = description;
+    this.tenantId = groupId.tenantId;
+  }
+
+  @Deprecated
+  private GroupData(final String groupId, final String name, final String description, final String tenantId) {
+    this.id = groupId;
     this.name = name;
     this.description = description;
     this.tenantId = tenantId;
   }
 
   public GroupState toGroupState() {
-    return new GroupState(id, name, description, tenantId);
+    return new GroupState(GroupId.from(tenantId, name), name, description);
   }
 
   @Override

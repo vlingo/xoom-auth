@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import java.time.LocalDateTime;
 import io.vlingo.xoom.auth.model.group.*;
 import io.vlingo.xoom.auth.infrastructure.*;
 
@@ -26,6 +25,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GroupProjectionTest {
+
+  private final String TENANT_ID = "47f36e24-9723-49cf-be71-54afc03aa120";
+  private final String FIRST_GROUP_NAME = "Group A";
+  private final String FIRST_GROUP_DESCRIPTION = "Group A description";
+  private final GroupId FIRST_GROUP_ID = GroupId.from(TENANT_ID, FIRST_GROUP_NAME);
+  private final String SECOND_GROUP_NAME = "Group B";
+  private final String SECOND_GROUP_DESCRIPTION = "Group B description";
+  private final GroupId SECOND_GROUP_ID = GroupId.from(TENANT_ID, SECOND_GROUP_NAME);
 
   private World world;
   private StateStore stateStore;
@@ -52,8 +59,8 @@ public class GroupProjectionTest {
 
   @Test
   public void provisionGroup() {
-    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    final GroupData firstData = GroupData.from(FIRST_GROUP_ID, FIRST_GROUP_NAME, FIRST_GROUP_DESCRIPTION);
+    final GroupData secondData = GroupData.from(SECOND_GROUP_ID, SECOND_GROUP_NAME, SECOND_GROUP_DESCRIPTION);
 
     final CountingProjectionControl control = new CountingProjectionControl();
     final AccessSafely access = control.afterCompleting(2);
@@ -70,26 +77,26 @@ public class GroupProjectionTest {
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
-    assertEquals(item.id, "1");
-    assertEquals(item.name, "first-group-name");
-    assertEquals(item.description, "first-group-description");
-    assertEquals(item.tenantId, "first-group-tenantId");
+    assertEquals(FIRST_GROUP_ID.idString(), item.id);
+    assertEquals(FIRST_GROUP_NAME, item.name);
+    assertEquals(FIRST_GROUP_DESCRIPTION, item.description);
+    assertEquals(TENANT_ID, item.tenantId);
 
     interest = new CountingReadResultInterest();
     interestAccess = interest.afterCompleting(1);
     stateStore.read(secondData.id, GroupData.class, interest);
     item = interestAccess.readFrom("item", secondData.id);
     assertEquals(secondData.id, item.id);
-    assertEquals(item.id, "2");
-    assertEquals(item.name, "second-group-name");
-    assertEquals(item.description, "second-group-description");
-    assertEquals(item.tenantId, "second-group-tenantId");
+    assertEquals(SECOND_GROUP_ID.idString(), item.id);
+    assertEquals(SECOND_GROUP_NAME, item.name);
+    assertEquals(SECOND_GROUP_DESCRIPTION, item.description);
+    assertEquals(TENANT_ID, item.tenantId);
   }
 
   @Test
   public void changeDescription() {
-    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    final GroupData firstData = GroupData.from(FIRST_GROUP_ID, FIRST_GROUP_NAME, FIRST_GROUP_DESCRIPTION);
+    final GroupData secondData = GroupData.from(SECOND_GROUP_ID, SECOND_GROUP_NAME, SECOND_GROUP_DESCRIPTION);
     registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -105,15 +112,15 @@ public class GroupProjectionTest {
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
-    assertEquals(item.id, "1");
-    assertEquals(item.description, "first-group-description");
-    assertEquals(item.tenantId, "first-group-tenantId");
+    assertEquals(FIRST_GROUP_ID.idString(), item.id);
+    assertEquals(FIRST_GROUP_DESCRIPTION, item.description);
+    assertEquals(TENANT_ID, item.tenantId);
   }
 
   @Test
   public void assignGroup() {
-    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    final GroupData firstData = GroupData.from(FIRST_GROUP_ID, FIRST_GROUP_NAME, FIRST_GROUP_DESCRIPTION);
+    final GroupData secondData = GroupData.from(SECOND_GROUP_ID, SECOND_GROUP_NAME, SECOND_GROUP_DESCRIPTION);
     registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -129,14 +136,14 @@ public class GroupProjectionTest {
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
-    assertEquals(item.id, "1");
-    assertEquals(item.tenantId, "first-group-tenantId");
+    assertEquals(FIRST_GROUP_ID.idString(), item.id);
+    assertEquals(TENANT_ID, item.tenantId);
   }
 
   @Test
   public void unassignGroup() {
-    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    final GroupData firstData = GroupData.from(FIRST_GROUP_ID, FIRST_GROUP_NAME, FIRST_GROUP_DESCRIPTION);
+    final GroupData secondData = GroupData.from(SECOND_GROUP_ID, SECOND_GROUP_NAME, SECOND_GROUP_DESCRIPTION);
     registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -152,14 +159,14 @@ public class GroupProjectionTest {
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
-    assertEquals(item.id, "1");
-    assertEquals(item.tenantId, "first-group-tenantId");
+    assertEquals(FIRST_GROUP_ID.idString(), item.id);
+    assertEquals(TENANT_ID, item.tenantId);
   }
 
   @Test
   public void assignUser() {
-    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    final GroupData firstData = GroupData.from(FIRST_GROUP_ID, FIRST_GROUP_NAME, FIRST_GROUP_DESCRIPTION);
+    final GroupData secondData = GroupData.from(SECOND_GROUP_ID, SECOND_GROUP_NAME, SECOND_GROUP_DESCRIPTION);
     registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -175,14 +182,14 @@ public class GroupProjectionTest {
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
-    assertEquals(item.id, "1");
-    assertEquals(item.tenantId, "first-group-tenantId");
+    assertEquals(FIRST_GROUP_ID.idString(), item.id);
+    assertEquals(TENANT_ID, item.tenantId);
   }
 
   @Test
   public void unassignUser() {
-    final GroupData firstData = GroupData.from("1", "first-group-name", "first-group-description", "first-group-tenantId");
-    final GroupData secondData = GroupData.from("2", "second-group-name", "second-group-description", "second-group-tenantId");
+    final GroupData firstData = GroupData.from(FIRST_GROUP_ID, FIRST_GROUP_NAME, FIRST_GROUP_DESCRIPTION);
+    final GroupData secondData = GroupData.from(SECOND_GROUP_ID, SECOND_GROUP_NAME, SECOND_GROUP_DESCRIPTION);
     registerExampleGroup(firstData.toGroupState(), secondData.toGroupState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -198,8 +205,8 @@ public class GroupProjectionTest {
     stateStore.read(firstData.id, GroupData.class, interest);
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
-    assertEquals(item.id, "1");
-    assertEquals(item.tenantId, "first-group-tenantId");
+    assertEquals(FIRST_GROUP_ID.idString(), item.id);
+    assertEquals(TENANT_ID, item.tenantId);
   }
 
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
@@ -207,67 +214,67 @@ public class GroupProjectionTest {
   }
 
   private Projectable createGroupProvisioned(GroupState data) {
-    final GroupProvisioned eventData = new GroupProvisioned(data.id, data.name, data.description, data.tenantId);
+    final GroupProvisioned eventData = new GroupProvisioned(data.id, data.name, data.description);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupProvisioned.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.id.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   private Projectable createGroupDescriptionChanged(GroupState data) {
-    final GroupDescriptionChanged eventData = new GroupDescriptionChanged(data.id, data.description, data.tenantId);
+    final GroupDescriptionChanged eventData = new GroupDescriptionChanged(data.id, data.description);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupDescriptionChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.id.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   private Projectable createGroupAssignedToGroup(GroupState data) {
-    final GroupAssignedToGroup eventData = new GroupAssignedToGroup(data.id, data.tenantId);
+    final GroupAssignedToGroup eventData = new GroupAssignedToGroup(data.id, GroupId.from(data.id.tenantId, "inner-group"));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupAssignedToGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.id.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   private Projectable createGroupUnassignedFromGroup(GroupState data) {
-    final GroupUnassignedFromGroup eventData = new GroupUnassignedFromGroup(data.id, data.tenantId);
+    final GroupUnassignedFromGroup eventData = new GroupUnassignedFromGroup(data.id, GroupId.from(data.id.tenantId, "inner-group"));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupUnassignedFromGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.id.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   private Projectable createUserAssignedToGroup(GroupState data) {
-    final UserAssignedToGroup eventData = new UserAssignedToGroup(data.id, data.tenantId);
+    final UserAssignedToGroup eventData = new UserAssignedToGroup(data.id);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserAssignedToGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.id.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   private Projectable createUserUnassignedFromGroup(GroupState data) {
-    final UserUnassignedFromGroup eventData = new UserUnassignedFromGroup(data.id, data.tenantId);
+    final UserUnassignedFromGroup eventData = new UserUnassignedFromGroup(data.id);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserUnassignedFromGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.id.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }

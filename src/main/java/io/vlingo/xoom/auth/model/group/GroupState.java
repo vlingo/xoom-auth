@@ -3,50 +3,48 @@ package io.vlingo.xoom.auth.model.group;
 
 public final class GroupState {
 
-  public final String id;
+  public final GroupId id;
   public final String name;
   public final String description;
-  public final String tenantId;
 
-  public static GroupState identifiedBy(final String id) {
-    return new GroupState(id, null, null, null);
+  public static GroupState identifiedBy(final GroupId groupId) {
+    return new GroupState(groupId, null, null);
   }
 
-  public GroupState (final String id, final String name, final String description, final String tenantId) {
-    this.id = id;
+  public GroupState(final GroupId groupId, final String name, final String description) {
+    this.id = groupId;
     this.name = name;
     this.description = description;
-    this.tenantId = tenantId;
   }
 
-  public GroupState provisionGroup(final String name, final String description, final String tenantId) {
+  public GroupState provisionGroup(final String name, final String description) {
     //TODO: Implement command logic.
-    return new GroupState(this.id, name, description, tenantId);
+    return new GroupState(this.id, name, description);
   }
 
-  public GroupState changeDescription(final String description, final String tenantId) {
+  public GroupState changeDescription(final String description) {
     //TODO: Implement command logic.
-    return new GroupState(this.id, this.name, description, tenantId);
+    return new GroupState(this.id, this.name, description);
   }
 
-  public GroupState assignGroup(final String tenantId) {
+  public GroupState assignGroup(final GroupId innerGroupId) {
     //TODO: Implement command logic.
-    return new GroupState(this.id, this.name, this.description, tenantId);
+    return new GroupState(this.id, this.name, this.description);
   }
 
-  public GroupState unassignGroup(final String tenantId) {
+  public GroupState unassignGroup(final GroupId innerGroupId) {
     //TODO: Implement command logic.
-    return new GroupState(this.id, this.name, this.description, tenantId);
+    return new GroupState(this.id, this.name, this.description);
   }
 
   public GroupState assignUser(final String tenantId) {
     //TODO: Implement command logic.
-    return new GroupState(this.id, this.name, this.description, tenantId);
+    return new GroupState(this.id, this.name, this.description);
   }
 
   public GroupState unassignUser(final String tenantId) {
     //TODO: Implement command logic.
-    return new GroupState(this.id, this.name, this.description, tenantId);
+    return new GroupState(this.id, this.name, this.description);
   }
 
 }

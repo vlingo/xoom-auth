@@ -10,9 +10,9 @@ import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
 public final class GroupEntity extends EventSourced implements Group {
   private GroupState state;
 
-  public GroupEntity(final String id) {
-    super(id);
-    this.state = GroupState.identifiedBy(id);
+  public GroupEntity(final GroupId groupId) {
+    super(groupId.idString());
+    this.state = GroupState.identifiedBy(groupId);
   }
 
   static {
@@ -25,35 +25,29 @@ public final class GroupEntity extends EventSourced implements Group {
   }
 
   @Override
-  public Completes<GroupState> provisionGroup(final String name, final String description, final String tenantId) {
-    /**
-     * TODO: Implement command logic. See {@link GroupState#provisionGroup()}
-     */
-    return apply(new GroupProvisioned(state.id, name, description, tenantId), () -> state);
+  public Completes<GroupState> provisionGroup(final String name, final String description) {
+    return apply(new GroupProvisioned(state.id, name, description), () -> state);
   }
 
   @Override
-  public Completes<GroupState> changeDescription(final String description, final String tenantId) {
-    /**
-     * TODO: Implement command logic. See {@link GroupState#changeDescription()}
-     */
-    return apply(new GroupDescriptionChanged(state.id, description, tenantId), () -> state);
+  public Completes<GroupState> changeDescription(final String description) {
+    return apply(new GroupDescriptionChanged(state.id, description), () -> state);
   }
 
   @Override
-  public Completes<GroupState> assignGroup(final String tenantId) {
+  public Completes<GroupState> assignGroup(final GroupId groupId) {
     /**
      * TODO: Implement command logic. See {@link GroupState#assignGroup()}
      */
-    return apply(new GroupAssignedToGroup(state.id, tenantId), () -> state);
+    return apply(new GroupAssignedToGroup(state.id, groupId), () -> state);
   }
 
   @Override
-  public Completes<GroupState> unassignGroup(final String tenantId) {
+  public Completes<GroupState> unassignGroup(final GroupId groupId) {
     /**
      * TODO: Implement command logic. See {@link GroupState#unassignGroup()}
      */
-    return apply(new GroupUnassignedFromGroup(state.id, tenantId), () -> state);
+    return apply(new GroupUnassignedFromGroup(state.id, groupId), () -> state);
   }
 
   @Override
@@ -61,7 +55,7 @@ public final class GroupEntity extends EventSourced implements Group {
     /**
      * TODO: Implement command logic. See {@link GroupState#assignUser()}
      */
-    return apply(new UserAssignedToGroup(state.id, tenantId), () -> state);
+    return apply(new UserAssignedToGroup(state.id), () -> state);
   }
 
   @Override
@@ -69,31 +63,31 @@ public final class GroupEntity extends EventSourced implements Group {
     /**
      * TODO: Implement command logic. See {@link GroupState#unassignUser()}
      */
-    return apply(new UserUnassignedFromGroup(state.id, tenantId), () -> state);
+    return apply(new UserUnassignedFromGroup(state.id), () -> state);
   }
 
   private void applyGroupProvisioned(final GroupProvisioned event) {
-    state = state.provisionGroup(event.name, event.description, event.tenantId);
+    state = state.provisionGroup(event.name, event.description);
   }
 
   private void applyGroupDescriptionChanged(final GroupDescriptionChanged event) {
-    state = state.changeDescription(event.description, event.tenantId);
+    state = state.changeDescription(event.description);
   }
 
   private void applyGroupAssignedToGroup(final GroupAssignedToGroup event) {
-    state = state.assignGroup(event.tenantId);
+    state = state.assignGroup(event.innerGroupId);
   }
 
   private void applyGroupUnassignedFromGroup(final GroupUnassignedFromGroup event) {
-    state = state.unassignGroup(event.tenantId);
+    state = state.unassignGroup(event.innerGroupId);
   }
 
   private void applyUserAssignedToGroup(final UserAssignedToGroup event) {
-    state = state.assignUser(event.tenantId);
+    state = state.assignUser(event.groupId.tenantId);
   }
 
   private void applyUserUnassignedFromGroup(final UserUnassignedFromGroup event) {
-    state = state.unassignUser(event.tenantId);
+    state = state.unassignUser(event.groupId.tenantId);
   }
 
   /*

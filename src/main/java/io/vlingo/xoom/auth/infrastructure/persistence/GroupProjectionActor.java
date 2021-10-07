@@ -43,37 +43,37 @@ public class GroupProjectionActor extends StateStoreProjectionActor<GroupData> {
       switch (Events.valueOf(event.typeName())) {
         case GroupProvisioned: {
           final GroupProvisioned typedEvent = typed(event);
-          merged = GroupData.from(typedEvent.id, typedEvent.name, typedEvent.description, typedEvent.tenantId);
+          merged = GroupData.from(typedEvent.groupId, typedEvent.name, typedEvent.description);
           break;
         }
 
         case GroupDescriptionChanged: {
           final GroupDescriptionChanged typedEvent = typed(event);
-          merged = GroupData.from(typedEvent.id, previousData.name, typedEvent.description, typedEvent.tenantId);
+          merged = GroupData.from(typedEvent.groupId, previousData.name, typedEvent.description);
           break;
         }
 
         case GroupAssignedToGroup: {
           final GroupAssignedToGroup typedEvent = typed(event);
-          merged = GroupData.from(typedEvent.id, previousData.name, previousData.description, typedEvent.tenantId);
+          merged = GroupData.from(typedEvent.groupId, previousData.name, previousData.description);
           break;
         }
 
         case GroupUnassignedFromGroup: {
           final GroupUnassignedFromGroup typedEvent = typed(event);
-          merged = GroupData.from(typedEvent.id, previousData.name, previousData.description, typedEvent.tenantId);
+          merged = GroupData.from(typedEvent.groupId, previousData.name, previousData.description);
           break;
         }
 
         case UserAssignedToGroup: {
           final UserAssignedToGroup typedEvent = typed(event);
-          merged = GroupData.from(typedEvent.id, previousData.name, previousData.description, typedEvent.tenantId);
+          merged = GroupData.from(typedEvent.groupId, previousData.name, previousData.description);
           break;
         }
 
         case UserUnassignedFromGroup: {
           final UserUnassignedFromGroup typedEvent = typed(event);
-          merged = GroupData.from(typedEvent.id, previousData.name, previousData.description, typedEvent.tenantId);
+          merged = GroupData.from(typedEvent.groupId, previousData.name, previousData.description);
           break;
         }
 
