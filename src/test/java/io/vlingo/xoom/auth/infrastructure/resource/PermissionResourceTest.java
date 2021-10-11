@@ -20,7 +20,6 @@ import io.vlingo.xoom.http.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled
 public class PermissionResourceTest extends ResourceTest {
   private PermissionData permissionData;
   private TenantData tenantData;
@@ -36,6 +35,7 @@ public class PermissionResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatPermissionEnforcesConstraint() {
     permission();
 
@@ -52,6 +52,7 @@ public class PermissionResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatPermissionEnforcesReplacementConstraint() {
     permission();
 
@@ -70,6 +71,7 @@ public class PermissionResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatPermissionForgetsConstraint() {
     permission();
 
@@ -92,6 +94,7 @@ public class PermissionResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatPermissionQueryFindsMultiple() {
     permission();
     final PermissionData permissionData1 = permissionData;
