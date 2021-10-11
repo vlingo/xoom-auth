@@ -42,14 +42,14 @@ public class GroupQueriesTest {
     stateStore.write(FIRST_QUERY_BY_ID_TEST_DATA.id, FIRST_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
     stateStore.write(SECOND_QUERY_BY_ID_TEST_DATA.id, SECOND_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
 
-    final GroupData firstData = queries.groupOf("e79e02c5-735f-4998-b414-938479650be0:first-group-name").await();
+    final GroupData firstData = queries.groupOf(GroupId.from("e79e02c5-735f-4998-b414-938479650be0", "first-group-name")).await();
 
     assertEquals(firstData.id, "e79e02c5-735f-4998-b414-938479650be0:first-group-name");
     assertEquals(firstData.name, "first-group-name");
     assertEquals(firstData.description, "first-group-description");
     assertEquals(firstData.tenantId, "e79e02c5-735f-4998-b414-938479650be0");
 
-    final GroupData secondData = queries.groupOf("96bf1fd1-9bdc-4352-99b4-8089e28cfaa3:second-group-name").await();
+    final GroupData secondData = queries.groupOf(GroupId.from("96bf1fd1-9bdc-4352-99b4-8089e28cfaa3", "second-group-name")).await();
 
     assertEquals(secondData.id, "96bf1fd1-9bdc-4352-99b4-8089e28cfaa3:second-group-name");
     assertEquals(secondData.name, "second-group-name");
@@ -83,7 +83,7 @@ public class GroupQueriesTest {
 
   @Test
   public void groupOfEmptyResult(){
-    final GroupData result = queries.groupOf("1").await();
+    final GroupData result = queries.groupOf(GroupId.from("1", "G2")).await();
     assertEquals("", result.id);
   }
 

@@ -94,7 +94,7 @@ public class GroupResource extends DynamicResourceHandler {
   }
 
   public Completes<Response> groupOf(final String tenantId, final String groupName) {
-    return $queries.groupOf(GroupId.from(tenantId, groupName).idString())
+    return $queries.groupOf(GroupId.from(tenantId, groupName))
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
