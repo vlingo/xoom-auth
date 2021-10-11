@@ -27,67 +27,71 @@ public class PermissionQueriesTest {
   private PermissionQueries queries;
 
   @BeforeEach
-  public void setUp(){
+  public void setUp() {
     world = World.startWithDefaults("test-state-store-query");
     stateStore = world.actorFor(StateStore.class, InMemoryStateStoreActor.class, Collections.singletonList(new NoOpDispatcher()));
     StatefulTypeRegistry.registerAll(world, stateStore, PermissionData.class);
     queries = world.actorFor(PermissionQueries.class, PermissionQueriesActor.class, stateStore);
   }
 
-  private static final PermissionData FIRST_QUERY_BY_ID_TEST_DATA = PermissionData.from(PermissionId.from("8844bb24-811a-45c7-b98b-ba7a88a42372",  "first-permission-name"), new HashSet<>(),  "first-permission-name", "first-permission-description");
-  private static final PermissionData SECOND_QUERY_BY_ID_TEST_DATA = PermissionData.from(PermissionId.from("2f50fc24-85b1-4657-b876-82491bfc3a70", "second-permission-name"), new HashSet<>(), "second-permission-name", "second-permission-description");
-
   @Test
   public void queryById() {
-    stateStore.write(FIRST_QUERY_BY_ID_TEST_DATA.id, FIRST_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
-    stateStore.write(SECOND_QUERY_BY_ID_TEST_DATA.id, SECOND_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
+    final PermissionId firstPermissionId = PermissionId.from("8844bb24-811a-45c7-b98b-ba7a88a42372", "first-permission-name");
+    final PermissionData firstPermission = PermissionData.from(firstPermissionId, new HashSet<>(),  "first-permission-name", "first-permission-description");
+    final PermissionId secondPermissionId = PermissionId.from("2f50fc24-85b1-4657-b876-82491bfc3a70", "second-permission-name");
+    final PermissionData secondPermission = PermissionData.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
 
-    final PermissionData firstData = queries.permissionOf(FIRST_QUERY_BY_ID_TEST_DATA.id).await();
+    stateStore.write(firstPermission.id, firstPermission, 1, NOOP_WRITER);
+    stateStore.write(secondPermission.id, secondPermission, 1, NOOP_WRITER);
 
-    assertEquals(firstData.id, FIRST_QUERY_BY_ID_TEST_DATA.id);
+    final PermissionData firstData = queries.permissionOf(firstPermissionId).await();
+
+    assertEquals(firstPermission.id, firstData.id);
     assertNotNull(firstData.constraints);
-    assertEquals(firstData.description, "first-permission-description");
-    assertEquals(firstData.name, "first-permission-name");
-    assertEquals(firstData.tenantId, "8844bb24-811a-45c7-b98b-ba7a88a42372");
+    assertEquals("first-permission-description", firstData.description);
+    assertEquals("first-permission-name", firstData.name);
+    assertEquals(firstPermissionId.tenantId, firstData.tenantId);
 
-    final PermissionData secondData = queries.permissionOf(SECOND_QUERY_BY_ID_TEST_DATA.id).await();
+    final PermissionData secondData = queries.permissionOf(secondPermissionId).await();
 
-    assertEquals(secondData.id, SECOND_QUERY_BY_ID_TEST_DATA.id);
+    assertEquals(secondPermission.id, secondData.id);
     assertNotNull(secondData.constraints);
-    assertEquals(secondData.description, "second-permission-description");
-    assertEquals(secondData.name, "second-permission-name");
-    assertEquals(secondData.tenantId, "2f50fc24-85b1-4657-b876-82491bfc3a70");
+    assertEquals("second-permission-description", secondData.description);
+    assertEquals("second-permission-name", secondData.name);
+    assertEquals(secondPermissionId.tenantId, secondData.tenantId);
   }
-
-  private static final PermissionData FIRST_QUERY_ALL_TEST_DATA = PermissionData.from(PermissionId.from("8844bb24-811a-45c7-b98b-ba7a88a42372",  "first-permission-name"), new HashSet<>(),  "first-permission-name", "first-permission-description");
-  private static final PermissionData SECOND_QUERY_ALL_TEST_DATA = PermissionData.from(PermissionId.from("2f50fc24-85b1-4657-b876-82491bfc3a70", "second-permission-name"), new HashSet<>(), "second-permission-name", "second-permission-description");
 
   @Test
   public void queryAll() {
-    stateStore.write(FIRST_QUERY_ALL_TEST_DATA.id, FIRST_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
-    stateStore.write(SECOND_QUERY_ALL_TEST_DATA.id, SECOND_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
+    final PermissionId firstPermissionId = PermissionId.from("8844bb24-811a-45c7-b98b-ba7a88a42372", "first-permission-name");
+    final PermissionData firstPermission = PermissionData.from(firstPermissionId, new HashSet<>(),  "first-permission-name", "first-permission-description");
+    final PermissionId secondPermissionId = PermissionId.from("2f50fc24-85b1-4657-b876-82491bfc3a70", "second-permission-name");
+    final PermissionData secondPermission = PermissionData.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
+
+    stateStore.write(firstPermission.id, firstPermission, 1, NOOP_WRITER);
+    stateStore.write(secondPermission.id, secondPermission, 1, NOOP_WRITER);
 
     final Collection<PermissionData> results = queries.permissions().await();
-    final PermissionData firstData = results.stream().filter(data -> data.id.equals(FIRST_QUERY_ALL_TEST_DATA.id)).findFirst().orElseThrow(RuntimeException::new);
+    final PermissionData firstData = results.stream().filter(data -> data.id.equals(firstPermission.id)).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(firstData.id, FIRST_QUERY_ALL_TEST_DATA.id);
+    assertEquals(firstPermission.id, firstData.id);
     assertNotNull(firstData.constraints);
-    assertEquals(firstData.description, "first-permission-description");
-    assertEquals(firstData.name, "first-permission-name");
-    assertEquals(firstData.tenantId, "8844bb24-811a-45c7-b98b-ba7a88a42372");
+    assertEquals("first-permission-description", firstData.description);
+    assertEquals("first-permission-name", firstData.name);
+    assertEquals(firstPermissionId.tenantId, firstData.tenantId);
 
-    final PermissionData secondData = results.stream().filter(data -> data.id.equals(SECOND_QUERY_BY_ID_TEST_DATA.id)).findFirst().orElseThrow(RuntimeException::new);
+    final PermissionData secondData = results.stream().filter(data -> data.id.equals(secondPermission.id)).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(secondData.id, SECOND_QUERY_ALL_TEST_DATA.id);
+    assertEquals(secondPermission.id, secondData.id);
     assertNotNull(secondData.constraints);
-    assertEquals(secondData.description, "second-permission-description");
-    assertEquals(secondData.name, "second-permission-name");
-    assertEquals(secondData.tenantId, "2f50fc24-85b1-4657-b876-82491bfc3a70");
+    assertEquals("second-permission-description", secondData.description);
+    assertEquals("second-permission-name", secondData.name);
+    assertEquals(secondPermissionId.tenantId, secondData.tenantId);
   }
 
   @Test
-  public void permissionOfEmptyResult(){
-    final PermissionData result = queries.permissionOf("1").await();
+  public void permissionOfEmptyResult() {
+    final PermissionData result = queries.permissionOf(PermissionId.from("1", "P1")).await();
     assertEquals("", result.id);
   }
 

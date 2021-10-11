@@ -86,8 +86,8 @@ public class PermissionResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> permissionOf(final String id) {
-    return $queries.permissionOf(id)
+  public Completes<Response> permissionOf(final String tenantId, final String permissionName) {
+    return $queries.permissionOf(PermissionId.from(tenantId, permissionName))
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -123,7 +123,8 @@ public class PermissionResource extends DynamicResourceHandler {
             .handle(this::changeDescription),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/permissions")
             .handle(this::permissions),
-        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/permissions/{id}")
+        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/permissions/{permissionName}")
+            .param(String.class)
             .param(String.class)
             .handle(this::permissionOf)
      );
