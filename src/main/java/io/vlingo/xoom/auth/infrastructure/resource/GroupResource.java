@@ -93,8 +93,8 @@ public class GroupResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> groupOf(final String id) {
-    return $queries.groupOf(id)
+  public Completes<Response> groupOf(final String tenantId, final String groupName) {
+    return $queries.groupOf(GroupId.from(tenantId, groupName).idString())
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -133,7 +133,8 @@ public class GroupResource extends DynamicResourceHandler {
             .handle(this::unassignUser),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/groups")
             .handle(this::groups),
-        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/groups/{id}")
+        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/groups/{groupName}")
+            .param(String.class)
             .param(String.class)
             .handle(this::groupOf)
      );

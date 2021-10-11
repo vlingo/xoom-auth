@@ -100,7 +100,6 @@ public class GroupResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatGroupQueries() {
     group();
 
