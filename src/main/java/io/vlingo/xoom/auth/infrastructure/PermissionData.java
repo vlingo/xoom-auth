@@ -1,12 +1,12 @@
 package io.vlingo.xoom.auth.infrastructure;
 
+import io.vlingo.xoom.auth.model.permission.PermissionId;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.stream.Collectors;
 import java.util.*;
-import io.vlingo.xoom.auth.model.value.*;
+
 import io.vlingo.xoom.auth.model.permission.PermissionState;
 
 @SuppressWarnings("all")
@@ -19,11 +19,16 @@ public class PermissionData {
 
   public static PermissionData from(final PermissionState permissionState) {
     final Set<ConstraintData> constraints = permissionState.constraints != null ? permissionState.constraints.stream().map(ConstraintData::from).collect(java.util.stream.Collectors.toSet()) : new HashSet<>();
-    return from(permissionState.id, constraints, permissionState.name, permissionState.description, permissionState.tenantId);
+    return from(permissionState.id, constraints, permissionState.name, permissionState.description);
   }
 
+  @Deprecated
   public static PermissionData from(final String id, final Set<ConstraintData> constraints, final String name, final String description, final String tenantId) {
-    return new PermissionData(id, constraints, description, name, tenantId);
+    return new PermissionData(id, constraints, name, description, tenantId);
+  }
+
+  public static PermissionData from(final PermissionId permissionId, final Set<ConstraintData> constraints, final String name, final String description) {
+    return new PermissionData(permissionId, constraints, name, description);
   }
 
   public static List<PermissionData> fromAll(final List<PermissionState> states) {
@@ -31,9 +36,10 @@ public class PermissionData {
   }
 
   public static PermissionData empty() {
-    return from(PermissionState.identifiedBy(""));
+    return from(PermissionState.identifiedBy(PermissionId.from("", "")));
   }
 
+  @Deprecated
   private PermissionData(final String id, final Set<ConstraintData> constraints, final String name, final String description, final String tenantId) {
     this.id = id;
     this.constraints.addAll(constraints);
@@ -42,8 +48,16 @@ public class PermissionData {
     this.tenantId = tenantId;
   }
 
+  private PermissionData(final PermissionId permissionId, final Set<ConstraintData> constraints, final String name, final String description) {
+    this.id = permissionId.idString();
+    this.constraints.addAll(constraints);
+    this.name = name;
+    this.description = description;
+    this.tenantId = permissionId.tenantId;
+  }
+
   public PermissionState toPermissionState() {
-    return new PermissionState(id, constraints.stream().map(ConstraintData::toConstraint).collect(java.util.stream.Collectors.toSet()), description, name, tenantId);
+    return new PermissionState(PermissionId.from(tenantId, name), constraints.stream().map(ConstraintData::toConstraint).collect(java.util.stream.Collectors.toSet()), name, description);
   }
 
   @Override

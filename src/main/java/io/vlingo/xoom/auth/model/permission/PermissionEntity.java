@@ -1,6 +1,5 @@
 package io.vlingo.xoom.auth.model.permission;
 
-import java.util.*;
 import io.vlingo.xoom.auth.model.value.*;
 import io.vlingo.xoom.common.Completes;
 
@@ -12,9 +11,9 @@ import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
 public final class PermissionEntity extends EventSourced implements Permission {
   private PermissionState state;
 
-  public PermissionEntity(final String id) {
-    super(id);
-    this.state = PermissionState.identifiedBy(id);
+  public PermissionEntity(final PermissionId permissionId) {
+    super(permissionId.idString());
+    this.state = PermissionState.identifiedBy(permissionId);
   }
 
   static {
@@ -26,11 +25,11 @@ public final class PermissionEntity extends EventSourced implements Permission {
   }
 
   @Override
-  public Completes<PermissionState> provisionPermission(final String name, final String description, final String tenantId) {
+  public Completes<PermissionState> provisionPermission(final String name, final String description) {
     /**
      * TODO: Implement command logic. See {@link PermissionState#provisionPermission()}
      */
-    return apply(new PermissionProvisioned(state.id, name, description, tenantId), () -> state);
+    return apply(new PermissionProvisioned(state.id, name, description), () -> state);
   }
 
   @Override
@@ -58,15 +57,15 @@ public final class PermissionEntity extends EventSourced implements Permission {
   }
 
   @Override
-  public Completes<PermissionState> changeDescription(final String description, final String tenantId) {
+  public Completes<PermissionState> changeDescription(final String description) {
     /**
      * TODO: Implement command logic. See {@link PermissionState#changeDescription()}
      */
-    return apply(new PermissionDescriptionChanged(state.id, description, tenantId), () -> state);
+    return apply(new PermissionDescriptionChanged(state.id, description), () -> state);
   }
 
   private void applyPermissionProvisioned(final PermissionProvisioned event) {
-    state = state.provisionPermission(event.description, event.name, event.tenantId);
+    state = state.provisionPermission(event.name, event.description);
   }
 
   private void applyPermissionConstraintEnforced(final PermissionConstraintEnforced event) {
@@ -82,7 +81,7 @@ public final class PermissionEntity extends EventSourced implements Permission {
   }
 
   private void applyPermissionDescriptionChanged(final PermissionDescriptionChanged event) {
-    state = state.changeDescription(event.description, event.tenantId);
+    state = state.changeDescription(event.description);
   }
 
   /*

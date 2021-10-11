@@ -3,7 +3,6 @@ package io.vlingo.xoom.auth.model.permission;
 import io.vlingo.xoom.common.version.SemanticVersion;
 import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
 
-import java.util.*;
 import io.vlingo.xoom.auth.model.value.*;
 
 /**
@@ -14,17 +13,17 @@ import io.vlingo.xoom.auth.model.value.*;
  */
 public final class PermissionConstraintForgotten extends IdentifiedDomainEvent {
 
-  public final String id;
+  public final PermissionId permissionId;
   public final Constraint constraint;
 
-  public PermissionConstraintForgotten(final String id, final Constraint constraint) {
+  public PermissionConstraintForgotten(final PermissionId permissionId, final Constraint constraint) {
     super(SemanticVersion.from("1.0.0").toValue());
-    this.id = id;
+    this.permissionId = permissionId;
     this.constraint = constraint;
   }
 
   @Override
   public String identity() {
-    return id;
+    return permissionId.idString();
   }
 }

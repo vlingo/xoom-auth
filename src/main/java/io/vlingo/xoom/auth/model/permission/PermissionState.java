@@ -5,50 +5,48 @@ import io.vlingo.xoom.auth.model.value.*;
 
 public final class PermissionState {
 
-  public final String id;
+  public final PermissionId id;
   public final Set<Constraint> constraints = new HashSet<>();
-  public final String description;
   public final String name;
-  public final String tenantId;
+  public final String description;
 
-  public static PermissionState identifiedBy(final String id) {
-    return new PermissionState(id, new HashSet<>(), null, null, null);
+  public static PermissionState identifiedBy(final PermissionId permissionId) {
+    return new PermissionState(permissionId, new HashSet<>(), null, null);
   }
 
-  public PermissionState (final String id, final Set<Constraint> constraints, final String description, final String name, final String tenantId) {
-    this.id = id;
+  public PermissionState(final PermissionId permissionId, final Set<Constraint> constraints, final String name, final String description) {
+    this.id = permissionId;
     this.constraints.addAll(constraints);
-    this.description = description;
     this.name = name;
-    this.tenantId = tenantId;
+    this.description = description;
   }
 
-  public PermissionState provisionPermission(final String description, final String name, final String tenantId) {
+  public PermissionState provisionPermission(final String name, final String description) {
     //TODO: Implement command logic.
-    return new PermissionState(this.id, this.constraints, description, name, tenantId);
+    return new PermissionState(this.id, this.constraints, name, description);
   }
 
   public PermissionState enforce(final Constraint constraint) {
     //TODO: Implement command logic.
     this.constraints.add(constraint);
-    return new PermissionState(this.id, this.constraints, this.description, this.name, this.tenantId);
+    return new PermissionState(this.id, this.constraints, this.name, this.description);
   }
 
   public PermissionState enforceReplacement(final Constraint constraint) {
     //TODO: Implement command logic.
     this.constraints.add(constraint);
-    return new PermissionState(this.id, this.constraints, this.description, this.name, this.tenantId);
+    return new PermissionState(this.id, this.constraints, this.name, this.description);
   }
 
   public PermissionState forget(final Constraint constraint) {
     //TODO: Implement command logic.
     this.constraints.add(constraint);
-    return new PermissionState(this.id, this.constraints, this.description, this.name, this.tenantId);
+    return new PermissionState(this.id, this.constraints, this.name, this.description);
   }
 
-  public PermissionState changeDescription(final String description, final String tenantId) {
+  public PermissionState changeDescription(final String description) {
     //TODO: Implement command logic.
-    return new PermissionState(this.id, this.constraints, description, this.name, tenantId);
+    return new PermissionState(this.id, this.constraints, this.name, description);
   }
 
 }

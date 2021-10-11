@@ -12,19 +12,17 @@ import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
  */
 public final class PermissionDescriptionChanged extends IdentifiedDomainEvent {
 
-  public final String id;
+  public final PermissionId permissionId;
   public final String description;
-  public final String tenantId;
 
-  public PermissionDescriptionChanged(final String id, final String description, final String tenantId) {
+  public PermissionDescriptionChanged(final PermissionId permissionId, final String description) {
     super(SemanticVersion.from("1.0.0").toValue());
-    this.id = id;
+    this.permissionId = permissionId;
     this.description = description;
-    this.tenantId = tenantId;
   }
 
   @Override
   public String identity() {
-    return id;
+    return permissionId.idString();
   }
 }
