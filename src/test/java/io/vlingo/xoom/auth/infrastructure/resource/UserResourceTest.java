@@ -7,18 +7,16 @@
 
 package io.vlingo.xoom.auth.infrastructure.resource;
 
-import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
-import static io.vlingo.xoom.common.serialization.JsonSerialization.serialized;
-import static org.junit.jupiter.api.Assertions.*;
-
 import io.vlingo.xoom.auth.infrastructure.*;
-
 import io.vlingo.xoom.auth.model.Credential;
 import io.vlingo.xoom.http.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled
+import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
+import static io.vlingo.xoom.common.serialization.JsonSerialization.serialized;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class UserResourceTest extends ResourceTest {
   private PermissionData permissionData;
   private RoleData roleData;
@@ -51,6 +49,7 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatUserManagesCredentials() {
     user();
 
@@ -106,6 +105,7 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatUserReplacesProfile() {
     user();
 
@@ -130,6 +130,7 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatUserQueries() {
     user();
 
@@ -151,6 +152,7 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatUserHasPermission() {
     userWithRolePermission();
 
@@ -163,6 +165,7 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatUserIsInRole() {
     userWithRolePermission();
 
@@ -223,12 +226,14 @@ public class UserResourceTest extends ResourceTest {
   }
 
   private Response putRoleUserRequestResponse(final RoleData roleData, final String username) {
-    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/users HTTP/1.1\nHost: vlingo.io\nContent-Length: " + username.length() + "\n\n" + username;
+    final String body = String.format("{\"username\":\"%s\"}", username);
+    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/users HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
   private Response putRolePermissionRequestResponse(final RoleData roleData, final String permissionName) {
-    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/permissions HTTP/1.1\nHost: vlingo.io\nContent-Length: " + permissionName.length() + "\n\n" + permissionName;
+    final String body = String.format("{\"name\":\"%s\"}", permissionName);
+    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/permissions HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 

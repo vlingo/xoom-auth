@@ -1,14 +1,17 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
-import java.util.*;
-import io.vlingo.xoom.auth.infrastructure.*;
+import io.vlingo.xoom.auth.infrastructure.CredentialData;
+import io.vlingo.xoom.auth.infrastructure.Events;
+import io.vlingo.xoom.auth.infrastructure.ProfileData;
+import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
 import io.vlingo.xoom.auth.model.user.*;
-
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.StateStoreProjectionActor;
 import io.vlingo.xoom.symbio.Source;
 import io.vlingo.xoom.symbio.store.state.StateStore;
 import io.vlingo.xoom.turbo.ComponentRegistry;
+
+import java.util.HashSet;
 
 /**
  * See
@@ -45,19 +48,19 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
         case UserRegistered: {
           final UserRegistered typedEvent = typed(event);
           final ProfileData profile = ProfileData.from(typedEvent.profile);
-          merged = UserRegistrationData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, typedEvent.active, new HashSet<>(), profile);
+          merged = UserRegistrationData.from(typedEvent.userId, typedEvent.username, profile, new HashSet<>(), typedEvent.active);
           break;
         }
 
         case UserActivated: {
           final UserActivated typedEvent = typed(event);
-          merged = UserRegistrationData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, true);
           break;
         }
 
         case UserDeactivated: {
           final UserDeactivated typedEvent = typed(event);
-          merged = UserRegistrationData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, false);
           break;
         }
 
@@ -65,7 +68,7 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
           final UserCredentialAdded typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
           previousData.credentials.add(credential);
-          merged = UserRegistrationData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, previousData.active);
           break;
         }
 
@@ -73,7 +76,7 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
           final UserCredentialRemoved typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
           previousData.credentials.remove(credential);
-          merged = UserRegistrationData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, previousData.active);
           break;
         }
 
@@ -81,14 +84,14 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
           final UserCredentialReplaced typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
           previousData.credentials.add(credential);
-          merged = UserRegistrationData.from(typedEvent.id, previousData.tenantId, previousData.username, previousData.active, previousData.credentials, previousData.profile);
+          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, previousData.active);
           break;
         }
 
         case UserProfileReplaced: {
           final UserProfileReplaced typedEvent = typed(event);
           final ProfileData profile = ProfileData.from(typedEvent.profile);
-          merged = UserRegistrationData.from(typedEvent.id, typedEvent.tenantId, typedEvent.username, previousData.active, previousData.credentials, profile);
+          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, profile, previousData.credentials, previousData.active);
           break;
         }
 

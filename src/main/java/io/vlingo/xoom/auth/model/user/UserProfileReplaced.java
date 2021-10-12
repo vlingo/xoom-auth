@@ -1,9 +1,8 @@
 package io.vlingo.xoom.auth.model.user;
 
+import io.vlingo.xoom.auth.model.value.Profile;
 import io.vlingo.xoom.common.version.SemanticVersion;
 import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
-
-import io.vlingo.xoom.auth.model.value.*;
 
 /**
  * See
@@ -13,21 +12,17 @@ import io.vlingo.xoom.auth.model.value.*;
  */
 public final class UserProfileReplaced extends IdentifiedDomainEvent {
 
-  public final String id;
-  public final String tenantId;
-  public final String username;
+  public final UserId userId;
   public final Profile profile;
 
-  public UserProfileReplaced(final String id, final String tenantId, final String username, final Profile profile) {
+  public UserProfileReplaced(final UserId userId, final Profile profile) {
     super(SemanticVersion.from("1.0.0").toValue());
-    this.id = id;
-    this.tenantId = tenantId;
-    this.username = username;
+    this.userId = userId;
     this.profile = profile;
   }
 
   @Override
   public String identity() {
-    return id;
+    return userId.idString();
   }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
+import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.lattice.query.StateStoreQueryActor;
 import io.vlingo.xoom.symbio.store.state.StateStore;
@@ -19,8 +20,8 @@ public class UserQueriesActor extends StateStoreQueryActor implements UserQuerie
   }
 
   @Override
-  public Completes<UserRegistrationData> userOf(String id) {
-    return queryStateFor(id, UserRegistrationData.class, UserRegistrationData.empty());
+  public Completes<UserRegistrationData> userOf(UserId userId) {
+    return queryStateFor(userId.idString(), UserRegistrationData.class, UserRegistrationData.empty());
   }
 
   @Override

@@ -11,6 +11,7 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.vlingo.xoom.auth.infrastructure.*;
+import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.http.Header;
 import io.vlingo.xoom.http.Request;
 import io.vlingo.xoom.http.Response;
@@ -87,7 +88,7 @@ public abstract class ResourceTest {
 
   protected UserRegistrationData userRegistrationData(final String tenantId) {
     return UserRegistrationData.from(
-            tenantId,
+            UserId.from(tenantId, "useroftheyear"),
             "useroftheyear",
             ProfileData.from(PersonNameData.of("Given", "A", "Family"), "me@family.us", "212-555-1212"),
             CredentialData.from("xoom-platform", "useroftheyear", "topsecret"),
@@ -96,7 +97,7 @@ public abstract class ResourceTest {
 
   protected UserRegistrationData userRegistrationData(final String tenantId, final int value) {
     return UserRegistrationData.from(
-            tenantId,
+            UserId.from(tenantId, "useroftheyear"),
             "useroftheyear" + value,
             ProfileData.from(PersonNameData.of("Given" + value, "A", "Family" + value), "me" + value + "@family.us", "212-555-1212"),
             CredentialData.from("xoom-platform", "useroftheyear" + value, "topsecret" + value),

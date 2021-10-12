@@ -1,24 +1,18 @@
 package io.vlingo.xoom.auth.model.user;
 
-import io.vlingo.xoom.actors.Definition;
-import java.util.*;
-import io.vlingo.xoom.auth.model.value.*;
+import io.vlingo.xoom.auth.model.value.Credential;
+import io.vlingo.xoom.auth.model.value.Profile;
 import io.vlingo.xoom.common.Completes;
-import io.vlingo.xoom.actors.Stage;
+
+import java.util.Set;
 
 public interface User {
 
-  Completes<UserState> registerUser(final String tenantId, final String username, final boolean active, final Set<Credential> credentials, final Profile profile);
+  Completes<UserState> registerUser(final String username, final Profile profile, final Set<Credential> credentials, final boolean active);
 
-  static Completes<UserState> registerUser(final Stage stage, final String tenantId, final String username, final boolean active, final Set<Credential> credentials, final Profile profile) {
-    final io.vlingo.xoom.actors.Address _address = stage.addressFactory().uniquePrefixedWith("g-");
-    final User _user = stage.actorFor(User.class, Definition.has(UserEntity.class, Definition.parameters(_address.idString())), _address);
-    return _user.registerUser(tenantId, username, active, credentials, profile);
-  }
+  Completes<UserState> activate();
 
-  Completes<UserState> activate(final String tenantId, final String username);
-
-  Completes<UserState> deactivate(final String tenantId, final String username);
+  Completes<UserState> deactivate();
 
   Completes<UserState> addCredential(final Credential credential);
 
@@ -26,6 +20,6 @@ public interface User {
 
   Completes<UserState> replaceCredential(final Credential credential);
 
-  Completes<UserState> replaceProfile(final String tenantId, final String username, final Profile profile);
+  Completes<UserState> replaceProfile(final Profile profile);
 
 }

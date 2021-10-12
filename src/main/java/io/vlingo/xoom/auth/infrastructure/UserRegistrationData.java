@@ -1,14 +1,18 @@
 package io.vlingo.xoom.auth.infrastructure;
 
+import io.vlingo.xoom.auth.model.user.UserId;
+import io.vlingo.xoom.auth.model.user.UserState;
+import io.vlingo.xoom.auth.model.value.PersonName;
+import io.vlingo.xoom.auth.model.value.Profile;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.*;
-import io.vlingo.xoom.auth.model.value.*;
 import java.util.stream.Stream;
-import io.vlingo.xoom.auth.model.user.UserState;
 
 @SuppressWarnings("all")
 public class UserRegistrationData {
@@ -22,15 +26,15 @@ public class UserRegistrationData {
   public static UserRegistrationData from(final UserState userState) {
     final Set<CredentialData> credentials = userState.credentials != null ? userState.credentials.stream().map(CredentialData::from).collect(java.util.stream.Collectors.toSet()) : new HashSet<>();
     final ProfileData profile = userState.profile != null ? ProfileData.from(userState.profile) : null;
-    return from(userState.id, userState.tenantId, userState.username, userState.active, credentials, profile);
+    return from(userState.userId, userState.username, profile, credentials, userState.active);
   }
 
-  public static UserRegistrationData from(final String id, final String tenantId, final String username, final boolean active, final Set<CredentialData> credentials, final ProfileData profile) {
-    return new UserRegistrationData(id, tenantId, username, active, credentials, profile);
+  public static UserRegistrationData from(final UserId userId, final String username, final ProfileData profile, final Set<CredentialData> credentials, final boolean active) {
+    return new UserRegistrationData(userId, username, profile, credentials, active);
   }
 
-  public static UserRegistrationData from(String tenantId, String username, ProfileData profile, CredentialData credential, boolean active) {
-    return from(null, tenantId, username, active, Stream.of(credential).collect(Collectors.toSet()), profile);
+  public static UserRegistrationData from(final UserId userId, final String username, final ProfileData profile, final CredentialData credential, final boolean active) {
+    return new UserRegistrationData(userId, username, profile, Stream.of(credential).collect(Collectors.toSet()), active);
   }
 
   public static List<UserRegistrationData> fromAll(final List<UserState> states) {
@@ -38,12 +42,12 @@ public class UserRegistrationData {
   }
 
   public static UserRegistrationData empty() {
-    return from(UserState.identifiedBy(""));
+    return from(UserState.identifiedBy(UserId.from("", "")));
   }
 
-  private UserRegistrationData(final String id, final String tenantId, final String username, final boolean active, final Set<CredentialData> credentials, final ProfileData profile) {
-    this.id = id;
-    this.tenantId = tenantId;
+  private UserRegistrationData(final UserId userId, final String username, final ProfileData profile, final Set<CredentialData> credentials, final boolean active) {
+    this.id = userId.idString();
+    this.tenantId = userId.tenantId;
     this.username = username;
     this.active = active;
     this.credentials.addAll(credentials);
@@ -62,7 +66,7 @@ public class UserRegistrationData {
   public UserState toUserState() {
     final PersonName name = PersonName.from(this.profile.name.given, this.profile.name.family, this.profile.name.second);
     final Profile profile = Profile.from(this.profile.emailAddress, name, this.profile.phone);
-    return new UserState(id, tenantId, username, active, credentials.stream().map(CredentialData::toCredential).collect(java.util.stream.Collectors.toSet()), profile);
+    return new UserState(UserId.from(tenantId, username), username, profile, credentials.stream().map(CredentialData::toCredential).collect(java.util.stream.Collectors.toSet()), active);
   }
 
   @Override

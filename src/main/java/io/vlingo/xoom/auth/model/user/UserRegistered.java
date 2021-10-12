@@ -1,9 +1,9 @@
 package io.vlingo.xoom.auth.model.user;
 
+import io.vlingo.xoom.auth.model.value.Credential;
+import io.vlingo.xoom.auth.model.value.Profile;
 import io.vlingo.xoom.common.version.SemanticVersion;
 import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
-
-import io.vlingo.xoom.auth.model.value.*;
 
 import java.util.Set;
 
@@ -15,17 +15,15 @@ import java.util.Set;
  */
 public final class UserRegistered extends IdentifiedDomainEvent {
 
-  public final String id;
-  public final String tenantId;
+  public final UserId userId;
   public final String username;
   public final boolean active;
   public final Set<Credential> credentials;
   public final Profile profile;
 
-  public UserRegistered(final String id, final String tenantId, final String username, final boolean active, final Set<Credential> credentials, final Profile profile) {
+  public UserRegistered(final UserId userId, final String username, final Profile profile, final Set<Credential> credentials, final boolean active) {
     super(SemanticVersion.from("1.0.0").toValue());
-    this.id = id;
-    this.tenantId = tenantId;
+    this.userId = userId;
     this.username = username;
     this.active = active;
     this.credentials = credentials;
@@ -34,6 +32,6 @@ public final class UserRegistered extends IdentifiedDomainEvent {
 
   @Override
   public String identity() {
-    return id;
+    return userId.idString();
   }
 }

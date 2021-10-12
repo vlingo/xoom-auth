@@ -1,10 +1,11 @@
 package io.vlingo.xoom.auth.model.user;
 
-import java.util.*;
-import io.vlingo.xoom.auth.model.value.*;
+import io.vlingo.xoom.auth.model.value.Credential;
+import io.vlingo.xoom.auth.model.value.Profile;
 import io.vlingo.xoom.common.Completes;
-
 import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
+
+import java.util.Set;
 
 /**
  * See <a href="https://docs.vlingo.io/xoom-lattice/entity-cqrs#sourced">EventSourced</a>
@@ -12,9 +13,9 @@ import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
 public final class UserEntity extends EventSourced implements User {
   private UserState state;
 
-  public UserEntity(final String id) {
-    super(id);
-    this.state = UserState.identifiedBy(id);
+  public UserEntity(final UserId userId) {
+    super(userId.idString());
+    this.state = UserState.identifiedBy(userId);
   }
 
   static {
@@ -28,24 +29,18 @@ public final class UserEntity extends EventSourced implements User {
   }
 
   @Override
-  public Completes<UserState> registerUser(final String tenantId, final String username, final boolean active, final Set<Credential> credentials, final Profile profile) {
-    return apply(new UserRegistered(state.id, tenantId, username, active, credentials, profile), () -> state);
+  public Completes<UserState> registerUser(final String username, final Profile profile, final Set<Credential> credentials, final boolean active) {
+    return apply(new UserRegistered(state.userId, username, profile, credentials, active), () -> state);
   }
 
   @Override
-  public Completes<UserState> activate(final String tenantId, final String username) {
-    /**
-     * TODO: Implement command logic. See {@link UserState#activate()}
-     */
-    return apply(new UserActivated(state.id, tenantId, username), () -> state);
+  public Completes<UserState> activate() {
+    return apply(new UserActivated(state.userId), () -> state);
   }
 
   @Override
-  public Completes<UserState> deactivate(final String tenantId, final String username) {
-    /**
-     * TODO: Implement command logic. See {@link UserState#deactivate()}
-     */
-    return apply(new UserDeactivated(state.id, tenantId, username), () -> state);
+  public Completes<UserState> deactivate() {
+    return apply(new UserDeactivated(state.userId), () -> state);
   }
 
   @Override
@@ -53,7 +48,7 @@ public final class UserEntity extends EventSourced implements User {
     /**
      * TODO: Implement command logic. See {@link UserState#addCredential()}
      */
-    return apply(new UserCredentialAdded(state.id, credential), () -> state);
+    return apply(new UserCredentialAdded(state.userId, credential), () -> state);
   }
 
   @Override
@@ -61,7 +56,7 @@ public final class UserEntity extends EventSourced implements User {
     /**
      * TODO: Implement command logic. See {@link UserState#removeCredential()}
      */
-    return apply(new UserCredentialRemoved(state.id, credential), () -> state);
+    return apply(new UserCredentialRemoved(state.userId, credential), () -> state);
   }
 
   @Override
@@ -69,27 +64,27 @@ public final class UserEntity extends EventSourced implements User {
     /**
      * TODO: Implement command logic. See {@link UserState#replaceCredential()}
      */
-    return apply(new UserCredentialReplaced(state.id, credential), () -> state);
+    return apply(new UserCredentialReplaced(state.userId, credential), () -> state);
   }
 
   @Override
-  public Completes<UserState> replaceProfile(final String tenantId, final String username, final Profile profile) {
+  public Completes<UserState> replaceProfile(final Profile profile) {
     /**
      * TODO: Implement command logic. See {@link UserState#replaceProfile()}
      */
-    return apply(new UserProfileReplaced(state.id, tenantId, username, profile), () -> state);
+    return apply(new UserProfileReplaced(state.userId, profile), () -> state);
   }
 
   private void applyUserRegistered(final UserRegistered event) {
-    state = state.registerUser(event.tenantId, event.username, event.active, event.credentials, event.profile);
+    state = state.registerUser(event.username, event.profile, event.credentials, event.active);
   }
 
   private void applyUserActivated(final UserActivated event) {
-    state = state.activate(event.tenantId, event.username);
+    state = state.activate();
   }
 
   private void applyUserDeactivated(final UserDeactivated event) {
-    state = state.deactivate(event.tenantId, event.username);
+    state = state.deactivate();
   }
 
   private void applyUserCredentialAdded(final UserCredentialAdded event) {
@@ -105,7 +100,7 @@ public final class UserEntity extends EventSourced implements User {
   }
 
   private void applyUserProfileReplaced(final UserProfileReplaced event) {
-    state = state.replaceProfile(event.tenantId, event.username, event.profile);
+    state = state.replaceProfile(event.profile);
   }
 
   /*
