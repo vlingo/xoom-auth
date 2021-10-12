@@ -16,7 +16,6 @@ import io.vlingo.xoom.http.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled
 public class RoleResourceTest extends ResourceTest {
   private GroupData groupData;
   private PermissionData permissionData;
@@ -35,6 +34,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRoleGroupIsAssigned() {
     roleWithGroup();
 
@@ -47,6 +47,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRoleGroupIsUnassigned() {
     roleWithGroup();
 
@@ -59,6 +60,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRoleUserIsAssigned() {
     roleWithUser();
 
@@ -71,6 +73,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRoleUserIsUnassigned() {
     roleWithUser();
 
@@ -83,6 +86,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRolePermissionAttaches() {
     roleWithPermission();
 
@@ -95,6 +99,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRolePermissionDetaches() {
     roleWithPermission();
     final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
@@ -106,6 +111,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRoleQueries() {
     role();
 
@@ -118,6 +124,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRoleGroupQueries() {
     roleWithGroup();
 
@@ -132,6 +139,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRolePermissionQueries() {
     roleWithPermission();
 
@@ -147,6 +155,7 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
+  @Disabled
   public void testThatRoleUserQueries() {
     roleWithUser();
 
