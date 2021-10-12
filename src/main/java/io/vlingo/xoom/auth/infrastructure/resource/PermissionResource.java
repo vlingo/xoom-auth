@@ -151,89 +151,9 @@ public class PermissionResource extends DynamicResourceHandler {
     return grid.actorFor(Permission.class, Definition.has(PermissionEntity.class, Definition.parameters(permissionId)), address);
   }
 
-  // @TODO replace this with something better thought out
-  public class PermissionAddress implements Address {
-
-    private final PermissionId permissionId;
-
+  private class PermissionAddress extends ComplexAddress<PermissionId> {
     public PermissionAddress(final PermissionId permissionId) {
-      this.permissionId = permissionId;
-    }
-
-    @Override
-    public long id() {
-      final long groupNamePart = Long.valueOf(CharBuffer.wrap(permissionId.permissionName.toCharArray()).chars()
-              .mapToObj(c -> {
-                if (Character.isUpperCase(c)) {
-                  return String.valueOf(Math.abs(c - 'A' + 1));
-                } else {
-                  return String.valueOf(Math.abs(c - 'a' + 1));
-                }
-              })
-              .reduce("", (subtotal, element) -> subtotal + element));
-      final long tenantIdPart = UUID.fromString(permissionId.tenantId).getMostSignificantBits();
-      return (tenantIdPart + groupNamePart) & Long.MAX_VALUE;
-    }
-
-    @Override
-    public long idSequence() {
-      return id();
-    }
-
-    @Override
-    public String idSequenceString() {
-      return idString();
-    }
-
-    @Override
-    public String idString() {
-      return String.valueOf(id());
-    }
-
-    @Override
-    public <T> T idTyped() {
-      return (T) idString();
-    }
-
-    @Override
-    public String name() {
-      return "group";
-    }
-
-    @Override
-    public boolean isDistributable() {
-      return true;
-    }
-
-    @Override
-    public int compareTo(Address other) {
-      if (other instanceof GroupResource.GroupAddress) {
-        if (permissionId.equals(other)) {
-          return 0;
-        } else {
-          return 1;
-        }
-      } else {
-        return -1;
-      }
-    }
-
-    @Override
-    public boolean equals(final Object other) {
-      if (other == null || other.getClass() != PermissionAddress.class) {
-        return false;
-      }
-      return permissionId.equals(((PermissionAddress) other).permissionId);
-    }
-
-    @Override
-    public int hashCode() {
-      return permissionId.hashCode();
-    }
-
-    @Override
-    public String toString() {
-      return "Address[permissionId=" + permissionId + "]";
+      super(permissionId, (id) -> id.idString());
     }
   }
 }
