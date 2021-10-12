@@ -41,7 +41,7 @@ public class GroupResource extends DynamicResourceHandler {
   public Completes<Response> provisionGroup(final GroupData data) {
     return create(data.tenantId, data.name)
       .provisionGroup(data.name, data.description)
-      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.id.idString()))), serialized(GroupData.from(state))))
+      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.id))), serialized(GroupData.from(state))))
       .otherwise(arg -> Response.of(NotFound))
       .recoverFrom(e -> Response.of(InternalServerError, e.getMessage())));
   }
@@ -70,16 +70,16 @@ public class GroupResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> assignUser(final String id, final GroupData data) {
-    return resolve(id)
+  public Completes<Response> assignUser(final String tenantId, final String groupName, final String username, final GroupData data) {
+    return resolve(tenantId, groupName)
             .andThenTo(group -> group.assignUser(data.tenantId))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> unassignUser(final String id, final GroupData data) {
-    return resolve(id)
+  public Completes<Response> unassignUser(final String tenantId, final String groupName, final String username, final GroupData data) {
+    return resolve(tenantId, groupName)
             .andThenTo(group -> group.unassignUser(data.tenantId))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
@@ -125,11 +125,15 @@ public class GroupResource extends DynamicResourceHandler {
             .handle(this::unassignGroup),
         io.vlingo.xoom.http.resource.ResourceBuilder.put("/tenants/{tenantId}/groups/{groupName}/users/{username}")
             .param(String.class)
+            .param(String.class)
+            .param(String.class)
             .body(GroupData.class)
             .handle(this::assignUser),
         io.vlingo.xoom.http.resource.ResourceBuilder.delete("/tenants/{tenantId}/groups/{groupName}/users/{username}")
             .param(String.class)
-            .param(GroupData.class)
+            .param(String.class)
+            .param(String.class)
+            .body(GroupData.class)
             .handle(this::unassignUser),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/groups")
             .handle(this::groups),
@@ -145,13 +149,8 @@ public class GroupResource extends DynamicResourceHandler {
     return ContentType.of("application/json", "charset=UTF-8");
   }
 
-  private String location(final String id) {
-    return "/tenants/" + id;
-  }
-
-  private Completes<Group> resolve(final String id) {
-    final Address address = grid.addressFactory().from(id);
-    return grid.actorOf(Group.class, address, Definition.has(GroupEntity.class, Definition.parameters(id)));
+  private String location(final GroupId groupId) {
+    return String.format("/tenants/%s/groups/%s", groupId.tenantId, groupId.groupName);
   }
 
   private Completes<Group> resolve(final String tenantId, final String groupName) {

@@ -157,7 +157,7 @@ public class RoleResource extends DynamicResourceHandler {
             .handle(this::detach),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/roles")
             .handle(this::roles),
-        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/roles/{id}")
+        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/roles/{roleName}")
             .param(String.class)
             .handle(this::roleOf)
      );
