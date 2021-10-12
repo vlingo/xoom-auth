@@ -1,6 +1,8 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.actors.World;
+import io.vlingo.xoom.auth.infrastructure.RoleData;
+import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.common.Outcome;
 import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry;
 import io.vlingo.xoom.symbio.Source;
@@ -11,12 +13,12 @@ import io.vlingo.xoom.symbio.store.state.StateStore;
 import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.time.LocalDateTime;
-import io.vlingo.xoom.auth.infrastructure.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoleQueriesTest {
 
@@ -32,56 +34,60 @@ public class RoleQueriesTest {
     queries = world.actorFor(RoleQueries.class, RoleQueriesActor.class, stateStore);
   }
 
-  private static final RoleData FIRST_QUERY_BY_ID_TEST_DATA = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-  private static final RoleData SECOND_QUERY_BY_ID_TEST_DATA = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
-
   @Test
   public void queryById() {
-    stateStore.write("1", FIRST_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
-    stateStore.write("2", SECOND_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
+    final RoleId firstRoleId = RoleId.from("06f22ad4-49f5-46a4-b350-f6198a7646a3", "first-role-name");
+    final RoleData firstRole = RoleData.from(firstRoleId, "first-role-name", "first-role-description");
+    final RoleId secondRoleId = RoleId.from("3f51d0fd-335e-41b0-b57c-766470cf6ad7", "second-role-name");
+    final RoleData secondRole = RoleData.from(secondRoleId, "second-role-name", "second-role-description");
 
-    final RoleData firstData = queries.roleOf("1").await();
+    stateStore.write(firstRole.id, firstRole, 1, NOOP_WRITER);
+    stateStore.write(secondRole.id, secondRole, 1, NOOP_WRITER);
 
-    assertEquals(firstData.id, "1");
-    assertEquals(firstData.tenantId, "first-role-tenantId");
-    assertEquals(firstData.name, "first-role-name");
-    assertEquals(firstData.description, "first-role-description");
+    final RoleData firstData = queries.roleOf(firstRoleId).await();
 
-    final RoleData secondData = queries.roleOf("2").await();
+    assertEquals(firstRole.id, firstData.id);
+    assertEquals(firstRole.tenantId, firstData.tenantId);
+    assertEquals("first-role-name", firstData.name);
+    assertEquals("first-role-description", firstData.description);
 
-    assertEquals(secondData.id, "2");
-    assertEquals(secondData.tenantId, "second-role-tenantId");
-    assertEquals(secondData.name, "second-role-name");
-    assertEquals(secondData.description, "second-role-description");
+    final RoleData secondData = queries.roleOf(secondRoleId).await();
+
+    assertEquals(secondRole.id, secondData.id);
+    assertEquals(secondRole.tenantId, secondData.tenantId);
+    assertEquals("second-role-name", secondData.name);
+    assertEquals("second-role-description", secondData.description);
   }
-
-  private static final RoleData FIRST_QUERY_ALL_TEST_DATA = RoleData.from("1", "first-role-tenantId", "first-role-name", "first-role-description");
-  private static final RoleData SECOND_QUERY_ALL_TEST_DATA = RoleData.from("2", "second-role-tenantId", "second-role-name", "second-role-description");
 
   @Test
   public void queryAll() {
-    stateStore.write("1", FIRST_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
-    stateStore.write("2", SECOND_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
+    final RoleId firstRoleId = RoleId.from("06f22ad4-49f5-46a4-b350-f6198a7646a3", "first-role-name");
+    final RoleData firstRole = RoleData.from(firstRoleId, "first-role-name", "first-role-description");
+    final RoleId secondRoleId = RoleId.from("3f51d0fd-335e-41b0-b57c-766470cf6ad7", "second-role-name");
+    final RoleData secondRole = RoleData.from(secondRoleId, "second-role-name", "second-role-description");
+
+    stateStore.write(firstRole.id, firstRole, 1, NOOP_WRITER);
+    stateStore.write(secondRole.id, secondRole, 1, NOOP_WRITER);
 
     final Collection<RoleData> results = queries.roles().await();
-    final RoleData firstData = results.stream().filter(data -> data.id.equals("1")).findFirst().orElseThrow(RuntimeException::new);
+    final RoleData firstData = results.stream().filter(data -> data.id.equals(firstRole.id)).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(firstData.id, "1");
-    assertEquals(firstData.tenantId, "first-role-tenantId");
-    assertEquals(firstData.name, "first-role-name");
-    assertEquals(firstData.description, "first-role-description");
+    assertEquals(firstRole.id, firstData.id);
+    assertEquals(firstRole.tenantId, firstData.tenantId);
+    assertEquals("first-role-name", firstData.name);
+    assertEquals("first-role-description", firstData.description);
 
-    final RoleData secondData = results.stream().filter(data -> data.id.equals("2")).findFirst().orElseThrow(RuntimeException::new);
+    final RoleData secondData = results.stream().filter(data -> data.id.equals(secondRole.id)).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(secondData.id, "2");
-    assertEquals(secondData.tenantId, "second-role-tenantId");
-    assertEquals(secondData.name, "second-role-name");
-    assertEquals(secondData.description, "second-role-description");
+    assertEquals(secondRole.id, secondData.id);
+    assertEquals(secondRole.tenantId, secondData.tenantId);
+    assertEquals("second-role-name", secondData.name);
+    assertEquals("second-role-description", secondData.description);
   }
 
   @Test
   public void roleOfEmptyResult(){
-    final RoleData result = queries.roleOf("1").await();
+    final RoleData result = queries.roleOf(RoleId.from("8e8c0fe5-c727-43a6-9307-926214a71af4", "role-c")).await();
     assertEquals("", result.id);
   }
 

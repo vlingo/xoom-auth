@@ -3,6 +3,7 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.lattice.query.StateStoreQueryActor;
 import io.vlingo.xoom.symbio.store.state.StateStore;
@@ -20,8 +21,8 @@ public class RoleQueriesActor extends StateStoreQueryActor implements RoleQuerie
   }
 
   @Override
-  public Completes<RoleData> roleOf(String id) {
-    return queryStateFor(id, RoleData.class, RoleData.empty());
+  public Completes<RoleData> roleOf(RoleId roleId) {
+    return queryStateFor(roleId.idString(), RoleData.class, RoleData.empty());
   }
 
   @Override

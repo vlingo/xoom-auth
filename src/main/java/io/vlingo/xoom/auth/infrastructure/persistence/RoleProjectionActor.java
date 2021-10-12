@@ -1,8 +1,8 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
+import io.vlingo.xoom.auth.infrastructure.Events;
+import io.vlingo.xoom.auth.infrastructure.RoleData;
 import io.vlingo.xoom.auth.model.role.*;
-import io.vlingo.xoom.auth.infrastructure.*;
-
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.StateStoreProjectionActor;
 import io.vlingo.xoom.symbio.Source;
@@ -43,49 +43,49 @@ public class RoleProjectionActor extends StateStoreProjectionActor<RoleData> {
       switch (Events.valueOf(event.typeName())) {
         case RoleProvisioned: {
           final RoleProvisioned typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.id, typedEvent.tenantId, typedEvent.name, typedEvent.description);
+          merged = RoleData.from(typedEvent.roleId, typedEvent.name, typedEvent.description);
           break;
         }
 
         case RoleDescriptionChanged: {
           final RoleDescriptionChanged typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.id, typedEvent.tenantId, typedEvent.name, typedEvent.description);
+          merged = RoleData.from(typedEvent.roleId, previousData.name, typedEvent.description);
           break;
         }
 
         case GroupAssignedToRole: {
           final GroupAssignedToRole typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.id, typedEvent.tenantId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
           break;
         }
 
         case GroupUnassignedFromRole: {
           final GroupUnassignedFromRole typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.id, typedEvent.tenantId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
           break;
         }
 
         case UserAssignedToRole: {
           final UserAssignedToRole typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.id, typedEvent.tenantId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
           break;
         }
 
         case UserUnassignedFromRole: {
           final UserUnassignedFromRole typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.id, typedEvent.tenantId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
           break;
         }
 
         case RolePermissionAttached: {
           final RolePermissionAttached typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.id, typedEvent.tenantId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
           break;
         }
 
         case RolePermissionDetached: {
           final RolePermissionDetached typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.id, typedEvent.tenantId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
           break;
         }
 

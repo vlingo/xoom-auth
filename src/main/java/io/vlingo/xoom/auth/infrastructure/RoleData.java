@@ -1,12 +1,13 @@
 package io.vlingo.xoom.auth.infrastructure;
 
+import io.vlingo.xoom.auth.model.role.RoleId;
+import io.vlingo.xoom.auth.model.role.RoleState;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.List;
 import java.util.stream.Collectors;
-import io.vlingo.xoom.auth.model.role.RoleState;
-import java.util.*;
 
 @SuppressWarnings("all")
 public class RoleData {
@@ -16,11 +17,16 @@ public class RoleData {
   public final String description;
 
   public static RoleData from(final RoleState roleState) {
-    return from(roleState.id, roleState.tenantId, roleState.name, roleState.description);
+    return from(roleState.roleId, roleState.name, roleState.description);
   }
 
+  @Deprecated
   public static RoleData from(final String id, final String tenantId, final String name, final String description) {
     return new RoleData(id, tenantId, name, description);
+  }
+
+  public static RoleData from(final RoleId roleId, final String name, final String description) {
+    return new RoleData(roleId, name, description);
   }
 
   public static List<RoleData> fromAll(final List<RoleState> states) {
@@ -28,9 +34,10 @@ public class RoleData {
   }
 
   public static RoleData empty() {
-    return from(RoleState.identifiedBy(""));
+    return from(RoleState.identifiedBy(RoleId.from("", "")));
   }
 
+  @Deprecated
   private RoleData (final String id, final String tenantId, final String name, final String description) {
     this.id = id;
     this.tenantId = tenantId;
@@ -38,8 +45,15 @@ public class RoleData {
     this.description = description;
   }
 
+  private RoleData(final RoleId roleId, final String name, final String description) {
+    this.id = roleId.idString();
+    this.tenantId = roleId.tenantId;
+    this.name = name;
+    this.description = description;
+  }
+
   public RoleState toRoleState() {
-    return new RoleState(id, tenantId, name, description);
+    return new RoleState(RoleId.from(tenantId, name), name, description);
   }
 
   @Override
