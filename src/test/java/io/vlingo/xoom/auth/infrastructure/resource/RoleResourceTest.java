@@ -111,7 +111,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRoleQueries() {
     role();
 
