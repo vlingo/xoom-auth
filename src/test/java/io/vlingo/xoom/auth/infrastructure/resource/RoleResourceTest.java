@@ -177,7 +177,8 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   private Response putRoleGroupRequestResponse(final RoleData roleData, final String groupName) {
-    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/groups HTTP/1.1\nHost: vlingo.io\nContent-Length: " + groupName.length() + "\n\n" + groupName;
+    final String body = String.format("{\"name\":\"%s\"}", groupName);
+    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/groups HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
@@ -187,7 +188,8 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   private Response putRolePermissionRequestResponse(final RoleData roleData, final String permissionName) {
-    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/permissions HTTP/1.1\nHost: vlingo.io\nContent-Length: " + permissionName.length() + "\n\n" + permissionName;
+    final String body = String.format("{\"name\":\"%s\"}", permissionName);
+    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/permissions HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
@@ -197,7 +199,8 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   private Response putRoleUserRequestResponse(final RoleData roleData, final String username) {
-    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/users HTTP/1.1\nHost: vlingo.io\nContent-Length: " + username.length() + "\n\n" + username;
+    final String body = String.format("{\"username\":\"%s\"}", username);
+    final String request = "PUT /tenants/" + roleData.tenantId + "/roles/" + roleData.name + "/users HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
