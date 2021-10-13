@@ -60,9 +60,10 @@ public class TenantEntityTest {
 
   @Test
   public void activate() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenInactiveTenant(TENANT_ID);
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final TenantState state = tenantOf(TENANT_ID).activate().await();
 
     assertTrue(state.active);
@@ -72,9 +73,10 @@ public class TenantEntityTest {
 
   @Test
   public void deactivate() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenActiveTenant(TENANT_ID);
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final TenantState state = tenantOf(TENANT_ID).deactivate().await();
 
     assertFalse(state.active);
@@ -84,9 +86,10 @@ public class TenantEntityTest {
 
   @Test
   public void changeName() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenActiveTenant(TENANT_ID);
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final TenantState state = tenantOf(TENANT_ID).changeName("updated-tenant-name").await();
 
     assertEquals("updated-tenant-name", state.name);
@@ -96,9 +99,10 @@ public class TenantEntityTest {
 
   @Test
   public void changeDescription() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenActiveTenant(TENANT_ID);
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final TenantState state = tenantOf(TENANT_ID).changeDescription("updated-tenant-description").await();
 
     assertEquals("updated-tenant-description", state.description);

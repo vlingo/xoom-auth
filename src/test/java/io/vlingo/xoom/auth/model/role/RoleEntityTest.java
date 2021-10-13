@@ -65,8 +65,10 @@ public class RoleEntityTest {
 
   @Test
   public void changeDescription() {
-    givenRoleExists(ROLE_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenRoleExists(ROLE_ID);
+
     final RoleState state = roleOf(ROLE_ID).changeDescription("updated-role-description").await();
 
     assertEquals(ROLE_ID, state.roleId);
@@ -78,8 +80,10 @@ public class RoleEntityTest {
 
   @Test
   public void assignGroup() {
-    givenRoleExists(ROLE_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenRoleExists(ROLE_ID);
+
     final RoleState state = roleOf(ROLE_ID).assignGroup("updated-role-name").await();
 
     assertEquals(ROLE_ID, state.roleId);
@@ -91,8 +95,10 @@ public class RoleEntityTest {
 
   @Test
   public void unassignGroup() {
-    givenRoleExists(ROLE_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenRoleExists(ROLE_ID);
+
     final RoleState state = roleOf(ROLE_ID).unassignGroup("updated-role-name").await();
 
     assertEquals(ROLE_ID, state.roleId);
@@ -104,8 +110,10 @@ public class RoleEntityTest {
 
   @Test
   public void assignUser() {
-    givenRoleExists(ROLE_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenRoleExists(ROLE_ID);
+
     final RoleState state = roleOf(ROLE_ID).assignUser("updated-role-name").await();
 
     assertEquals(ROLE_ID, state.roleId);
@@ -117,8 +125,10 @@ public class RoleEntityTest {
 
   @Test
   public void unassignUser() {
-    givenRoleExists(ROLE_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenRoleExists(ROLE_ID);
+
     final RoleState state = roleOf(ROLE_ID).unassignUser("updated-role-name").await();
 
     assertEquals(ROLE_ID, state.roleId);
@@ -130,8 +140,10 @@ public class RoleEntityTest {
 
   @Test
   public void attach() {
-    givenRoleExists(ROLE_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenRoleExists(ROLE_ID);
+
     final RoleState state = roleOf(ROLE_ID).attach("updated-role-name").await();
 
     assertEquals(ROLE_ID, state.roleId);
@@ -143,8 +155,10 @@ public class RoleEntityTest {
 
   @Test
   public void detach() {
-    givenRoleExists(ROLE_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenRoleExists(ROLE_ID);
+
     final RoleState state = roleOf(ROLE_ID).detach("updated-role-name").await();
 
     assertEquals(ROLE_ID, state.roleId);

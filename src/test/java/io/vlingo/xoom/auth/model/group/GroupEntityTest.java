@@ -68,9 +68,10 @@ public class GroupEntityTest {
 
   @Test
   public void changeDescription() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenGroupIsProvisioned(GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION);
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final GroupState state = groupOf(GROUP_ID).changeDescription("updated-groupOf-description").await();
 
     assertEquals(GROUP_NAME, state.name);
@@ -82,10 +83,11 @@ public class GroupEntityTest {
 
   @Test
   public void assignGroup() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenGroupIsProvisioned(GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION);
     GroupState innerGroup = givenGroupIsProvisioned(GroupId.from(TENANT_ID, "Group B"), "Group B", "Group B description");
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final GroupState state = groupOf(GROUP_ID).assignGroup(innerGroup.id).await();
 
     // @TODO implement assignGroup()
@@ -98,12 +100,13 @@ public class GroupEntityTest {
 
   @Test
   public void unassignGroup() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenGroupIsProvisioned(GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION);
     GroupState innerGroup = givenGroupIsProvisioned(GroupId.from(TENANT_ID, "Group B"), "Group B", "Group B description");
 
     groupOf(GROUP_ID).assignGroup(innerGroup.id).await();
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final GroupState state = groupOf(GROUP_ID).unassignGroup(innerGroup.id).await();
 
     // @TODO implement unassignGroup()
@@ -117,8 +120,10 @@ public class GroupEntityTest {
   @Test
   @Disabled("Requires user implementation")
   public void assignUser() {
-    givenGroupIsProvisioned(GROUP_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenGroupIsProvisioned(GROUP_ID);
+
     final GroupState state = groupOf(GROUP_ID).assignUser(TenantId.from("updated-groupOf-tenantId")).await();
 
     assertEquals(state.name, "groupOf-name");
@@ -131,8 +136,10 @@ public class GroupEntityTest {
   @Test
   @Disabled("Requires user implementation")
   public void unassignUser() {
-    givenGroupIsProvisioned(GROUP_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenGroupIsProvisioned(GROUP_ID);
+
     final GroupState state = groupOf(GROUP_ID).unassignUser(TenantId.from("updated-groupOf-tenantId")).await();
 
     assertEquals(state.name, "groupOf-name");

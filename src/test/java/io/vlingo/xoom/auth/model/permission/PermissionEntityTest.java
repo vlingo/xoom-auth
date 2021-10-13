@@ -66,8 +66,10 @@ public class PermissionEntityTest {
 
   @Test
   public void enforce() {
-    givenPermissionIsProvisioned(PERMISSION_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenPermissionIsProvisioned(PERMISSION_ID);
+
     final Constraint constraint = Constraint.from("updated-permission-constraints-description", "updated-permission-constraints-name", "updated-permission-constraints-type", "updated-permission-constraints-value");
     final PermissionState state = permissionOf(PERMISSION_ID).enforce(constraint).await();
 
@@ -81,8 +83,10 @@ public class PermissionEntityTest {
 
   @Test
   public void enforceReplacement() {
-    givenPermissionIsProvisioned(PERMISSION_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenPermissionIsProvisioned(PERMISSION_ID);
+
     final Constraint constraint = Constraint.from("updated-permission-constraints-description", "updated-permission-constraints-name", "updated-permission-constraints-type", "updated-permission-constraints-value");
     final PermissionState state = permissionOf(PERMISSION_ID).enforceReplacement(constraint).await();
 
@@ -96,8 +100,10 @@ public class PermissionEntityTest {
 
   @Test
   public void forget() {
-    givenPermissionIsProvisioned(PERMISSION_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenPermissionIsProvisioned(PERMISSION_ID);
+
     final Constraint constraint = Constraint.from("updated-permission-constraints-description", "updated-permission-constraints-name", "updated-permission-constraints-type", "updated-permission-constraints-value");
     final PermissionState state = permissionOf(PERMISSION_ID).forget(constraint).await();
 
@@ -111,8 +117,10 @@ public class PermissionEntityTest {
 
   @Test
   public void changeDescription() {
-    givenPermissionIsProvisioned(PERMISSION_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenPermissionIsProvisioned(PERMISSION_ID);
+
     final PermissionState state = permissionOf(PERMISSION_ID).changeDescription("updated-permission-description").await();
 
     assertEquals(PERMISSION_NAME, state.name);
