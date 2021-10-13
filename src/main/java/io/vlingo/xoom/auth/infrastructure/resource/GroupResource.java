@@ -151,7 +151,7 @@ public class GroupResource extends DynamicResourceHandler {
   }
 
   private String location(final GroupId groupId) {
-    return String.format("/tenants/%s/groups/%s", groupId.tenantId, groupId.groupName);
+    return String.format("/tenants/%s/groups/%s", groupId.tenantId.id, groupId.groupName);
   }
 
   private Completes<Group> resolve(final String tenantId, final String groupName) {

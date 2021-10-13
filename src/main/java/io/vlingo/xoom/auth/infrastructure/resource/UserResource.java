@@ -169,7 +169,7 @@ public class UserResource extends DynamicResourceHandler {
   }
 
   private String location(final UserId userId) {
-    return String.format("/tenants/%s/users/%s", userId.tenantId, userId.username);
+    return String.format("/tenants/%s/users/%s", userId.tenantId.id, userId.username);
   }
 
   private Completes<User> resolve(final String tenantId, final String username) {

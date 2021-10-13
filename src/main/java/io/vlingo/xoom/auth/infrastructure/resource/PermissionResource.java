@@ -137,7 +137,7 @@ public class PermissionResource extends DynamicResourceHandler {
   }
 
   private String location(final PermissionId permissionId) {
-    return String.format("/tenants/%s/permissions/%s", permissionId.tenantId, permissionId.permissionName);
+    return String.format("/tenants/%s/permissions/%s", permissionId.tenantId.id, permissionId.permissionName);
   }
 
   private Completes<Permission> resolve(final String tenantId, final String permissionName) {

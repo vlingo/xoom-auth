@@ -173,7 +173,7 @@ public class RoleResource extends DynamicResourceHandler {
   }
 
   private String location(final RoleId roleId) {
-    return String.format("/tenants/%s/roles/%s", roleId.tenantId, roleId.roleName);
+    return String.format("/tenants/%s/roles/%s", roleId.tenantId.id, roleId.roleName);
   }
 
   private Completes<Role> resolve(final String tenantId, String roleName) {
