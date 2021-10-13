@@ -48,9 +48,9 @@ public class PermissionResource extends DynamicResourceHandler {
       .recoverFrom(e -> Response.of(InternalServerError, e.getMessage())));
   }
 
-  public Completes<Response> enforce(final String tenantId, final String permissionName, final PermissionData data) {
+  public Completes<Response> enforce(final String tenantId, final String permissionName, final ConstraintData data) {
     return resolve(tenantId, permissionName)
-            .andThenTo(permission -> permission.enforce(data.constraints.stream().map(ConstraintData::toConstraint).findFirst().get()))
+            .andThenTo(permission -> permission.enforce(data.toConstraint()))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -103,7 +103,7 @@ public class PermissionResource extends DynamicResourceHandler {
         io.vlingo.xoom.http.resource.ResourceBuilder.patch("/tenants/{tenantId}/permissions/{permissionName}/constraints")
             .param(String.class)
             .param(String.class)
-            .body(PermissionData.class)
+            .body(ConstraintData.class)
             .handle(this::enforce),
         io.vlingo.xoom.http.resource.ResourceBuilder.patch("/tenants/{tenantId}/permissions/{permissionName}/constraints/{constraintName}")
             .param(String.class)

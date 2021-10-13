@@ -13,11 +13,12 @@ import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PermissionEntityTest {
 
@@ -70,10 +71,8 @@ public class PermissionEntityTest {
     final Constraint constraint = Constraint.from("updated-permission-constraints-description", "updated-permission-constraints-name", "updated-permission-constraints-type", "updated-permission-constraints-value");
     final PermissionState state = permissionOf(PERMISSION_ID).enforce(constraint).await();
 
-    assertEquals(PERMISSION_NAME, state.name);
-    assertEquals(PERMISSION_DESCRIPTION, state.description);
     assertEquals(PERMISSION_ID, state.id);
-    assertNotNull(state.constraints);
+    assertEquals(new HashSet<>(Arrays.asList(constraint)), state.constraints);
     assertEventDispatched(dispatcherAccess, 2, PermissionConstraintEnforced.class);
   }
 
