@@ -8,7 +8,7 @@
 package io.vlingo.xoom.auth.infrastructure.resource;
 
 import io.vlingo.xoom.auth.infrastructure.*;
-import io.vlingo.xoom.auth.model.Credential;
+import io.vlingo.xoom.auth.model.value.Credential;
 import io.vlingo.xoom.http.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

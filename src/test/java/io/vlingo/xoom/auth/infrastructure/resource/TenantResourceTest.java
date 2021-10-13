@@ -165,7 +165,6 @@ public class TenantResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatTenantRegistersUsers() {
     final TenantData tenantData = tenantData();
 
@@ -187,7 +186,7 @@ public class TenantResourceTest extends ResourceTest {
     assertEquals(userRegData.credentials.stream().findFirst().get().authority, userRegistrateredData.credentials.stream().findFirst().get().authority);
     assertEquals(userRegData.credentials.stream().findFirst().get().id, userRegistrateredData.credentials.stream().findFirst().get().id);
     assertNotEquals(userRegData.credentials.stream().findFirst().get().secret, userRegistrateredData.credentials.stream().findFirst().get().secret);
-    assertEquals("VLINGO", userRegistrateredData.credentials.stream().findFirst().get().type);
+    assertEquals("XOOM", userRegistrateredData.credentials.stream().findFirst().get().type);
     assertTrue(userRegistrateredData.active);
   }
 

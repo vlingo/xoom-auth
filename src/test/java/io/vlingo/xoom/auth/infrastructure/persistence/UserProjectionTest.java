@@ -8,6 +8,7 @@ import io.vlingo.xoom.auth.infrastructure.ProfileData;
 import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.*;
+import io.vlingo.xoom.auth.model.value.Credential;
 import io.vlingo.xoom.common.serialization.JsonSerialization;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.Projection;
@@ -164,9 +165,9 @@ public class UserProjectionTest {
   @Test
   public void removeCredential() {
     final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), CredentialData.from("first-authority", "first-id", "first-secret", "first-type"), false);
+    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), CredentialData.from("first-authority", "first-id", "first-secret", Credential.Type.XOOM.name()), false);
     final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), CredentialData.from("second-authority", "second-id", "second-secret", "second-type"), false);
+    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), CredentialData.from("second-authority", "second-id", "second-secret", Credential.Type.XOOM.name()), false);
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -189,9 +190,9 @@ public class UserProjectionTest {
   @Test
   public void replaceCredential() {
     final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), CredentialData.from("first-authority", "first-id", "first-secret", "first-type"), false);
+    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), CredentialData.from("first-authority", "first-id", "first-secret", Credential.Type.XOOM.name()), false);
     final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), CredentialData.from("second-authority", "second-id", "second-secret", "second-type"), false);
+    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), CredentialData.from("second-authority", "second-id", "second-secret", Credential.Type.XOOM.name()), false);
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
     final CountingProjectionControl control = new CountingProjectionControl();

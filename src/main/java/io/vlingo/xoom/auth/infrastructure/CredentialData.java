@@ -1,5 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure;
 
+import io.vlingo.xoom.auth.model.crypto.AuthHasher;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,7 +22,7 @@ public class CredentialData {
     if (credential == null) {
       return CredentialData.empty();
     } else {
-      return from(credential.authority, credential.id, credential.secret, credential.type);
+      return from(credential.authority, credential.id, credential.secret, credential.type.name());
     }
   }
 
@@ -41,7 +42,7 @@ public class CredentialData {
     return correspondingObjects == null ? Collections.emptyList() : correspondingObjects.stream().map(CredentialData::from).collect(Collectors.toList());
   }
 
-  private CredentialData (final String authority, final String id, final String secret, final String type) {
+  private CredentialData(final String authority, final String id, final String secret, final String type) {
     this.authority = authority;
     this.id = id;
     this.secret = secret;
@@ -49,7 +50,8 @@ public class CredentialData {
   }
 
   public Credential toCredential() {
-    return Credential.from(authority, id, secret, type);
+    final String cryptoSecret = AuthHasher.defaultHasher().hash(secret);
+    return Credential.from(authority, id, cryptoSecret, type);
   }
 
   public static CredentialData empty() {

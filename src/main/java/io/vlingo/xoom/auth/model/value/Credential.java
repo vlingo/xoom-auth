@@ -7,16 +7,31 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public final class Credential {
 
+  public enum Type { XOOM, OAUTH }
+
   public final String authority;
   public final String id;
   public final String secret;
-  public final String type;
+  public final Type type;
 
   public static Credential from(final String authority, final String id, final String secret, final String type) {
-    return new Credential(authority, id, secret, type);
+    if (null == type || isXoomType(type)) {
+      return xoomCredentialFrom(authority, id, secret);
+    } else if (isOAuthType(type)) {
+      return oauthCredentialFrom(authority, id, secret);
+    }
+    throw new IllegalArgumentException(String.format("Unknown credential type: %s", type));
   }
 
-  private Credential (final String authority, final String id, final String secret, final String type) {
+  public static Credential xoomCredentialFrom(final String authority, final String id, final String secret) {
+    return new Credential(authority, id, secret, Type.XOOM);
+  }
+
+  public static Credential oauthCredentialFrom(final String authority, final String id, final String secret) {
+    return new Credential(authority, id, secret, Type.OAUTH);
+  }
+
+  private Credential(final String authority, final String id, final String secret, final Type type) {
     this.authority = authority;
     this.id = id;
     this.secret = secret;
@@ -58,5 +73,13 @@ public final class Credential {
               .append("secret", secret)
               .append("type", type)
               .toString();
+  }
+
+  private static boolean isOAuthType(final String credentialType) {
+    return Type.OAUTH.name().equals(credentialType);
+  }
+
+  private static boolean isXoomType(final String credentialType) {
+    return Type.XOOM.name().equals(credentialType);
   }
 }

@@ -29,7 +29,7 @@ public class UserEntityTest {
   private final TenantId TENANT_ID = TenantId.from("8b727090-652a-4b02-90fc-2e890d09a1c5");
   private final String USER_USERNAME = "bob";
   private final Profile USER_PROFILE = Profile.from("bob@example.com", PersonName.from("Bob", "Smith", "Cecil"), "07926123123");
-  private final Credential USER_CREDENTIAL = Credential.from("user-credential-authority", "user-credential-id", "user-credential-secret", "user-credential-type");
+  private final Credential USER_CREDENTIAL = Credential.xoomCredentialFrom("user-credential-authority", "user-credential-id", "user-credential-secret");
   private final Set<Credential> USER_CREDENTIALS = Collections.singleton(USER_CREDENTIAL);
   private final UserId USER_ID = UserId.from(TENANT_ID, USER_USERNAME);
 
@@ -107,7 +107,7 @@ public class UserEntityTest {
 
     givenActiveUser(USER_ID);
 
-    final Credential newCredential = Credential.from("updated-user-credentials-authority", "updated-1", "updated-user-credentials-secret", "updated-user-credentials-type");
+    final Credential newCredential = Credential.xoomCredentialFrom("updated-user-credentials-authority", "updated-1", "updated-user-credentials-secret");
     final UserState state = userOf(USER_ID).addCredential(newCredential).await();
 
     assertEquals(USER_ID, state.userId);
@@ -134,7 +134,7 @@ public class UserEntityTest {
 
     givenActiveUser(USER_ID);
 
-    final Credential newCredential = Credential.from(USER_CREDENTIAL.authority, "updated-user-credentials-id", "updated-user-credentials-secret", "updated-user-credentials-type");
+    final Credential newCredential = Credential.xoomCredentialFrom(USER_CREDENTIAL.authority, "updated-user-credentials-id", "updated-user-credentials-secret");
     final UserState state = userOf(USER_ID).replaceCredential(newCredential).await();
 
     assertEquals(USER_ID, state.userId);
