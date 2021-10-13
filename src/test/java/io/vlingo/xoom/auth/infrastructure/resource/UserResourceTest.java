@@ -49,7 +49,6 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatUserManagesCredentials() {
     user();
 
@@ -105,7 +104,6 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatUserReplacesProfile() {
     user();
 

@@ -3,6 +3,7 @@ package io.vlingo.xoom.auth.infrastructure.resource;
 import io.vlingo.xoom.actors.Address;
 import io.vlingo.xoom.actors.Definition;
 import io.vlingo.xoom.auth.infrastructure.CredentialData;
+import io.vlingo.xoom.auth.infrastructure.ProfileData;
 import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
 import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
 import io.vlingo.xoom.auth.infrastructure.persistence.UserQueries;
@@ -70,35 +71,33 @@ public class UserResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> addCredential(final String tenantId, final String username, final UserRegistrationData data) {
+  public Completes<Response> addCredential(final String tenantId, final String username, final CredentialData data) {
     return resolve(tenantId, username)
-            .andThenTo(user -> user.addCredential(data.credentials.stream().map(CredentialData::toCredential).findFirst().get()))
+            .andThenTo(user -> user.addCredential(data.toCredential()))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(UserRegistrationData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> removeCredential(final String tenantId, final String username, final String authority, final UserRegistrationData data) {
+  public Completes<Response> removeCredential(final String tenantId, final String username, final String authority) {
     return resolve(tenantId, username)
-            .andThenTo(user -> user.removeCredential(data.credentials.stream().map(CredentialData::toCredential).findFirst().get()))
+            .andThenTo(user -> user.removeCredential(authority))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(UserRegistrationData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> replaceCredential(final String tenantId, final String username, final String authority, final UserRegistrationData data) {
+  public Completes<Response> replaceCredential(final String tenantId, final String username, final String authority, final CredentialData data) {
     return resolve(tenantId, username)
-            .andThenTo(user -> user.replaceCredential(data.credentials.stream().map(CredentialData::toCredential).findFirst().get()))
+            .andThenTo(user -> user.replaceCredential(data.toCredential()))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(UserRegistrationData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> replaceProfile(final String tenantId, final String username, final UserRegistrationData data) {
-    final PersonName name = PersonName.from(data.profile.name.given, data.profile.name.family, data.profile.name.second);
-    final Profile profile = Profile.from(data.profile.emailAddress, name, data.profile.phone);
+  public Completes<Response> replaceProfile(final String tenantId, final String username, final ProfileData data) {
     return resolve(tenantId, username)
-            .andThenTo(user -> user.replaceProfile(profile))
+            .andThenTo(user -> user.replaceProfile(data.toProfile()))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(UserRegistrationData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -137,24 +136,23 @@ public class UserResource extends DynamicResourceHandler {
         io.vlingo.xoom.http.resource.ResourceBuilder.put("/tenants/{tenantId}/users/{username}/credentials")
             .param(String.class)
             .param(String.class)
-            .body(UserRegistrationData.class)
+            .body(CredentialData.class)
             .handle(this::addCredential),
         io.vlingo.xoom.http.resource.ResourceBuilder.delete("/tenants/{tenantId}/users/{username}/credentials/{authority}")
             .param(String.class)
             .param(String.class)
             .param(String.class)
-            .body(UserRegistrationData.class)
             .handle(this::removeCredential),
         io.vlingo.xoom.http.resource.ResourceBuilder.patch("/tenants/{tenantId}/users/{username}/credentials/{authority}")
             .param(String.class)
             .param(String.class)
             .param(String.class)
-            .body(UserRegistrationData.class)
+            .body(CredentialData.class)
             .handle(this::replaceCredential),
         io.vlingo.xoom.http.resource.ResourceBuilder.patch("/tenants/{tenantId}/users/{username}/profile")
             .param(String.class)
             .param(String.class)
-            .body(UserRegistrationData.class)
+            .body(ProfileData.class)
             .handle(this::replaceProfile),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/users")
             .handle(this::users),

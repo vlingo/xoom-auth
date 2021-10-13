@@ -13,6 +13,7 @@ import io.vlingo.xoom.symbio.BaseEntry;
 import io.vlingo.xoom.symbio.EntryAdapterProvider;
 import io.vlingo.xoom.symbio.store.journal.Journal;
 import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -58,8 +59,13 @@ public class UserEntityTest {
     new SourcedTypeRegistry(world).register(new Info(journal, UserEntity.class, UserEntity.class.getSimpleName()));
   }
 
+  @AfterEach
+  public void tearDown() {
+    world.terminate();
+  }
+
   @Test
-  public void registerUser() {
+  public void userIsRegistered() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final UserState state = userOf(USER_ID).registerUser(USER_USERNAME, USER_PROFILE, USER_CREDENTIALS, true).await();
 
@@ -68,85 +74,85 @@ public class UserEntityTest {
     assertEquals(true, state.active);
     assertEquals(USER_PROFILE, state.profile);
     assertEquals(USER_CREDENTIALS, state.credentials);
-    assertEquals(1, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserRegistered.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 0)).typeName());
+    assertEventDispatched(dispatcherAccess, 1, UserRegistered.class);
   }
 
   @Test
-  public void activate() {
+  public void userIsActivated() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenInactiveUser(USER_ID);
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final UserState state = userOf(USER_ID).activate().await();
 
     assertTrue(state.active);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserActivated.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserActivated.class);
   }
 
   @Test
-  public void deactivate() {
+  public void userIsDeactivated() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenActiveUser(USER_ID);
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final UserState state = userOf(USER_ID).deactivate().await();
 
     assertFalse(state.active);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserDeactivated.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserDeactivated.class);
   }
 
   @Test
-  public void addCredential() {
+  public void credentialsAreAddedToRegisteredUser() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenActiveUser(USER_ID);
 
     final Credential newCredential = Credential.from("updated-user-credentials-authority", "updated-1", "updated-user-credentials-secret", "updated-user-credentials-type");
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final UserState state = userOf(USER_ID).addCredential(newCredential).await();
 
     assertEquals(USER_ID, state.userId);
     assertEquals(new HashSet<>(Arrays.asList(USER_CREDENTIAL, newCredential)), state.credentials);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserCredentialAdded.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserCredentialAdded.class);
   }
 
   @Test
-  public void removeCredential() {
+  public void credentialsAreRemovedFromRegisteredUser() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenActiveUser(USER_ID);
 
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final UserState state = userOf(USER_ID).removeCredential(USER_CREDENTIAL).await();
+    final UserState state = userOf(USER_ID).removeCredential(USER_CREDENTIAL.authority).await();
 
     assertEquals(USER_ID, state.userId);
     assertEquals(0, state.credentials.size());
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserCredentialRemoved.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserCredentialRemoved.class);
   }
 
   @Test
-  public void replaceCredential() {
+  public void credentialsAreReplaced() {
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
     givenActiveUser(USER_ID);
 
-    final Credential newCredential = Credential.from("updated-user-credentials-authority", USER_CREDENTIAL.id, "updated-user-credentials-secret", "updated-user-credentials-type");
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final Credential newCredential = Credential.from(USER_CREDENTIAL.authority, "updated-user-credentials-id", "updated-user-credentials-secret", "updated-user-credentials-type");
     final UserState state = userOf(USER_ID).replaceCredential(newCredential).await();
 
     assertEquals(USER_ID, state.userId);
     assertEquals(new HashSet<>(Arrays.asList(newCredential)), state.credentials);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserCredentialReplaced.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserCredentialReplaced.class);
   }
 
   @Test
-  public void replaceProfile() {
-    givenActiveUser(USER_ID);
-    final Profile updatedProfile = Profile.from("updated-user-profile-emailAddress", PersonName.from("updated-user-profile-name-given", "updated-user-profile-name-family", "updated-user-profile-name-second"), "updated-user-profile-phone");
+  public void profileIsReplaced() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+
+    givenActiveUser(USER_ID);
+
+    final Profile updatedProfile = Profile.from("updated-user-profile-emailAddress", PersonName.from("updated-user-profile-name-given", "updated-user-profile-name-family", "updated-user-profile-name-second"), "updated-user-profile-phone");
     final UserState state = userOf(USER_ID).replaceProfile(updatedProfile).await();
 
     assertEquals(updatedProfile, state.profile);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserProfileReplaced.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserProfileReplaced.class);
   }
 
   private User userOf(UserId userId) {
@@ -159,5 +165,10 @@ public class UserEntityTest {
 
   private void givenActiveUser(UserId userId) {
     userOf(userId).registerUser(USER_USERNAME, USER_PROFILE, USER_CREDENTIALS, true).await();
+  }
+
+  private void assertEventDispatched(final AccessSafely dispatcherAccess, final int sequence, final Class<?> expectedEvent) {
+    assertEquals(sequence, (int) dispatcherAccess.readFrom("entriesCount"), String.format("Expected at least %d events", sequence));
+    assertEquals(expectedEvent.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", sequence - 1)).typeName(), String.format("Expected the %d event in the sequence to be %s", sequence, expectedEvent.getName()));
   }
 }

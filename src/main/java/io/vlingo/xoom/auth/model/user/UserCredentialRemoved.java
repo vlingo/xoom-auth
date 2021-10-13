@@ -13,12 +13,12 @@ import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
 public final class UserCredentialRemoved extends IdentifiedDomainEvent {
 
   public final UserId userId;
-  public final Credential credential;
+  public final String authority;
 
-  public UserCredentialRemoved(final UserId userId, final Credential credential) {
+  public UserCredentialRemoved(final UserId userId, final String authority) {
     super(SemanticVersion.from("1.0.0").toValue());
     this.userId = userId;
-    this.credential = credential;
+    this.authority = authority;
   }
 
   @Override

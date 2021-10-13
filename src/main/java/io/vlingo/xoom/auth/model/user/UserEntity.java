@@ -45,33 +45,21 @@ public final class UserEntity extends EventSourced implements User {
 
   @Override
   public Completes<UserState> addCredential(final Credential credential) {
-    /**
-     * TODO: Implement command logic. See {@link UserState#addCredential()}
-     */
     return apply(new UserCredentialAdded(state.userId, credential), () -> state);
   }
 
   @Override
-  public Completes<UserState> removeCredential(final Credential credential) {
-    /**
-     * TODO: Implement command logic. See {@link UserState#removeCredential()}
-     */
-    return apply(new UserCredentialRemoved(state.userId, credential), () -> state);
+  public Completes<UserState> removeCredential(final String authority) {
+    return apply(new UserCredentialRemoved(state.userId, authority), () -> state);
   }
 
   @Override
   public Completes<UserState> replaceCredential(final Credential credential) {
-    /**
-     * TODO: Implement command logic. See {@link UserState#replaceCredential()}
-     */
     return apply(new UserCredentialReplaced(state.userId, credential), () -> state);
   }
 
   @Override
   public Completes<UserState> replaceProfile(final Profile profile) {
-    /**
-     * TODO: Implement command logic. See {@link UserState#replaceProfile()}
-     */
     return apply(new UserProfileReplaced(state.userId, profile), () -> state);
   }
 
@@ -92,7 +80,7 @@ public final class UserEntity extends EventSourced implements User {
   }
 
   private void applyUserCredentialRemoved(final UserCredentialRemoved event) {
-    state = state.removeCredential(event.credential);
+    state = state.removeCredential(event.authority);
   }
 
   private void applyUserCredentialReplaced(final UserCredentialReplaced event) {

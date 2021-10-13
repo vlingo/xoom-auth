@@ -43,13 +43,16 @@ public final class UserState {
     return new UserState(this.userId, this.username, this.profile, this.credentials, this.active);
   }
 
-  public UserState removeCredential(final Credential credential) {
-    this.credentials.remove(credential);
+  public UserState removeCredential(final String authority) {
+    this.credentials.stream()
+            .filter(c -> c.authority.equals(authority))
+            .findFirst()
+            .ifPresent(credentials::remove);
     return new UserState(this.userId, this.username, this.profile, this.credentials, this.active);
   }
 
   public UserState replaceCredential(final Credential credential) {
-    this.credentials.stream().filter(c -> c.id.equals(credential.id))
+    this.credentials.stream().filter(c -> c.authority.equals(credential.authority))
             .findFirst()
             .ifPresent(c -> this.credentials.remove(c));
     this.credentials.add(credential);

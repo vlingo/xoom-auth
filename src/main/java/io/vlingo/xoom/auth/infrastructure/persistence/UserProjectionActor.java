@@ -74,8 +74,8 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
 
         case UserCredentialRemoved: {
           final UserCredentialRemoved typedEvent = typed(event);
-          final CredentialData credential = CredentialData.from(typedEvent.credential);
-          previousData.credentials.remove(credential);
+          previousData.credentials.stream().filter(credential -> credential.authority.equals(typedEvent.authority))
+                  .forEach(credential -> previousData.credentials.remove(credential));
           merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, previousData.active);
           break;
         }
