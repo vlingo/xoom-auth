@@ -1,5 +1,6 @@
 package io.vlingo.xoom.auth.model.group;
 
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Completes;
 
 import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
@@ -51,7 +52,7 @@ public final class GroupEntity extends EventSourced implements Group {
   }
 
   @Override
-  public Completes<GroupState> assignUser(final String tenantId) {
+  public Completes<GroupState> assignUser(final TenantId tenantId) {
     /**
      * TODO: Implement command logic. See {@link GroupState#assignUser()}
      */
@@ -59,7 +60,7 @@ public final class GroupEntity extends EventSourced implements Group {
   }
 
   @Override
-  public Completes<GroupState> unassignUser(final String tenantId) {
+  public Completes<GroupState> unassignUser(final TenantId tenantId) {
     /**
      * TODO: Implement command logic. See {@link GroupState#unassignUser()}
      */

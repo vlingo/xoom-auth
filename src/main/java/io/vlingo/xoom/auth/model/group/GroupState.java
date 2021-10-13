@@ -1,6 +1,8 @@
 package io.vlingo.xoom.auth.model.group;
 
 
+import io.vlingo.xoom.auth.model.tenant.TenantId;
+
 public final class GroupState {
 
   public final GroupId id;
@@ -37,12 +39,12 @@ public final class GroupState {
     return new GroupState(this.id, this.name, this.description);
   }
 
-  public GroupState assignUser(final String tenantId) {
+  public GroupState assignUser(final TenantId tenantId) {
     //TODO: Implement command logic.
     return new GroupState(this.id, this.name, this.description);
   }
 
-  public GroupState unassignUser(final String tenantId) {
+  public GroupState unassignUser(final TenantId tenantId) {
     //TODO: Implement command logic.
     return new GroupState(this.id, this.name, this.description);
   }

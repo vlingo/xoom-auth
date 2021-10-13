@@ -43,31 +43,31 @@ public class TenantProjectionActor extends StateStoreProjectionActor<TenantData>
       switch (Events.valueOf(event.typeName())) {
         case TenantSubscribed: {
           final TenantSubscribed typedEvent = typed(event);
-          merged = TenantData.from(typedEvent.id, typedEvent.name, typedEvent.description, typedEvent.active);
+          merged = TenantData.from(typedEvent.tenantId, typedEvent.name, typedEvent.description, typedEvent.active);
           break;
         }
 
         case TenantActivated: {
           final TenantActivated typedEvent = typed(event);
-          merged = TenantData.from(typedEvent.id, previousData.name, previousData.description, true);
+          merged = TenantData.from(typedEvent.tenantId, previousData.name, previousData.description, true);
           break;
         }
 
         case TenantDeactivated: {
           final TenantDeactivated typedEvent = typed(event);
-          merged = TenantData.from(typedEvent.id, previousData.name, previousData.description, false);
+          merged = TenantData.from(typedEvent.tenantId, previousData.name, previousData.description, false);
           break;
         }
 
         case TenantNameChanged: {
           final TenantNameChanged typedEvent = typed(event);
-          merged = TenantData.from(typedEvent.id, typedEvent.name, previousData.description, previousData.active);
+          merged = TenantData.from(typedEvent.tenantId, typedEvent.name, previousData.description, previousData.active);
           break;
         }
 
         case TenantDescriptionChanged: {
           final TenantDescriptionChanged typedEvent = typed(event);
-          merged = TenantData.from(typedEvent.id, previousData.name, typedEvent.description, previousData.active);
+          merged = TenantData.from(typedEvent.tenantId, previousData.name, typedEvent.description, previousData.active);
           break;
         }
 

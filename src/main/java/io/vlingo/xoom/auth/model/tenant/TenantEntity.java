@@ -10,9 +10,9 @@ import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
 public final class TenantEntity extends EventSourced implements Tenant {
   private TenantState state;
 
-  public TenantEntity(final String id) {
-    super(id);
-    this.state = TenantState.identifiedBy(id);
+  public TenantEntity(final TenantId tenantId) {
+    super(tenantId.idString());
+    this.state = TenantState.identifiedBy(tenantId);
   }
 
   static {
@@ -25,17 +25,17 @@ public final class TenantEntity extends EventSourced implements Tenant {
 
   @Override
   public Completes<TenantState> subscribeFor(final String name, final String description, final boolean active) {
-    return apply(new TenantSubscribed(state.id, name, description, active), () -> state);
+    return apply(new TenantSubscribed(state.tenantId, name, description, active), () -> state);
   }
 
   @Override
   public Completes<TenantState> activate() {
-    return apply(new TenantActivated(state.id), () -> state);
+    return apply(new TenantActivated(state.tenantId), () -> state);
   }
 
   @Override
   public Completes<TenantState> deactivate() {
-    return apply(new TenantDeactivated(state.id), () -> state);
+    return apply(new TenantDeactivated(state.tenantId), () -> state);
   }
 
   @Override
@@ -43,7 +43,7 @@ public final class TenantEntity extends EventSourced implements Tenant {
     /**
      * TODO: Implement command logic. See {@link TenantState#changeName()}
      */
-    return apply(new TenantNameChanged(state.id, name), () -> state);
+    return apply(new TenantNameChanged(state.tenantId, name), () -> state);
   }
 
   @Override
@@ -51,7 +51,7 @@ public final class TenantEntity extends EventSourced implements Tenant {
     /**
      * TODO: Implement command logic. See {@link TenantState#changeDescription()}
      */
-    return apply(new TenantDescriptionChanged(state.id, description), () -> state);
+    return apply(new TenantDescriptionChanged(state.tenantId, description), () -> state);
   }
 
   private void applyTenantSubscribed(final TenantSubscribed event) {

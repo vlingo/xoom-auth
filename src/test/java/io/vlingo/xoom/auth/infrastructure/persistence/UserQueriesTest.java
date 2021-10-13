@@ -4,6 +4,7 @@ import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.auth.infrastructure.PersonNameData;
 import io.vlingo.xoom.auth.infrastructure.ProfileData;
 import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.Outcome;
 import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry;
@@ -39,9 +40,9 @@ public class UserQueriesTest {
 
   @Test
   public void queryById() {
-    final UserId firstUserId = UserId.from("first-user-tenantId", "first-user-username");
+    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
     final UserRegistrationData firstUser = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), true);
-    final UserId secondUserId = UserId.from("second-user-tenantId", "second-user-username");
+    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
     final UserRegistrationData secondUser = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), true);
 
     stateStore.write(firstUserId.idString(), firstUser, 1, NOOP_WRITER);
@@ -58,9 +59,9 @@ public class UserQueriesTest {
 
   @Test
   public void queryAll() {
-    final UserId firstUserId = UserId.from("first-user-tenantId", "first-user-username");
+    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
     final UserRegistrationData firstUser = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), true);
-    final UserId secondUserId = UserId.from("second-user-tenantId", "second-user-username");
+    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
     final UserRegistrationData secondUser = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), true);
 
     stateStore.write(firstUserId.idString(), firstUser, 1, NOOP_WRITER);
@@ -78,7 +79,7 @@ public class UserQueriesTest {
 
   @Test
   public void userOfEmptyResult(){
-    final UserRegistrationData result = queries.userOf(UserId.from("1", "bob")).await();
+    final UserRegistrationData result = queries.userOf(UserId.from(TenantId.from("1"), "bob")).await();
     assertEquals("", result.id);
   }
 

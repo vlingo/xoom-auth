@@ -8,6 +8,7 @@ import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvid
 import io.vlingo.xoom.auth.model.group.Group;
 import io.vlingo.xoom.auth.model.group.GroupEntity;
 import io.vlingo.xoom.auth.model.group.GroupId;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.http.ContentType;
 import io.vlingo.xoom.http.Response;
@@ -56,7 +57,7 @@ public class GroupResource extends DynamicResourceHandler {
 
   public Completes<Response> assignGroup(final String tenantId, final String groupName, final String innerGroupName, final GroupData data) {
     return resolve(tenantId, groupName)
-            .andThenTo(group -> group.assignGroup(GroupId.from(tenantId, innerGroupName)))
+            .andThenTo(group -> group.assignGroup(GroupId.from(TenantId.from(tenantId), innerGroupName)))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -64,7 +65,7 @@ public class GroupResource extends DynamicResourceHandler {
 
   public Completes<Response> unassignGroup(final String tenantId, final String groupName, final String innerGroupName, final GroupData data) {
     return resolve(tenantId, groupName)
-            .andThenTo(group -> group.unassignGroup(GroupId.from(tenantId, innerGroupName)))
+            .andThenTo(group -> group.unassignGroup(GroupId.from(TenantId.from(tenantId), innerGroupName)))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -72,7 +73,7 @@ public class GroupResource extends DynamicResourceHandler {
 
   public Completes<Response> assignUser(final String tenantId, final String groupName, final String username, final GroupData data) {
     return resolve(tenantId, groupName)
-            .andThenTo(group -> group.assignUser(data.tenantId))
+            .andThenTo(group -> group.assignUser(TenantId.from(data.tenantId)))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -80,7 +81,7 @@ public class GroupResource extends DynamicResourceHandler {
 
   public Completes<Response> unassignUser(final String tenantId, final String groupName, final String username, final GroupData data) {
     return resolve(tenantId, groupName)
-            .andThenTo(group -> group.unassignUser(data.tenantId))
+            .andThenTo(group -> group.unassignUser(TenantId.from(data.tenantId)))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -94,7 +95,7 @@ public class GroupResource extends DynamicResourceHandler {
   }
 
   public Completes<Response> groupOf(final String tenantId, final String groupName) {
-    return $queries.groupOf(GroupId.from(tenantId, groupName))
+    return $queries.groupOf(GroupId.from(TenantId.from(tenantId), groupName))
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -154,13 +155,13 @@ public class GroupResource extends DynamicResourceHandler {
   }
 
   private Completes<Group> resolve(final String tenantId, final String groupName) {
-    final GroupId groupId = GroupId.from(tenantId, groupName);
+    final GroupId groupId = GroupId.from(TenantId.from(tenantId), groupName);
     final Address address = new GroupAddress(groupId);
     return grid.actorOf(Group.class, address, Definition.has(GroupEntity.class, Definition.parameters(groupId)));
   }
 
   private Group create(final String tenantId, final String groupName) {
-    final GroupId groupId = GroupId.from(tenantId, groupName);
+    final GroupId groupId = GroupId.from(TenantId.from(tenantId), groupName);
     final Address address = new GroupAddress(groupId);
     return grid.actorFor(Group.class, Definition.has(GroupEntity.class, Definition.parameters(groupId)), address);
   }

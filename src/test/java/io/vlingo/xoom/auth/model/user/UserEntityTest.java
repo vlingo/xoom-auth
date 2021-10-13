@@ -3,6 +3,7 @@ package io.vlingo.xoom.auth.model.user;
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.persistence.*;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.value.Credential;
 import io.vlingo.xoom.auth.model.value.PersonName;
 import io.vlingo.xoom.auth.model.value.Profile;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserEntityTest {
 
-  private final String TENANT_ID = "8b727090-652a-4b02-90fc-2e890d09a1c5";
+  private final TenantId TENANT_ID = TenantId.from("8b727090-652a-4b02-90fc-2e890d09a1c5");
   private final String USER_USERNAME = "bob";
   private final Profile USER_PROFILE = Profile.from("bob@example.com", PersonName.from("Bob", "Smith", "Cecil"), "07926123123");
   private final Credential USER_CREDENTIAL = Credential.from("user-credential-authority", "user-credential-id", "user-credential-secret", "user-credential-type");

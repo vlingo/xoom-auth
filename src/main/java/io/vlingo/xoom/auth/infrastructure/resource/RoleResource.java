@@ -8,6 +8,7 @@ import io.vlingo.xoom.auth.infrastructure.persistence.RoleQueries;
 import io.vlingo.xoom.auth.model.role.Role;
 import io.vlingo.xoom.auth.model.role.RoleEntity;
 import io.vlingo.xoom.auth.model.role.RoleId;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.http.ContentType;
 import io.vlingo.xoom.http.Response;
@@ -107,7 +108,7 @@ public class RoleResource extends DynamicResourceHandler {
   }
 
   public Completes<Response> roleOf(final String tenantId, final String roleName) {
-    return $queries.roleOf(RoleId.from(tenantId, roleName))
+    return $queries.roleOf(RoleId.from(TenantId.from(tenantId), roleName))
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -176,13 +177,13 @@ public class RoleResource extends DynamicResourceHandler {
   }
 
   private Completes<Role> resolve(final String tenantId, String roleName) {
-    final RoleId roleId = RoleId.from(tenantId, roleName);
+    final RoleId roleId = RoleId.from(TenantId.from(tenantId), roleName);
     final Address address = new RoleAddress(roleId);
     return grid.actorOf(Role.class, address, Definition.has(RoleEntity.class, Definition.parameters(roleId)));
   }
 
   private Role create(String tenantId, String roleName) {
-    final RoleId roleId = RoleId.from(tenantId, roleName);
+    final RoleId roleId = RoleId.from(TenantId.from(tenantId), roleName);
     final Address address = new RoleAddress(roleId);
     return grid.actorFor(Role.class, Definition.has(RoleEntity.class, Definition.parameters(roleId)), address);
   }

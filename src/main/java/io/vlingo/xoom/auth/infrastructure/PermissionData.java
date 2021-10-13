@@ -1,6 +1,7 @@
 package io.vlingo.xoom.auth.infrastructure;
 
 import io.vlingo.xoom.auth.model.permission.PermissionId;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -22,9 +23,8 @@ public class PermissionData {
     return from(permissionState.id, constraints, permissionState.name, permissionState.description);
   }
 
-  @Deprecated
-  public static PermissionData from(final String id, final Set<ConstraintData> constraints, final String name, final String description, final String tenantId) {
-    return new PermissionData(id, constraints, name, description, tenantId);
+  public static PermissionData from(final TenantId tenantId, final Set<ConstraintData> constraints, final String name, final String description) {
+    return new PermissionData(tenantId, constraints, name, description);
   }
 
   public static PermissionData from(final PermissionId permissionId, final Set<ConstraintData> constraints, final String name, final String description) {
@@ -36,16 +36,15 @@ public class PermissionData {
   }
 
   public static PermissionData empty() {
-    return from(PermissionState.identifiedBy(PermissionId.from("", "")));
+    return from(PermissionState.identifiedBy(PermissionId.from(TenantId.from(""), "")));
   }
 
-  @Deprecated
-  private PermissionData(final String id, final Set<ConstraintData> constraints, final String name, final String description, final String tenantId) {
-    this.id = id;
+  private PermissionData(final TenantId tenantId, final Set<ConstraintData> constraints, final String name, final String description) {
+    this.id = null;
     this.constraints.addAll(constraints);
     this.name = name;
     this.description = description;
-    this.tenantId = tenantId;
+    this.tenantId = tenantId.idString();
   }
 
   private PermissionData(final PermissionId permissionId, final Set<ConstraintData> constraints, final String name, final String description) {
@@ -53,11 +52,11 @@ public class PermissionData {
     this.constraints.addAll(constraints);
     this.name = name;
     this.description = description;
-    this.tenantId = permissionId.tenantId;
+    this.tenantId = permissionId.tenantId.idString();
   }
 
   public PermissionState toPermissionState() {
-    return new PermissionState(PermissionId.from(tenantId, name), constraints.stream().map(ConstraintData::toConstraint).collect(java.util.stream.Collectors.toSet()), name, description);
+    return new PermissionState(PermissionId.from(TenantId.from(tenantId), name), constraints.stream().map(ConstraintData::toConstraint).collect(java.util.stream.Collectors.toSet()), name, description);
   }
 
   @Override

@@ -1,25 +1,26 @@
 package io.vlingo.xoom.auth.model.role;
 
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 
 public class RoleId {
-  public final String tenantId;
+  public final TenantId tenantId;
   public final String roleName;
 
-  public static RoleId from(final String tenantId, final String roleName) {
+  public static RoleId from(final TenantId tenantId, final String roleName) {
     return new RoleId(tenantId, roleName);
   }
 
-  private RoleId(final String tenantId, final String roleName) {
+  private RoleId(final TenantId tenantId, final String roleName) {
     this.tenantId = tenantId;
     this.roleName = roleName;
   }
 
   public String idString() {
-    return tenantId != "" || roleName != "" ? String.format("%s:%s", tenantId, roleName) : "";
+    return tenantId.id != "" || roleName != "" ? String.format("%s:%s", tenantId.id, roleName) : "";
   }
 
   @Override

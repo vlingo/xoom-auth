@@ -4,6 +4,7 @@ import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.RoleData;
 import io.vlingo.xoom.auth.model.role.*;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.serialization.JsonSerialization;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.Projection;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoleProjectionTest {
 
-  private final String TENANT_ID = "568c04ad-dd07-437f-bfb4-280b178f59f9";
+  private final TenantId TENANT_ID = TenantId.from("568c04ad-dd07-437f-bfb4-280b178f59f9");
   private final String FIRST_ROLE_NAME = "role-a";
   private final String FIRST_ROLE_DESCRIPTION = "Role A description";
   private final RoleId FIRST_ROLE_ID = RoleId.from(TENANT_ID, FIRST_ROLE_NAME);
@@ -78,7 +79,7 @@ public class RoleProjectionTest {
     RoleData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_ROLE_ID.idString(), item.id);
-    assertEquals(FIRST_ROLE_ID.tenantId, item.tenantId);
+    assertEquals(FIRST_ROLE_ID.tenantId.id, item.tenantId);
     assertEquals(FIRST_ROLE_NAME, item.name);
     assertEquals(FIRST_ROLE_DESCRIPTION, item.description);
 
@@ -87,7 +88,7 @@ public class RoleProjectionTest {
     stateStore.read(secondData.id, RoleData.class, interest);
     item = interestAccess.readFrom("item", secondData.id);
     assertEquals(SECOND_ROLE_ID.idString(), item.id);
-    assertEquals(SECOND_ROLE_ID.tenantId, item.tenantId);
+    assertEquals(SECOND_ROLE_ID.tenantId.id, item.tenantId);
     assertEquals(SECOND_ROLE_NAME, item.name);
     assertEquals(SECOND_ROLE_DESCRIPTION, item.description);
   }
@@ -112,7 +113,7 @@ public class RoleProjectionTest {
     RoleData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_ROLE_ID.idString(), item.id);
-    assertEquals(FIRST_ROLE_ID.tenantId, item.tenantId);
+    assertEquals(FIRST_ROLE_ID.tenantId.id, item.tenantId);
     assertEquals(FIRST_ROLE_NAME, item.name);
     assertEquals(FIRST_ROLE_DESCRIPTION, item.description);
   }
@@ -137,7 +138,7 @@ public class RoleProjectionTest {
     RoleData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_ROLE_ID.idString(), item.id);
-    assertEquals(FIRST_ROLE_ID.tenantId, item.tenantId);
+    assertEquals(FIRST_ROLE_ID.tenantId.id, item.tenantId);
     assertEquals(FIRST_ROLE_NAME, item.name);
     assertEquals(FIRST_ROLE_DESCRIPTION, item.description);
   }
@@ -162,7 +163,7 @@ public class RoleProjectionTest {
     RoleData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_ROLE_ID.idString(), item.id);
-    assertEquals(FIRST_ROLE_ID.tenantId, item.tenantId);
+    assertEquals(FIRST_ROLE_ID.tenantId.id, item.tenantId);
     assertEquals(FIRST_ROLE_NAME, item.name);
     assertEquals(FIRST_ROLE_DESCRIPTION, item.description);
   }
@@ -187,7 +188,7 @@ public class RoleProjectionTest {
     RoleData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_ROLE_ID.idString(), item.id);
-    assertEquals(FIRST_ROLE_ID.tenantId, item.tenantId);
+    assertEquals(FIRST_ROLE_ID.tenantId.id, item.tenantId);
     assertEquals(FIRST_ROLE_NAME, item.name);
     assertEquals(FIRST_ROLE_DESCRIPTION, item.description);
   }
@@ -212,7 +213,7 @@ public class RoleProjectionTest {
     RoleData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_ROLE_ID.idString(), item.id);
-    assertEquals(FIRST_ROLE_ID.tenantId, item.tenantId);
+    assertEquals(FIRST_ROLE_ID.tenantId.id, item.tenantId);
     assertEquals(FIRST_ROLE_NAME, item.name);
     assertEquals(FIRST_ROLE_DESCRIPTION, item.description);
   }
@@ -237,7 +238,7 @@ public class RoleProjectionTest {
     RoleData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_ROLE_ID.idString(), item.id);
-    assertEquals(FIRST_ROLE_ID.tenantId, item.tenantId);
+    assertEquals(FIRST_ROLE_ID.tenantId.id, item.tenantId);
     assertEquals(FIRST_ROLE_NAME, item.name);
     assertEquals(FIRST_ROLE_DESCRIPTION, item.description);
   }
@@ -262,7 +263,7 @@ public class RoleProjectionTest {
     RoleData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_ROLE_ID.idString(), item.id);
-    assertEquals(FIRST_ROLE_ID.tenantId, item.tenantId);
+    assertEquals(FIRST_ROLE_ID.tenantId.id, item.tenantId);
     assertEquals(FIRST_ROLE_NAME, item.name);
     assertEquals(FIRST_ROLE_DESCRIPTION, item.description);
   }

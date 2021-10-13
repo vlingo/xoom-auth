@@ -1,5 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure;
 
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -15,15 +16,15 @@ public class TenantData {
   public final boolean active;
 
   public static TenantData from(final TenantState tenantState) {
-    return from(tenantState.id, tenantState.name, tenantState.description, tenantState.active);
+    return from(tenantState.tenantId, tenantState.name, tenantState.description, tenantState.active);
   }
 
-  public static TenantData from(final String tenantId, final String name, final String description, final boolean active) {
+  public static TenantData from(final TenantId tenantId, final String name, final String description, final boolean active) {
     return new TenantData(tenantId, name, description, active);
   }
 
   public static TenantData from(final String name, final String description, final boolean active) {
-    return from(UUID.randomUUID().toString(), name, description, active);
+    return from(TenantId.from(UUID.randomUUID().toString()), name, description, active);
   }
 
   public static List<TenantData> fromAll(final List<TenantState> states) {
@@ -31,22 +32,22 @@ public class TenantData {
   }
 
   public static TenantData empty() {
-    return from(TenantState.identifiedBy(""));
+    return from(TenantState.identifiedBy(TenantId.from("")));
   }
 
-  private TenantData (final String tenantId, final String name, final String description, final boolean active) {
-    this.tenantId = tenantId;
+  private TenantData(final TenantId tenantId, final String name, final String description, final boolean active) {
+    this.tenantId = tenantId.idString();
     this.name = name;
     this.description = description;
     this.active = active;
   }
 
   public TenantState toTenantState() {
-    return new TenantState(tenantId, name, description, active);
+    return new TenantState(TenantId.from(tenantId), name, description, active);
   }
 
   public TenantData withTenantId(String tenantId) {
-    return from(tenantId, this.name, this.description, this.active);
+    return from(TenantId.from(tenantId), this.name, this.description, this.active);
   }
 
   @Override

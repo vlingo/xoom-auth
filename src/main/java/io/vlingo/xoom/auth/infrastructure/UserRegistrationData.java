@@ -1,5 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure;
 
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.auth.model.user.UserState;
 import io.vlingo.xoom.auth.model.value.PersonName;
@@ -42,12 +43,12 @@ public class UserRegistrationData {
   }
 
   public static UserRegistrationData empty() {
-    return from(UserState.identifiedBy(UserId.from("", "")));
+    return from(UserState.identifiedBy(UserId.from(TenantId.from(""), "")));
   }
 
   private UserRegistrationData(final UserId userId, final String username, final ProfileData profile, final Set<CredentialData> credentials, final boolean active) {
     this.id = userId.idString();
-    this.tenantId = userId.tenantId;
+    this.tenantId = userId.tenantId.idString();
     this.username = username;
     this.active = active;
     this.credentials.addAll(credentials);
@@ -66,7 +67,7 @@ public class UserRegistrationData {
   public UserState toUserState() {
     final PersonName name = PersonName.from(this.profile.name.given, this.profile.name.family, this.profile.name.second);
     final Profile profile = Profile.from(this.profile.emailAddress, name, this.profile.phone);
-    return new UserState(UserId.from(tenantId, username), username, profile, credentials.stream().map(CredentialData::toCredential).collect(java.util.stream.Collectors.toSet()), active);
+    return new UserState(UserId.from(TenantId.from(tenantId), username), username, profile, credentials.stream().map(CredentialData::toCredential).collect(java.util.stream.Collectors.toSet()), active);
   }
 
   @Override

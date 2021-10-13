@@ -9,6 +9,7 @@ import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvid
 import io.vlingo.xoom.auth.model.permission.Permission;
 import io.vlingo.xoom.auth.model.permission.PermissionEntity;
 import io.vlingo.xoom.auth.model.permission.PermissionId;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.http.ContentType;
 import io.vlingo.xoom.http.Response;
@@ -87,7 +88,7 @@ public class PermissionResource extends DynamicResourceHandler {
   }
 
   public Completes<Response> permissionOf(final String tenantId, final String permissionName) {
-    return $queries.permissionOf(PermissionId.from(tenantId, permissionName))
+    return $queries.permissionOf(PermissionId.from(TenantId.from(tenantId), permissionName))
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -140,13 +141,13 @@ public class PermissionResource extends DynamicResourceHandler {
   }
 
   private Completes<Permission> resolve(final String tenantId, final String permissionName) {
-    final PermissionId permissionId = PermissionId.from(tenantId, permissionName);
+    final PermissionId permissionId = PermissionId.from(TenantId.from(tenantId), permissionName);
     final Address address = new PermissionAddress(permissionId);
     return grid.actorOf(Permission.class, address, Definition.has(PermissionEntity.class, Definition.parameters(permissionId)));
   }
 
   private Permission create(final String tenantId, final String permissionName) {
-    final PermissionId permissionId = PermissionId.from(tenantId, permissionName);
+    final PermissionId permissionId = PermissionId.from(TenantId.from(tenantId), permissionName);
     final Address address = new PermissionAddress(permissionId);
     return grid.actorFor(Permission.class, Definition.has(PermissionEntity.class, Definition.parameters(permissionId)), address);
   }

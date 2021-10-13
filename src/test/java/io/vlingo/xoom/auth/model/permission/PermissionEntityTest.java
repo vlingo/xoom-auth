@@ -4,6 +4,7 @@ import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.persistence.PermissionConstraintEnforcedAdapter;
 import io.vlingo.xoom.auth.infrastructure.persistence.PermissionProvisionedAdapter;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.symbio.BaseEntry;
 import java.util.*;
 import io.vlingo.xoom.auth.infrastructure.persistence.PermissionConstraintForgottenAdapter;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PermissionEntityTest {
 
-  private final String TENANT_ID = "d8e6476f-00c2-4bfd-9790-bf6388ed78d2";
+  private final TenantId TENANT_ID = TenantId.from("d8e6476f-00c2-4bfd-9790-bf6388ed78d2");
   private final String PERMISSION_NAME = "permission-a";
   private final String PERMISSION_DESCRIPTION = "Permission A description";
   private final PermissionId PERMISSION_ID = PermissionId.from(TENANT_ID, PERMISSION_NAME);

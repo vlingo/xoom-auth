@@ -1,6 +1,7 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.actors.World;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Outcome;
 import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry;
 import io.vlingo.xoom.symbio.Source;
@@ -31,56 +32,58 @@ public class TenantQueriesTest {
     queries = world.actorFor(TenantQueries.class, TenantQueriesActor.class, stateStore);
   }
 
-  private static final TenantData FIRST_QUERY_BY_ID_TEST_DATA = TenantData.from("1", "first-tenant-name", "first-tenant-description", true);
-  private static final TenantData SECOND_QUERY_BY_ID_TEST_DATA = TenantData.from("2", "second-tenant-name", "second-tenant-description", true);
-
   @Test
   public void queryById() {
-    stateStore.write("1", FIRST_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
-    stateStore.write("2", SECOND_QUERY_BY_ID_TEST_DATA, 1, NOOP_WRITER);
+    final TenantId firstTenantId = TenantId.from("f6f2402b-dd97-4b07-9b6b-55138b173606");
+    final TenantId secondTenantId = TenantId.from("4120a2f7-89ff-479b-934c-6d0ac2e2e138");
+    final TenantData firstTenant = TenantData.from(firstTenantId, "first-tenant-name", "first-tenant-description", true);
+    final TenantData secondTenant = TenantData.from(secondTenantId, "second-tenant-name", "second-tenant-description", true);
+    stateStore.write(firstTenantId.idString(), firstTenant, 1, NOOP_WRITER);
+    stateStore.write(secondTenantId.id, secondTenant, 1, NOOP_WRITER);
 
-    final TenantData firstData = queries.tenantOf("1").await();
+    final TenantData firstData = queries.tenantOf(firstTenantId).await();
 
-    assertEquals(firstData.tenantId, "1");
-    assertEquals(firstData.name, "first-tenant-name");
-    assertEquals(firstData.description, "first-tenant-description");
-    assertEquals(firstData.active, true);
+    assertEquals(firstTenantId.id, firstData.tenantId);
+    assertEquals("first-tenant-name", firstData.name);
+    assertEquals("first-tenant-description", firstData.description);
+    assertTrue(firstData.active);
 
-    final TenantData secondData = queries.tenantOf("2").await();
+    final TenantData secondData = queries.tenantOf(secondTenantId).await();
 
-    assertEquals(secondData.tenantId, "2");
-    assertEquals(secondData.name, "second-tenant-name");
-    assertEquals(secondData.description, "second-tenant-description");
-    assertEquals(secondData.active, true);
+    assertEquals(secondTenantId.id, secondData.tenantId);
+    assertEquals("second-tenant-name", secondData.name);
+    assertEquals("second-tenant-description", secondData.description);
+    assertTrue(secondData.active);
   }
-
-  private static final TenantData FIRST_QUERY_ALL_TEST_DATA = TenantData.from("1", "first-tenant-name", "first-tenant-description", true);
-  private static final TenantData SECOND_QUERY_ALL_TEST_DATA = TenantData.from("2", "second-tenant-name", "second-tenant-description", true);
 
   @Test
   public void queryAll() {
-    stateStore.write("1", FIRST_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
-    stateStore.write("2", SECOND_QUERY_ALL_TEST_DATA, 1, NOOP_WRITER);
+    final TenantId firstTenantId = TenantId.from("f6f2402b-dd97-4b07-9b6b-55138b173606");
+    final TenantId secondTenantId = TenantId.from("4120a2f7-89ff-479b-934c-6d0ac2e2e138");
+    final TenantData firstTenant = TenantData.from(firstTenantId, "first-tenant-name", "first-tenant-description", true);
+    final TenantData secondTenant = TenantData.from(secondTenantId, "second-tenant-name", "second-tenant-description", true);
+    stateStore.write(firstTenantId.idString(), firstTenant, 1, NOOP_WRITER);
+    stateStore.write(secondTenantId.id, secondTenant, 1, NOOP_WRITER);
 
     final Collection<TenantData> results = queries.tenants().await();
-    final TenantData firstData = results.stream().filter(data -> data.tenantId.equals("1")).findFirst().orElseThrow(RuntimeException::new);
+    final TenantData firstData = results.stream().filter(data -> data.tenantId.equals(firstTenantId.id)).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(firstData.tenantId, "1");
-    assertEquals(firstData.name, "first-tenant-name");
-    assertEquals(firstData.description, "first-tenant-description");
-    assertEquals(firstData.active, true);
+    assertEquals(firstTenantId.id, firstData.tenantId);
+    assertEquals("first-tenant-name", firstData.name);
+    assertEquals("first-tenant-description", firstData.description);
+    assertTrue(firstData.active);
 
-    final TenantData secondData = results.stream().filter(data -> data.tenantId.equals("2")).findFirst().orElseThrow(RuntimeException::new);
+    final TenantData secondData = results.stream().filter(data -> data.tenantId.equals(secondTenantId.id)).findFirst().orElseThrow(RuntimeException::new);
 
-    assertEquals(secondData.tenantId, "2");
-    assertEquals(secondData.name, "second-tenant-name");
-    assertEquals(secondData.description, "second-tenant-description");
-    assertEquals(secondData.active, true);
+    assertEquals(secondTenantId.id, secondData.tenantId);
+    assertEquals("second-tenant-name", secondData.name);
+    assertEquals("second-tenant-description", secondData.description);
+    assertTrue(secondData.active);
   }
 
   @Test
   public void tenantOfEmptyResult(){
-    final TenantData result = queries.tenantOf("1").await();
+    final TenantData result = queries.tenantOf(TenantId.from("48000827-a6c8-4a29-8dbc-f88a5fa57b58")).await();
     assertEquals("", result.tenantId);
   }
 

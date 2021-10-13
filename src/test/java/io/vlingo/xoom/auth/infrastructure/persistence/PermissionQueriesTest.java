@@ -2,6 +2,7 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.auth.model.permission.PermissionId;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Outcome;
 import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry;
 import io.vlingo.xoom.symbio.Source;
@@ -36,11 +37,10 @@ public class PermissionQueriesTest {
 
   @Test
   public void queryById() {
-    final PermissionId firstPermissionId = PermissionId.from("8844bb24-811a-45c7-b98b-ba7a88a42372", "first-permission-name");
+    final PermissionId firstPermissionId = PermissionId.from(TenantId.from("8844bb24-811a-45c7-b98b-ba7a88a42372"), "first-permission-name");
     final PermissionData firstPermission = PermissionData.from(firstPermissionId, new HashSet<>(),  "first-permission-name", "first-permission-description");
-    final PermissionId secondPermissionId = PermissionId.from("2f50fc24-85b1-4657-b876-82491bfc3a70", "second-permission-name");
+    final PermissionId secondPermissionId = PermissionId.from(TenantId.from("2f50fc24-85b1-4657-b876-82491bfc3a70"), "second-permission-name");
     final PermissionData secondPermission = PermissionData.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
-
     stateStore.write(firstPermission.id, firstPermission, 1, NOOP_WRITER);
     stateStore.write(secondPermission.id, secondPermission, 1, NOOP_WRITER);
 
@@ -50,7 +50,7 @@ public class PermissionQueriesTest {
     assertNotNull(firstData.constraints);
     assertEquals("first-permission-description", firstData.description);
     assertEquals("first-permission-name", firstData.name);
-    assertEquals(firstPermissionId.tenantId, firstData.tenantId);
+    assertEquals(firstPermissionId.tenantId.id, firstData.tenantId);
 
     final PermissionData secondData = queries.permissionOf(secondPermissionId).await();
 
@@ -58,16 +58,15 @@ public class PermissionQueriesTest {
     assertNotNull(secondData.constraints);
     assertEquals("second-permission-description", secondData.description);
     assertEquals("second-permission-name", secondData.name);
-    assertEquals(secondPermissionId.tenantId, secondData.tenantId);
+    assertEquals(secondPermissionId.tenantId.id, secondData.tenantId);
   }
 
   @Test
   public void queryAll() {
-    final PermissionId firstPermissionId = PermissionId.from("8844bb24-811a-45c7-b98b-ba7a88a42372", "first-permission-name");
+    final PermissionId firstPermissionId = PermissionId.from(TenantId.from("8844bb24-811a-45c7-b98b-ba7a88a42372"), "first-permission-name");
     final PermissionData firstPermission = PermissionData.from(firstPermissionId, new HashSet<>(),  "first-permission-name", "first-permission-description");
-    final PermissionId secondPermissionId = PermissionId.from("2f50fc24-85b1-4657-b876-82491bfc3a70", "second-permission-name");
+    final PermissionId secondPermissionId = PermissionId.from(TenantId.from("2f50fc24-85b1-4657-b876-82491bfc3a70"), "second-permission-name");
     final PermissionData secondPermission = PermissionData.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
-
     stateStore.write(firstPermission.id, firstPermission, 1, NOOP_WRITER);
     stateStore.write(secondPermission.id, secondPermission, 1, NOOP_WRITER);
 
@@ -78,7 +77,7 @@ public class PermissionQueriesTest {
     assertNotNull(firstData.constraints);
     assertEquals("first-permission-description", firstData.description);
     assertEquals("first-permission-name", firstData.name);
-    assertEquals(firstPermissionId.tenantId, firstData.tenantId);
+    assertEquals(firstPermissionId.tenantId.id, firstData.tenantId);
 
     final PermissionData secondData = results.stream().filter(data -> data.id.equals(secondPermission.id)).findFirst().orElseThrow(RuntimeException::new);
 
@@ -86,12 +85,12 @@ public class PermissionQueriesTest {
     assertNotNull(secondData.constraints);
     assertEquals("second-permission-description", secondData.description);
     assertEquals("second-permission-name", secondData.name);
-    assertEquals(secondPermissionId.tenantId, secondData.tenantId);
+    assertEquals(secondPermissionId.tenantId.id, secondData.tenantId);
   }
 
   @Test
   public void permissionOfEmptyResult() {
-    final PermissionData result = queries.permissionOf(PermissionId.from("1", "P1")).await();
+    final PermissionData result = queries.permissionOf(PermissionId.from(TenantId.from("1"), "P1")).await();
     assertEquals("", result.id);
   }
 

@@ -2,6 +2,7 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.serialization.JsonSerialization;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.Projection;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GroupProjectionTest {
 
-  private final String TENANT_ID = "47f36e24-9723-49cf-be71-54afc03aa120";
+  private final TenantId TENANT_ID = TenantId.from("47f36e24-9723-49cf-be71-54afc03aa120");
   private final String FIRST_GROUP_NAME = "Group A";
   private final String FIRST_GROUP_DESCRIPTION = "Group A description";
   private final GroupId FIRST_GROUP_ID = GroupId.from(TENANT_ID, FIRST_GROUP_NAME);
@@ -80,7 +81,7 @@ public class GroupProjectionTest {
     assertEquals(FIRST_GROUP_ID.idString(), item.id);
     assertEquals(FIRST_GROUP_NAME, item.name);
     assertEquals(FIRST_GROUP_DESCRIPTION, item.description);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
 
     interest = new CountingReadResultInterest();
     interestAccess = interest.afterCompleting(1);
@@ -90,7 +91,7 @@ public class GroupProjectionTest {
     assertEquals(SECOND_GROUP_ID.idString(), item.id);
     assertEquals(SECOND_GROUP_NAME, item.name);
     assertEquals(SECOND_GROUP_DESCRIPTION, item.description);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
   }
 
   @Test
@@ -114,7 +115,7 @@ public class GroupProjectionTest {
 
     assertEquals(FIRST_GROUP_ID.idString(), item.id);
     assertEquals(FIRST_GROUP_DESCRIPTION, item.description);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
   }
 
   @Test
@@ -137,7 +138,7 @@ public class GroupProjectionTest {
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_GROUP_ID.idString(), item.id);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
   }
 
   @Test
@@ -160,7 +161,7 @@ public class GroupProjectionTest {
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_GROUP_ID.idString(), item.id);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
   }
 
   @Test
@@ -183,7 +184,7 @@ public class GroupProjectionTest {
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_GROUP_ID.idString(), item.id);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
   }
 
   @Test
@@ -206,7 +207,7 @@ public class GroupProjectionTest {
     GroupData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_GROUP_ID.idString(), item.id);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
   }
 
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {

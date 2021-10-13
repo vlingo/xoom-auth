@@ -3,6 +3,7 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.auth.infrastructure.RoleData;
 import io.vlingo.xoom.auth.model.role.RoleId;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Outcome;
 import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry;
 import io.vlingo.xoom.symbio.Source;
@@ -36,9 +37,9 @@ public class RoleQueriesTest {
 
   @Test
   public void queryById() {
-    final RoleId firstRoleId = RoleId.from("06f22ad4-49f5-46a4-b350-f6198a7646a3", "first-role-name");
+    final RoleId firstRoleId = RoleId.from(TenantId.from("06f22ad4-49f5-46a4-b350-f6198a7646a3"), "first-role-name");
     final RoleData firstRole = RoleData.from(firstRoleId, "first-role-name", "first-role-description");
-    final RoleId secondRoleId = RoleId.from("3f51d0fd-335e-41b0-b57c-766470cf6ad7", "second-role-name");
+    final RoleId secondRoleId = RoleId.from(TenantId.from("3f51d0fd-335e-41b0-b57c-766470cf6ad7"), "second-role-name");
     final RoleData secondRole = RoleData.from(secondRoleId, "second-role-name", "second-role-description");
 
     stateStore.write(firstRole.id, firstRole, 1, NOOP_WRITER);
@@ -61,9 +62,9 @@ public class RoleQueriesTest {
 
   @Test
   public void queryAll() {
-    final RoleId firstRoleId = RoleId.from("06f22ad4-49f5-46a4-b350-f6198a7646a3", "first-role-name");
+    final RoleId firstRoleId = RoleId.from(TenantId.from("06f22ad4-49f5-46a4-b350-f6198a7646a3"), "first-role-name");
     final RoleData firstRole = RoleData.from(firstRoleId, "first-role-name", "first-role-description");
-    final RoleId secondRoleId = RoleId.from("3f51d0fd-335e-41b0-b57c-766470cf6ad7", "second-role-name");
+    final RoleId secondRoleId = RoleId.from(TenantId.from("3f51d0fd-335e-41b0-b57c-766470cf6ad7"), "second-role-name");
     final RoleData secondRole = RoleData.from(secondRoleId, "second-role-name", "second-role-description");
 
     stateStore.write(firstRole.id, firstRole, 1, NOOP_WRITER);
@@ -87,7 +88,7 @@ public class RoleQueriesTest {
 
   @Test
   public void roleOfEmptyResult(){
-    final RoleData result = queries.roleOf(RoleId.from("8e8c0fe5-c727-43a6-9307-926214a71af4", "role-c")).await();
+    final RoleData result = queries.roleOf(RoleId.from(TenantId.from("8e8c0fe5-c727-43a6-9307-926214a71af4"), "role-c")).await();
     assertEquals("", result.id);
   }
 

@@ -2,6 +2,7 @@ package io.vlingo.xoom.auth.infrastructure.resource;
 
 import io.vlingo.xoom.actors.Definition;
 import io.vlingo.xoom.actors.Address;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.turbo.ComponentRegistry;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.http.ContentType;
@@ -35,8 +36,9 @@ public class TenantResource extends DynamicResourceHandler {
   }
 
   public Completes<Response> subscribeFor(final TenantData data) {
-    return Tenant.subscribeFor(grid, data.name, data.description, data.active)
-      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.id))), serialized(TenantData.from(state))))
+    return create()
+      .subscribeFor(data.name, data.description, data.active)
+      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.tenantId))), serialized(TenantData.from(state))))
       .otherwise(arg -> Response.of(NotFound))
       .recoverFrom(e -> Response.of(InternalServerError, e.getMessage())));
   }
@@ -81,7 +83,7 @@ public class TenantResource extends DynamicResourceHandler {
   }
 
   public Completes<Response> tenantOf(final String id) {
-    return $queries.tenantOf(id)
+    return $queries.tenantOf(TenantId.from(id))
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -120,13 +122,19 @@ public class TenantResource extends DynamicResourceHandler {
     return ContentType.of("application/json", "charset=UTF-8");
   }
 
-  private String location(final String id) {
-    return "/tenants/" + id;
+  private String location(final TenantId tenantId) {
+    return String.format("/tenants/%s", tenantId.id);
   }
 
   private Completes<Tenant> resolve(final String id) {
-    final Address address = grid.addressFactory().from(id);
-    return grid.actorOf(Tenant.class, address, Definition.has(TenantEntity.class, Definition.parameters(id)));
+    final TenantId tenantId = TenantId.from(id);
+    final Address address = grid.addressFactory().from(tenantId.idString());
+    return grid.actorOf(Tenant.class, address, Definition.has(TenantEntity.class, Definition.parameters(tenantId)));
   }
 
+  private Tenant create() {
+    final Address address = grid.addressFactory().uniquePrefixedWith("g-");
+    final TenantId tenantId = TenantId.from(address.idString());
+    return grid.actorFor(Tenant.class, Definition.has(TenantEntity.class, Definition.parameters(tenantId)), address);
+  }
 }

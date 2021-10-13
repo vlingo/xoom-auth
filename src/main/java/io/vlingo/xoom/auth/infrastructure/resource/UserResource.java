@@ -6,6 +6,7 @@ import io.vlingo.xoom.auth.infrastructure.CredentialData;
 import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
 import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
 import io.vlingo.xoom.auth.infrastructure.persistence.UserQueries;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.User;
 import io.vlingo.xoom.auth.model.user.UserEntity;
 import io.vlingo.xoom.auth.model.user.UserId;
@@ -111,7 +112,7 @@ public class UserResource extends DynamicResourceHandler {
   }
 
   public Completes<Response> userOf(final String tenantId, final String username) {
-    return $queries.userOf(UserId.from(tenantId, username))
+    return $queries.userOf(UserId.from(TenantId.from(tenantId), username))
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -174,13 +175,13 @@ public class UserResource extends DynamicResourceHandler {
   }
 
   private Completes<User> resolve(final String tenantId, final String username) {
-    final UserId userId = UserId.from(tenantId, username);
+    final UserId userId = UserId.from(TenantId.from(tenantId), username);
     final Address address = new UserAddress(userId);
     return grid.actorOf(User.class, address, Definition.has(UserEntity.class, Definition.parameters(userId)));
   }
 
   private User create(final String tenantId, final String username) {
-    final UserId userId = UserId.from(tenantId, username);
+    final UserId userId = UserId.from(TenantId.from(tenantId), username);
     final Address address = new UserAddress(userId);
     return grid.actorFor(User.class, Definition.has(UserEntity.class, Definition.parameters(userId)), address);
   }

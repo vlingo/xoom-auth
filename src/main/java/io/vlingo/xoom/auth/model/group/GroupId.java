@@ -1,25 +1,26 @@
 package io.vlingo.xoom.auth.model.group;
 
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 
 public class GroupId {
-  public final String tenantId;
+  public final TenantId tenantId;
   public final String groupName;
 
-  public static GroupId from(final String tenantId, final String groupName) {
+  public static GroupId from(final TenantId tenantId, final String groupName) {
     return new GroupId(tenantId, groupName);
   }
 
-  private GroupId(final String tenantId, final String groupName) {
+  private GroupId(final TenantId tenantId, final String groupName) {
     this.tenantId = tenantId;
     this.groupName = groupName;
   }
 
   public String idString() {
-    return tenantId != "" || groupName != "" ? String.format("%s:%s", tenantId, groupName) : "";
+    return tenantId.id != "" || groupName != "" ? String.format("%s:%s", tenantId.id, groupName) : "";
   }
 
   @Override
@@ -42,7 +43,7 @@ public class GroupId {
   @Override
   public String toString() {
     return new ToStringBuilder(this, ToStringStyle.DEFAULT_STYLE)
-            .append("tenantId", tenantId)
+            .append("tenantId", tenantId.idString())
             .append("groupName", groupName)
             .toString();
   }

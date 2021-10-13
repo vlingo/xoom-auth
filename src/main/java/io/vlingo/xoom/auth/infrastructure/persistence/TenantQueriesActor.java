@@ -3,6 +3,7 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.lattice.query.StateStoreQueryActor;
 import io.vlingo.xoom.symbio.store.state.StateStore;
@@ -20,8 +21,8 @@ public class TenantQueriesActor extends StateStoreQueryActor implements TenantQu
   }
 
   @Override
-  public Completes<TenantData> tenantOf(String id) {
-    return queryStateFor(id, TenantData.class, TenantData.empty());
+  public Completes<TenantData> tenantOf(TenantId tenantId) {
+    return queryStateFor(tenantId.idString(), TenantData.class, TenantData.empty());
   }
 
   @Override

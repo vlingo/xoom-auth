@@ -3,6 +3,7 @@ package io.vlingo.xoom.auth.model.role;
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.persistence.*;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
 import io.vlingo.xoom.symbio.BaseEntry;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoleEntityTest {
 
-  private final String TENANT_ID = "f3e1f662-d7b4-4f9e-aa6c-6d16d4c70437";
+  private final TenantId TENANT_ID = TenantId.from("f3e1f662-d7b4-4f9e-aa6c-6d16d4c70437");
   private final String ROLE_NAME = "role-a";
   private final String ROLE_DESCRIPTION = "Role A";
   private final RoleId ROLE_ID = RoleId.from(TENANT_ID, ROLE_NAME);

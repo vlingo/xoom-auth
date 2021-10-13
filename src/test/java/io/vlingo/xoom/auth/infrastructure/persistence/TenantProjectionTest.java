@@ -51,8 +51,8 @@ public class TenantProjectionTest {
 
   @Test
   public void subscribeFor() {
-    final TenantData firstData = TenantData.from("1", "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from("2", "second-tenant-name", "second-tenant-description", true);
+    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
+    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
 
     final CountingProjectionControl control = new CountingProjectionControl();
     final AccessSafely access = control.afterCompleting(2);
@@ -87,8 +87,8 @@ public class TenantProjectionTest {
 
   @Test
   public void activate() {
-    final TenantData firstData = TenantData.from("1", "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from("2", "second-tenant-name", "second-tenant-description", true);
+    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
+    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
     registerExampleTenant(firstData.toTenantState(), secondData.toTenantState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -109,8 +109,8 @@ public class TenantProjectionTest {
 
   @Test
   public void deactivate() {
-    final TenantData firstData = TenantData.from("1", "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from("2", "second-tenant-name", "second-tenant-description", true);
+    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
+    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
     registerExampleTenant(firstData.toTenantState(), secondData.toTenantState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -131,8 +131,8 @@ public class TenantProjectionTest {
 
   @Test
   public void changeName() {
-    final TenantData firstData = TenantData.from("1", "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from("2", "second-tenant-name", "second-tenant-description", true);
+    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
+    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
     registerExampleTenant(firstData.toTenantState(), secondData.toTenantState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -154,8 +154,8 @@ public class TenantProjectionTest {
 
   @Test
   public void changeDescription() {
-    final TenantData firstData = TenantData.from("1", "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from("2", "second-tenant-name", "second-tenant-description", true);
+    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
+    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
     registerExampleTenant(firstData.toTenantState(), secondData.toTenantState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -180,56 +180,56 @@ public class TenantProjectionTest {
   }
 
   private Projectable createTenantSubscribed(TenantState data) {
-    final TenantSubscribed eventData = new TenantSubscribed(data.id, data.name, data.description, data.active);
+    final TenantSubscribed eventData = new TenantSubscribed(data.tenantId, data.name, data.description, data.active);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantSubscribed.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.tenantId.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   private Projectable createTenantActivated(TenantState data) {
-    final TenantActivated eventData = new TenantActivated(data.id);
+    final TenantActivated eventData = new TenantActivated(data.tenantId);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantActivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.tenantId.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   private Projectable createTenantDeactivated(TenantState data) {
-    final TenantDeactivated eventData = new TenantDeactivated(data.id);
+    final TenantDeactivated eventData = new TenantDeactivated(data.tenantId);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDeactivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.tenantId.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   private Projectable createTenantNameChanged(TenantState data) {
-    final TenantNameChanged eventData = new TenantNameChanged(data.id, data.name);
+    final TenantNameChanged eventData = new TenantNameChanged(data.tenantId, data.name);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantNameChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.tenantId.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }
 
   private Projectable createTenantDescriptionChanged(TenantState data) {
-    final TenantDescriptionChanged eventData = new TenantDescriptionChanged(data.id, data.description);
+    final TenantDescriptionChanged eventData = new TenantDescriptionChanged(data.tenantId, data.description);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDescriptionChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
     final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.id, projectionId);
+    valueToProjectionId.put(data.tenantId.idString(), projectionId);
 
     return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
   }

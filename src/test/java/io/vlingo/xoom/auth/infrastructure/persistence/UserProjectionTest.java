@@ -5,6 +5,7 @@ import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.PersonNameData;
 import io.vlingo.xoom.auth.infrastructure.ProfileData;
 import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.*;
 import io.vlingo.xoom.common.serialization.JsonSerialization;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
@@ -54,9 +55,9 @@ public class UserProjectionTest {
 
   @Test
   public void registerUser() {
-    final UserId firstUserId = UserId.from("first-user-tenantId", "first-user-username");
+    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
     final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), true);
-    final UserId secondUserId = UserId.from("second-user-tenantId", "second-user-username");
+    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
     final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), true);
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -86,9 +87,9 @@ public class UserProjectionTest {
 
   @Test
   public void activate() {
-    final UserId firstUserId = UserId.from("first-user-tenantId", "first-user-username");
+    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
     final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), false);
-    final UserId secondUserId = UserId.from("second-user-tenantId", "second-user-username");
+    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
     final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), false);
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
@@ -111,9 +112,9 @@ public class UserProjectionTest {
 
   @Test
   public void deactivate() {
-    final UserId firstUserId = UserId.from("first-user-tenantId", "first-user-username");
+    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
     final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), true);
-    final UserId secondUserId = UserId.from("second-user-tenantId", "second-user-username");
+    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
     final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), true);
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
@@ -136,9 +137,9 @@ public class UserProjectionTest {
 
   @Test
   public void addCredential() {
-    final UserId firstUserId = UserId.from("first-user-tenantId", "first-user-username");
+    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
     final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), false);
-    final UserId secondUserId = UserId.from("second-user-tenantId", "second-user-username");
+    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
     final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), false);
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
@@ -161,9 +162,9 @@ public class UserProjectionTest {
 
   @Test
   public void removeCredential() {
-    final UserId firstUserId = UserId.from("first-user-tenantId", "first-user-username");
+    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
     final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), false);
-    final UserId secondUserId = UserId.from("second-user-tenantId", "second-user-username");
+    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
     final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), false);
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
@@ -186,9 +187,9 @@ public class UserProjectionTest {
 
   @Test
   public void replaceCredential() {
-    final UserId firstUserId = UserId.from("first-user-tenantId", "first-user-username");
+    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
     final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), false);
-    final UserId secondUserId = UserId.from("second-user-tenantId", "second-user-username");
+    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
     final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), false);
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 
@@ -211,9 +212,9 @@ public class UserProjectionTest {
 
   @Test
   public void replaceProfile() {
-    final UserId firstUserId = UserId.from("first-user-tenantId", "first-user-username");
+    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
     final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), false);
-    final UserId secondUserId = UserId.from("second-user-tenantId", "second-user-username");
+    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
     final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), false);
     registerExampleUser(firstData.toUserState(), secondData.toUserState());
 

@@ -1,25 +1,26 @@
 package io.vlingo.xoom.auth.model.permission;
 
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 
 public class PermissionId {
-  public final String tenantId;
+  public final TenantId tenantId;
   public final String permissionName;
 
-  public static PermissionId from(final String tenantId, final String permissionName) {
+  public static PermissionId from(final TenantId tenantId, final String permissionName) {
     return new PermissionId(tenantId, permissionName);
   }
 
-  private PermissionId(final String tenantId, final String permissionName) {
+  private PermissionId(final TenantId tenantId, final String permissionName) {
     this.tenantId = tenantId;
     this.permissionName = permissionName;
   }
 
   public String idString() {
-    return tenantId != "" || permissionName != "" ? String.format("%s:%s", tenantId, permissionName) : "";
+    return tenantId.id != "" || permissionName != "" ? String.format("%s:%s", tenantId.idString(), permissionName) : "";
   }
 
   @Override

@@ -4,6 +4,7 @@ import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.model.permission.*;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.serialization.JsonSerialization;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.Projection;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PermissionProjectionTest {
 
-  private final String TENANT_ID = "b5744809-91c2-49d6-87fb-3221b8846ca0";
+  private final TenantId TENANT_ID = TenantId.from("b5744809-91c2-49d6-87fb-3221b8846ca0");
   private final String FIRST_PERMISSION_NAME = "permission-a";
   private final PermissionId FIRST_PERMISSION_ID = PermissionId.from(TENANT_ID, FIRST_PERMISSION_NAME);
   private final String SECOND_PERMISSION_NAME = "permission-b";
@@ -80,7 +81,7 @@ public class PermissionProjectionTest {
     assertEquals(FIRST_PERMISSION_ID.idString(), item.id);
     assertEquals(FIRST_PERMISSION_NAME, item.name);
     assertEquals("first-permission-description", item.description);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
 
     interest = new CountingReadResultInterest();
     interestAccess = interest.afterCompleting(1);
@@ -90,7 +91,7 @@ public class PermissionProjectionTest {
     assertEquals(SECOND_PERMISSION_ID.idString(), item.id);
     assertEquals(SECOND_PERMISSION_NAME, item.name);
     assertEquals("second-permission-description", item.description);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
   }
 
   @Test
@@ -183,7 +184,7 @@ public class PermissionProjectionTest {
 
     assertEquals(FIRST_PERMISSION_ID.idString(), item.id);
     assertEquals("first-permission-description", item.description);
-    assertEquals(TENANT_ID, item.tenantId);
+    assertEquals(TENANT_ID.id, item.tenantId);
   }
 
   private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {

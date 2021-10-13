@@ -2,6 +2,7 @@ package io.vlingo.xoom.auth.model.group;
 
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.symbio.BaseEntry;
 import io.vlingo.xoom.auth.infrastructure.persistence.UserUnassignedFromGroupAdapter;
 import io.vlingo.xoom.auth.infrastructure.persistence.GroupProvisionedAdapter;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GroupEntityTest {
 
-  private final String TENANT_ID = "7c7161d4-12c9-4dde-9e8f-26c40bfc7902";
+  private final TenantId TENANT_ID = TenantId.from("7c7161d4-12c9-4dde-9e8f-26c40bfc7902");
   private final String GROUP_NAME = "Group A";
   private final String GROUP_DESCRIPTION = "Group A description";
   private final GroupId GROUP_ID = GroupId.from(TENANT_ID, GROUP_NAME);
@@ -118,7 +119,7 @@ public class GroupEntityTest {
   public void assignUser() {
     givenGroupIsProvisioned(GROUP_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final GroupState state = groupOf(GROUP_ID).assignUser("updated-groupOf-tenantId").await();
+    final GroupState state = groupOf(GROUP_ID).assignUser(TenantId.from("updated-groupOf-tenantId")).await();
 
     assertEquals(state.name, "groupOf-name");
     assertEquals(state.description, "groupOf-description");
@@ -127,14 +128,12 @@ public class GroupEntityTest {
     assertEquals(UserAssignedToGroup.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
   }
 
-  private static final String TENANT_ID_FOR_UNASSIGN_USER_TEST = "updated-groupOf-tenantId";
-
   @Test
   @Disabled("Requires user implementation")
   public void unassignUser() {
     givenGroupIsProvisioned(GROUP_ID);
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final GroupState state = groupOf(GROUP_ID).unassignUser(TENANT_ID_FOR_UNASSIGN_USER_TEST).await();
+    final GroupState state = groupOf(GROUP_ID).unassignUser(TenantId.from("updated-groupOf-tenantId")).await();
 
     assertEquals(state.name, "groupOf-name");
     assertEquals(state.description, "groupOf-description");

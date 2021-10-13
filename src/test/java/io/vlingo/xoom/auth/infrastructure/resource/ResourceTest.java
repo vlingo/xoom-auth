@@ -11,6 +11,7 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.vlingo.xoom.auth.infrastructure.*;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.http.Header;
 import io.vlingo.xoom.http.Request;
@@ -88,7 +89,7 @@ public abstract class ResourceTest {
 
   protected UserRegistrationData userRegistrationData(final String tenantId) {
     return UserRegistrationData.from(
-            UserId.from(tenantId, "useroftheyear"),
+            UserId.from(TenantId.from(tenantId), "useroftheyear"),
             "useroftheyear",
             ProfileData.from(PersonNameData.of("Given", "A", "Family"), "me@family.us", "212-555-1212"),
             CredentialData.from("xoom-platform", "useroftheyear", "topsecret"),
@@ -97,7 +98,7 @@ public abstract class ResourceTest {
 
   protected UserRegistrationData userRegistrationData(final String tenantId, final int value) {
     return UserRegistrationData.from(
-            UserId.from(tenantId, "useroftheyear"),
+            UserId.from(TenantId.from(tenantId), "useroftheyear"),
             "useroftheyear" + value,
             ProfileData.from(PersonNameData.of("Given" + value, "A", "Family" + value), "me" + value + "@family.us", "212-555-1212"),
             CredentialData.from("xoom-platform", "useroftheyear" + value, "topsecret" + value),
@@ -175,19 +176,19 @@ public abstract class ResourceTest {
   }
 
   protected Response postProvisionGroup(final String tenantId, final String name, final String description) {
-    final String body = serialized(GroupData.from(null, name, description, tenantId));
+    final String body = serialized(GroupData.from(TenantId.from(tenantId), name, description));
     final String request = "POST /tenants/" + tenantId + "/groups HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
   protected Response postProvisionPermission(String tenantId, String name, String description) {
-    final String body = serialized(PermissionData.from(null, Collections.emptySet(), name, description, tenantId));
+    final String body = serialized(PermissionData.from(TenantId.from(tenantId), Collections.emptySet(), name, description));
     final String request = "POST /tenants/" + tenantId + "/permissions HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
 
   protected Response postProvisionRole(final String tenantId, final String name, final String description) {
-    final String body = serialized(RoleData.from(null, tenantId, name, description));
+    final String body = serialized(RoleData.from(TenantId.from(tenantId), name, description));
     final String request = "POST /tenants/" + tenantId + "/roles HTTP/1.1\nHost: vlingo.io\nContent-Length: " + body.length() + "\n\n" + body;
     return requestResponse(request);
   }
