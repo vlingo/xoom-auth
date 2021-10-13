@@ -9,7 +9,6 @@ import io.vlingo.xoom.auth.model.value.PersonName;
 import io.vlingo.xoom.auth.model.value.Profile;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
-import io.vlingo.xoom.symbio.BaseEntry;
 import io.vlingo.xoom.symbio.EntryAdapterProvider;
 import io.vlingo.xoom.symbio.store.journal.Journal;
 import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
@@ -22,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserEntityTest {
@@ -165,10 +165,5 @@ public class UserEntityTest {
 
   private void givenActiveUser(UserId userId) {
     userOf(userId).registerUser(USER_USERNAME, USER_PROFILE, USER_CREDENTIALS, true).await();
-  }
-
-  private void assertEventDispatched(final AccessSafely dispatcherAccess, final int sequence, final Class<?> expectedEvent) {
-    assertEquals(sequence, (int) dispatcherAccess.readFrom("entriesCount"), String.format("Expected at least %d events", sequence));
-    assertEquals(expectedEvent.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", sequence - 1)).typeName(), String.format("Expected the %d event in the sequence to be %s", sequence, expectedEvent.getName()));
   }
 }
