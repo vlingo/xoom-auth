@@ -2,25 +2,21 @@ package io.vlingo.xoom.auth.model.group;
 
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
+import io.vlingo.xoom.auth.infrastructure.persistence.*;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
-import io.vlingo.xoom.symbio.BaseEntry;
-import io.vlingo.xoom.auth.infrastructure.persistence.UserUnassignedFromGroupAdapter;
-import io.vlingo.xoom.auth.infrastructure.persistence.GroupProvisionedAdapter;
-import io.vlingo.xoom.auth.infrastructure.persistence.GroupUnassignedFromGroupAdapter;
-import io.vlingo.xoom.auth.infrastructure.persistence.UserAssignedToGroupAdapter;
-import io.vlingo.xoom.auth.infrastructure.persistence.MockDispatcher;
-import io.vlingo.xoom.auth.infrastructure.persistence.GroupDescriptionChangedAdapter;
-import io.vlingo.xoom.auth.infrastructure.persistence.GroupAssignedToGroupAdapter;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
 import io.vlingo.xoom.symbio.EntryAdapterProvider;
 import io.vlingo.xoom.symbio.store.journal.Journal;
 import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GroupEntityTest {
 
@@ -62,8 +58,7 @@ public class GroupEntityTest {
     assertEquals(GROUP_NAME, state.name);
     assertEquals(GROUP_DESCRIPTION, state.description);
     assertEquals(GROUP_ID, state.id);
-    assertEquals(1, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(GroupProvisioned.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 0)).typeName());
+    assertEventDispatched(dispatcherAccess, 1, GroupProvisioned.class);
   }
 
   @Test
@@ -77,8 +72,7 @@ public class GroupEntityTest {
     assertEquals(GROUP_NAME, state.name);
     assertEquals("updated-groupOf-description", state.description);
     assertEquals(GROUP_ID, state.id);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(GroupDescriptionChanged.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, GroupDescriptionChanged.class);
   }
 
   @Test
@@ -94,8 +88,7 @@ public class GroupEntityTest {
     assertEquals(GROUP_NAME, state.name);
     assertEquals(GROUP_DESCRIPTION, state.description);
     assertEquals(GROUP_ID, state.id);
-    assertEquals(3, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(GroupAssignedToGroup.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 2)).typeName());
+    assertEventDispatched(dispatcherAccess, 3, GroupAssignedToGroup.class);
   }
 
   @Test
@@ -113,8 +106,7 @@ public class GroupEntityTest {
     assertEquals(GROUP_NAME, state.name);
     assertEquals(GROUP_DESCRIPTION, state.description);
     assertEquals(GROUP_ID, state.id);
-    assertEquals(4, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(GroupUnassignedFromGroup.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 3)).typeName());
+    assertEventDispatched(dispatcherAccess, 4, GroupUnassignedFromGroup.class);
   }
 
   @Test
@@ -129,8 +121,7 @@ public class GroupEntityTest {
     assertEquals(state.name, "groupOf-name");
     assertEquals(state.description, "groupOf-description");
     assertEquals(state.id.tenantId, "updated-groupOf-tenantId");
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserAssignedToGroup.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserAssignedToGroup.class);
   }
 
   @Test
@@ -145,8 +136,7 @@ public class GroupEntityTest {
     assertEquals(state.name, "groupOf-name");
     assertEquals(state.description, "groupOf-description");
     assertEquals(state.id.tenantId, "updated-groupOf-tenantId");
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserUnassignedFromGroup.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserUnassignedFromGroup.class);
   }
 
   private Group groupOf(final GroupId groupId) {

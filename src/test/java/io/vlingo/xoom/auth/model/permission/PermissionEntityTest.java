@@ -2,24 +2,22 @@ package io.vlingo.xoom.auth.model.permission;
 
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
-import io.vlingo.xoom.auth.infrastructure.persistence.PermissionConstraintEnforcedAdapter;
-import io.vlingo.xoom.auth.infrastructure.persistence.PermissionProvisionedAdapter;
+import io.vlingo.xoom.auth.infrastructure.persistence.*;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
-import io.vlingo.xoom.symbio.BaseEntry;
-import java.util.*;
-import io.vlingo.xoom.auth.infrastructure.persistence.PermissionConstraintForgottenAdapter;
-import io.vlingo.xoom.auth.model.value.*;
-import io.vlingo.xoom.auth.infrastructure.persistence.PermissionDescriptionChangedAdapter;
-import io.vlingo.xoom.auth.infrastructure.persistence.PermissionConstraintReplacementEnforcedAdapter;
-import io.vlingo.xoom.auth.infrastructure.persistence.MockDispatcher;
+import io.vlingo.xoom.auth.model.value.Constraint;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
 import io.vlingo.xoom.symbio.EntryAdapterProvider;
 import io.vlingo.xoom.symbio.store.journal.Journal;
 import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Collections;
+
+import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PermissionEntityTest {
 
@@ -53,19 +51,18 @@ public class PermissionEntityTest {
   }
 
   @Test
-  public void provisionPermission() {
+  public void permissionIsProvisionedForTheTenant() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
     final PermissionState state = permissionOf(PERMISSION_ID).provisionPermission(PERMISSION_NAME, PERMISSION_DESCRIPTION).await();
 
     assertEquals(PERMISSION_NAME, state.name);
     assertEquals(PERMISSION_DESCRIPTION, state.description);
     assertEquals(PERMISSION_ID, state.id);
-    assertEquals(1, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(PermissionProvisioned.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 0)).typeName());
+    assertEventDispatched(dispatcherAccess, 1, PermissionProvisioned.class);
   }
 
   @Test
-  public void enforce() {
+  public void permissionConstraintIsEnforced() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
 
     givenPermissionIsProvisioned(PERMISSION_ID);
@@ -77,8 +74,7 @@ public class PermissionEntityTest {
     assertEquals(PERMISSION_DESCRIPTION, state.description);
     assertEquals(PERMISSION_ID, state.id);
     assertNotNull(state.constraints);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(PermissionConstraintEnforced.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, PermissionConstraintEnforced.class);
   }
 
   @Test
@@ -94,8 +90,7 @@ public class PermissionEntityTest {
     assertEquals(PERMISSION_DESCRIPTION, state.description);
     assertEquals(PERMISSION_ID, state.id);
     assertNotNull(state.constraints);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(PermissionConstraintReplacementEnforced.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, PermissionConstraintReplacementEnforced.class);
   }
 
   @Test
@@ -111,8 +106,7 @@ public class PermissionEntityTest {
     assertEquals(PERMISSION_DESCRIPTION, state.description);
     assertEquals(PERMISSION_ID, state.id);
     assertNotNull(state.constraints);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(PermissionConstraintForgotten.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, PermissionConstraintForgotten.class);
   }
 
   @Test
@@ -126,8 +120,7 @@ public class PermissionEntityTest {
     assertEquals(PERMISSION_NAME, state.name);
     assertEquals("updated-permission-description", state.description);
     assertEquals(PERMISSION_ID, state.id);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(PermissionDescriptionChanged.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, PermissionDescriptionChanged.class);
   }
 
   private void givenPermissionIsProvisioned(final PermissionId permissionId) {

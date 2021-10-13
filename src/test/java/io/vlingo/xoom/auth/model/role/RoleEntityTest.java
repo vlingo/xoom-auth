@@ -6,7 +6,6 @@ import io.vlingo.xoom.auth.infrastructure.persistence.*;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
-import io.vlingo.xoom.symbio.BaseEntry;
 import io.vlingo.xoom.symbio.EntryAdapterProvider;
 import io.vlingo.xoom.symbio.store.journal.Journal;
 import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoleEntityTest {
@@ -59,8 +59,7 @@ public class RoleEntityTest {
     assertEquals(ROLE_ID, state.roleId);
     assertEquals(ROLE_NAME, state.name);
     assertEquals(ROLE_DESCRIPTION, state.description);
-    assertEquals(1, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(RoleProvisioned.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 0)).typeName());
+    assertEventDispatched(dispatcherAccess, 1, RoleProvisioned.class);
   }
 
   @Test
@@ -74,8 +73,7 @@ public class RoleEntityTest {
     assertEquals(ROLE_ID, state.roleId);
     assertEquals(ROLE_NAME, state.name);
     assertEquals("updated-role-description", state.description);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(RoleDescriptionChanged.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, RoleDescriptionChanged.class);
   }
 
   @Test
@@ -89,8 +87,7 @@ public class RoleEntityTest {
     assertEquals(ROLE_ID, state.roleId);
     assertEquals("updated-role-name", state.name);
     assertEquals(ROLE_DESCRIPTION, state.description);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(GroupAssignedToRole.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, GroupAssignedToRole.class);
   }
 
   @Test
@@ -104,8 +101,7 @@ public class RoleEntityTest {
     assertEquals(ROLE_ID, state.roleId);
     assertEquals("updated-role-name", state.name);
     assertEquals(ROLE_DESCRIPTION, state.description);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(GroupUnassignedFromRole.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, GroupUnassignedFromRole.class);
   }
 
   @Test
@@ -119,8 +115,7 @@ public class RoleEntityTest {
     assertEquals(ROLE_ID, state.roleId);
     assertEquals("updated-role-name", state.name);
     assertEquals(ROLE_DESCRIPTION, state.description);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserAssignedToRole.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserAssignedToRole.class);
   }
 
   @Test
@@ -134,8 +129,7 @@ public class RoleEntityTest {
     assertEquals(ROLE_ID, state.roleId);
     assertEquals("updated-role-name", state.name);
     assertEquals(ROLE_DESCRIPTION, state.description);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(UserUnassignedFromRole.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, UserUnassignedFromRole.class);
   }
 
   @Test
@@ -149,8 +143,7 @@ public class RoleEntityTest {
     assertEquals(ROLE_ID, state.roleId);
     assertEquals("updated-role-name", state.name);
     assertEquals(ROLE_DESCRIPTION, state.description);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(RolePermissionAttached.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, RolePermissionAttached.class);
   }
 
   @Test
@@ -164,8 +157,7 @@ public class RoleEntityTest {
     assertEquals(ROLE_ID, state.roleId);
     assertEquals("updated-role-name", state.name);
     assertEquals(ROLE_DESCRIPTION, state.description);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(RolePermissionDetached.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, RolePermissionDetached.class);
   }
 
   private void givenRoleExists(RoleId roleId) {

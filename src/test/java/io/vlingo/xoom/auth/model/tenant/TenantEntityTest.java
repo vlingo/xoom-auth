@@ -5,7 +5,6 @@ import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.persistence.*;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
-import io.vlingo.xoom.symbio.BaseEntry;
 import io.vlingo.xoom.symbio.EntryAdapterProvider;
 import io.vlingo.xoom.symbio.store.journal.Journal;
 import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TenantEntityTest {
@@ -54,8 +54,7 @@ public class TenantEntityTest {
     assertEquals(TENANT_NAME, state.name);
     assertEquals(TENANT_DESCRIPTION, state.description);
     assertTrue(state.active);
-    assertEquals(1, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(TenantSubscribed.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 0)).typeName());
+    assertEventDispatched(dispatcherAccess, 1, TenantSubscribed.class);
   }
 
   @Test
@@ -67,8 +66,7 @@ public class TenantEntityTest {
     final TenantState state = tenantOf(TENANT_ID).activate().await();
 
     assertTrue(state.active);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(TenantActivated.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, TenantActivated.class);
   }
 
   @Test
@@ -80,8 +78,7 @@ public class TenantEntityTest {
     final TenantState state = tenantOf(TENANT_ID).deactivate().await();
 
     assertFalse(state.active);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(TenantDeactivated.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, TenantDeactivated.class);
   }
 
   @Test
@@ -93,8 +90,7 @@ public class TenantEntityTest {
     final TenantState state = tenantOf(TENANT_ID).changeName("updated-tenant-name").await();
 
     assertEquals("updated-tenant-name", state.name);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(TenantNameChanged.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, TenantNameChanged.class);
   }
 
   @Test
@@ -106,8 +102,7 @@ public class TenantEntityTest {
     final TenantState state = tenantOf(TENANT_ID).changeDescription("updated-tenant-description").await();
 
     assertEquals("updated-tenant-description", state.description);
-    assertEquals(2, (int) dispatcherAccess.readFrom("entriesCount"));
-    assertEquals(TenantDescriptionChanged.class.getName(), ((BaseEntry<String>) dispatcherAccess.readFrom("appendedAt", 1)).typeName());
+    assertEventDispatched(dispatcherAccess, 2, TenantDescriptionChanged.class);
   }
 
   private void givenActiveTenant(TenantId tenantId) {
