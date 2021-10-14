@@ -61,9 +61,9 @@ public class PermissionResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> forget(final String tenantId, final String permissionName, final String constraintName, final PermissionData data) {
+  public Completes<Response> forget(final String tenantId, final String permissionName, final String constraintName) {
     return resolve(tenantId, permissionName)
-            .andThenTo(permission -> permission.forget(data.constraints.stream().map(ConstraintData::toConstraint).findFirst().get()))
+            .andThenTo(permission -> permission.forget(constraintName))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -112,7 +112,6 @@ public class PermissionResource extends DynamicResourceHandler {
             .param(String.class)
             .param(String.class)
             .param(String.class)
-            .body(PermissionData.class)
             .handle(this::forget),
         io.vlingo.xoom.http.resource.ResourceBuilder.patch("/tenants/{tenantId}/permissions/{permissionName}/description")
             .param(String.class)

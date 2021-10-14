@@ -91,19 +91,15 @@ public class PermissionEntityTest {
   }
 
   @Test
-  public void forget() {
+  public void permissionConstraintIsForgotten() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
 
-    givenPermissionIsProvisioned(PERMISSION_ID);
+    givenPermissionIsProvisionedWithEnforcedConstraint(PERMISSION_ID, "constraint-A");
 
-    final Constraint constraint = Constraint.from(Constraint.Type.String, "updated-permission-constraints-name", "updated-permission-constraints-value", "updated-permission-constraints-description");
-    final PermissionState state = permissionOf(PERMISSION_ID).forget(constraint).await();
+    final PermissionState state = permissionOf(PERMISSION_ID).forget("constraint-A").await();
 
-    assertEquals(PERMISSION_NAME, state.name);
-    assertEquals(PERMISSION_DESCRIPTION, state.description);
-    assertEquals(PERMISSION_ID, state.id);
-    assertNotNull(state.constraints);
-    assertEventDispatched(dispatcherAccess, 2, PermissionConstraintForgotten.class);
+    assertEquals(0, state.constraints.size());
+    assertEventDispatched(dispatcherAccess, 3, PermissionConstraintForgotten.class);
   }
 
   @Test

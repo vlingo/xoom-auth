@@ -31,17 +31,13 @@ public final class PermissionState {
   }
 
   public PermissionState enforceReplacement(final String constraintName, final Constraint constraint) {
-    this.constraints.stream()
-            .filter(c -> c.name.equals(constraintName))
-            .findFirst()
-            .ifPresent(c -> constraints.remove(c));
+    constraintOf(constraintName).ifPresent(c -> constraints.remove(c));
     this.constraints.add(constraint);
     return new PermissionState(this.id, this.constraints, this.name, this.description);
   }
 
-  public PermissionState forget(final Constraint constraint) {
-    //TODO: Implement command logic.
-    this.constraints.add(constraint);
+  public PermissionState forget(final String constraintName) {
+    constraintOf(constraintName).ifPresent(constraints::remove);
     return new PermissionState(this.id, this.constraints, this.name, this.description);
   }
 
@@ -50,4 +46,9 @@ public final class PermissionState {
     return new PermissionState(this.id, this.constraints, this.name, description);
   }
 
+  private Optional<Constraint> constraintOf(final String constraintName) {
+    return this.constraints.stream()
+            .filter(c -> c.name.equals(constraintName))
+            .findFirst();
+  }
 }

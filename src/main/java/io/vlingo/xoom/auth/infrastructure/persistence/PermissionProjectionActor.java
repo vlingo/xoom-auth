@@ -66,8 +66,6 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
 
         case PermissionConstraintForgotten: {
           final PermissionConstraintForgotten typedEvent = typed(event);
-          final ConstraintData constraint = ConstraintData.from(typedEvent.constraint);
-          previousData.constraints.add(constraint);
           merged = PermissionData.from(typedEvent.permissionId, previousData.constraints, previousData.name, previousData.description);
           break;
         }

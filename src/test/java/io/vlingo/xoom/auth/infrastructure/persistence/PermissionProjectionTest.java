@@ -119,7 +119,7 @@ public class PermissionProjectionTest {
     PermissionData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_PERMISSION_ID.idString(), item.id);
-    assertNotNull(item.constraints);
+    assertEquals(1, item.constraints.size());
   }
 
   @Test
@@ -144,7 +144,7 @@ public class PermissionProjectionTest {
     PermissionData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_PERMISSION_ID.idString(), item.id);
-    assertNotNull(item.constraints);
+    assertEquals(1, item.constraints.size());
   }
 
   @Test
@@ -169,7 +169,7 @@ public class PermissionProjectionTest {
     PermissionData item = interestAccess.readFrom("item", firstData.id);
 
     assertEquals(FIRST_PERMISSION_ID.idString(), item.id);
-    assertNotNull(item.constraints);
+    assertEquals(0, item.constraints.size());
   }
 
   @Test
@@ -237,7 +237,7 @@ public class PermissionProjectionTest {
   }
 
   private Projectable createPermissionConstraintForgotten(PermissionState data) {
-    final PermissionConstraintForgotten eventData = new PermissionConstraintForgotten(data.id, data.constraints.stream().findFirst().orElse(null));
+    final PermissionConstraintForgotten eventData = new PermissionConstraintForgotten(data.id, data.constraints.stream().findFirst().get().name);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintForgotten.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 

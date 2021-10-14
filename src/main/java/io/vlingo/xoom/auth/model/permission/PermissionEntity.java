@@ -40,11 +40,11 @@ public final class PermissionEntity extends EventSourced implements Permission {
   }
 
   @Override
-  public Completes<PermissionState> forget(final Constraint constraint) {
+  public Completes<PermissionState> forget(final String constraintName) {
     /**
      * TODO: Implement command logic. See {@link PermissionState#forget()}
      */
-    return apply(new PermissionConstraintForgotten(state.id, constraint), () -> state);
+    return apply(new PermissionConstraintForgotten(state.id, constraintName), () -> state);
   }
 
   @Override
@@ -68,7 +68,7 @@ public final class PermissionEntity extends EventSourced implements Permission {
   }
 
   private void applyPermissionConstraintForgotten(final PermissionConstraintForgotten event) {
-    state = state.forget(event.constraint);
+    state = state.forget(event.constraintName);
   }
 
   private void applyPermissionDescriptionChanged(final PermissionDescriptionChanged event) {

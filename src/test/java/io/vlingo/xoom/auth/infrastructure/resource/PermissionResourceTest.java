@@ -69,7 +69,6 @@ public class PermissionResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatPermissionForgetsConstraint() {
     permission();
 

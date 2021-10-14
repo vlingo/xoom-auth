@@ -11,7 +11,7 @@ public interface Permission {
 
   Completes<PermissionState> enforceReplacement(String constraintName, final Constraint constraint);
 
-  Completes<PermissionState> forget(final Constraint constraint);
+  Completes<PermissionState> forget(final String constraintName);
 
   Completes<PermissionState> changeDescription(final String description);
 
