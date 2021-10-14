@@ -14,11 +14,13 @@ import io.vlingo.xoom.auth.model.value.*;
 public final class PermissionConstraintReplacementEnforced extends IdentifiedDomainEvent {
 
   public final PermissionId permissionId;
+  public final String constraintName;
   public final Constraint constraint;
 
-  public PermissionConstraintReplacementEnforced(final PermissionId permissionId, final Constraint constraint) {
+  public PermissionConstraintReplacementEnforced(final PermissionId permissionId, final String constraintName, final Constraint constraint) {
     super(SemanticVersion.from("1.0.0").toValue());
     this.permissionId = permissionId;
+    this.constraintName = constraintName;
     this.constraint = constraint;
   }
 

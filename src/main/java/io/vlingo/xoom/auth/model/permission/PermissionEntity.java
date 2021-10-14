@@ -26,26 +26,17 @@ public final class PermissionEntity extends EventSourced implements Permission {
 
   @Override
   public Completes<PermissionState> provisionPermission(final String name, final String description) {
-    /**
-     * TODO: Implement command logic. See {@link PermissionState#provisionPermission()}
-     */
     return apply(new PermissionProvisioned(state.id, name, description), () -> state);
   }
 
   @Override
   public Completes<PermissionState> enforce(final Constraint constraint) {
-    /**
-     * TODO: Implement command logic. See {@link PermissionState#enforce()}
-     */
     return apply(new PermissionConstraintEnforced(state.id, constraint), () -> state);
   }
 
   @Override
-  public Completes<PermissionState> enforceReplacement(final Constraint constraint) {
-    /**
-     * TODO: Implement command logic. See {@link PermissionState#enforceReplacement()}
-     */
-    return apply(new PermissionConstraintReplacementEnforced(state.id, constraint), () -> state);
+  public Completes<PermissionState> enforceReplacement(final String constraintName, final Constraint constraint) {
+    return apply(new PermissionConstraintReplacementEnforced(state.id, constraintName, constraint), () -> state);
   }
 
   @Override
@@ -73,7 +64,7 @@ public final class PermissionEntity extends EventSourced implements Permission {
   }
 
   private void applyPermissionConstraintReplacementEnforced(final PermissionConstraintReplacementEnforced event) {
-    state = state.enforceReplacement(event.constraint);
+    state = state.enforceReplacement(event.constraintName, event.constraint);
   }
 
   private void applyPermissionConstraintForgotten(final PermissionConstraintForgotten event) {

@@ -19,9 +19,6 @@ import io.vlingo.xoom.http.resource.Resource;
 import io.vlingo.xoom.lattice.grid.Grid;
 import io.vlingo.xoom.turbo.ComponentRegistry;
 
-import java.nio.CharBuffer;
-import java.util.UUID;
-
 import static io.vlingo.xoom.common.serialization.JsonSerialization.serialized;
 import static io.vlingo.xoom.http.Response.Status.*;
 import static io.vlingo.xoom.http.ResponseHeader.Location;
@@ -58,7 +55,7 @@ public class PermissionResource extends DynamicResourceHandler {
 
   public Completes<Response> enforceReplacement(final String tenantId, final String permissionName, final String constraintName, final ConstraintData data) {
     return resolve(tenantId, permissionName)
-            .andThenTo(permission -> permission.enforceReplacement(data.toConstraint()))
+            .andThenTo(permission -> permission.enforceReplacement(constraintName, data.toConstraint()))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));

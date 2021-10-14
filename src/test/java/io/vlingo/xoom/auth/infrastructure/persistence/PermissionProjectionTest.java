@@ -2,6 +2,7 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
+import io.vlingo.xoom.auth.infrastructure.ConstraintData;
 import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.model.permission.*;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
@@ -60,8 +61,10 @@ public class PermissionProjectionTest {
 
   @Test
   public void provisionPermission() {
-    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(), FIRST_PERMISSION_NAME, "first-permission-description");
-    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(), SECOND_PERMISSION_NAME, "second-permission-description");
+    final ConstraintData firstConstraintData = ConstraintData.from("String", "constraint-A", "1", "Constraint A");
+    final ConstraintData secondConstraintData = ConstraintData.from("String", "constraint-B", "1", "Constraint B");
+    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(Collections.singletonList(firstConstraintData)), FIRST_PERMISSION_NAME, "first-permission-description");
+    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(Collections.singletonList(secondConstraintData)), SECOND_PERMISSION_NAME, "second-permission-description");
 
     final CountingProjectionControl control = new CountingProjectionControl();
     final AccessSafely access = control.afterCompleting(2);
@@ -96,8 +99,10 @@ public class PermissionProjectionTest {
 
   @Test
   public void enforce() {
-    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(), FIRST_PERMISSION_NAME, "first-permission-description");
-    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(), SECOND_PERMISSION_NAME, "second-permission-description");
+    final ConstraintData firstConstraintData = ConstraintData.from("String", "constraint-A", "1", "Constraint A");
+    final ConstraintData secondConstraintData = ConstraintData.from("String", "constraint-B", "1", "Constraint B");
+    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(Collections.singletonList(firstConstraintData)), FIRST_PERMISSION_NAME, "first-permission-description");
+    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(Collections.singletonList(secondConstraintData)), SECOND_PERMISSION_NAME, "second-permission-description");
     registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -119,8 +124,10 @@ public class PermissionProjectionTest {
 
   @Test
   public void enforceReplacement() {
-    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(), FIRST_PERMISSION_NAME, "first-permission-description");
-    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(), SECOND_PERMISSION_NAME, "second-permission-description");
+    final ConstraintData firstConstraintData = ConstraintData.from("String", "constraint-A", "1", "Constraint A");
+    final ConstraintData secondConstraintData = ConstraintData.from("String", "constraint-B", "1", "Constraint B");
+    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(Collections.singletonList(firstConstraintData)), FIRST_PERMISSION_NAME, "first-permission-description");
+    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(Collections.singletonList(secondConstraintData)), SECOND_PERMISSION_NAME, "second-permission-description");
     registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -142,8 +149,10 @@ public class PermissionProjectionTest {
 
   @Test
   public void forget() {
-    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(), FIRST_PERMISSION_NAME, "first-permission-description");
-    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(), SECOND_PERMISSION_NAME, "second-permission-description");
+    final ConstraintData firstConstraintData = ConstraintData.from("String", "constraint-A", "1", "Constraint A");
+    final ConstraintData secondConstraintData = ConstraintData.from("String", "constraint-B", "1", "Constraint B");
+    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(Collections.singletonList(firstConstraintData)), FIRST_PERMISSION_NAME, "first-permission-description");
+    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(Collections.singletonList(secondConstraintData)), SECOND_PERMISSION_NAME, "second-permission-description");
     registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -165,8 +174,10 @@ public class PermissionProjectionTest {
 
   @Test
   public void changeDescription() {
-    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(), FIRST_PERMISSION_NAME, "first-permission-description");
-    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(), SECOND_PERMISSION_NAME, "second-permission-description");
+    final ConstraintData firstConstraintData = ConstraintData.from("String", "constraint-A", "1", "Constraint A");
+    final ConstraintData secondConstraintData = ConstraintData.from("String", "constraint-B", "1", "Constraint B");
+    final PermissionData firstData = PermissionData.from(FIRST_PERMISSION_ID, new HashSet<>(Collections.singletonList(firstConstraintData)), FIRST_PERMISSION_NAME, "first-permission-description");
+    final PermissionData secondData = PermissionData.from(SECOND_PERMISSION_ID, new HashSet<>(Collections.singletonList(secondConstraintData)), SECOND_PERMISSION_NAME, "second-permission-description");
     registerExamplePermission(firstData.toPermissionState(), secondData.toPermissionState());
 
     final CountingProjectionControl control = new CountingProjectionControl();
@@ -215,7 +226,7 @@ public class PermissionProjectionTest {
   }
 
   private Projectable createPermissionConstraintReplacementEnforced(PermissionState data) {
-    final PermissionConstraintReplacementEnforced eventData = new PermissionConstraintReplacementEnforced(data.id, data.constraints.stream().findFirst().orElse(null));
+    final PermissionConstraintReplacementEnforced eventData = new PermissionConstraintReplacementEnforced(data.id, data.constraints.stream().findFirst().get().name, data.constraints.stream().findFirst().orElse(null));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(PermissionConstraintReplacementEnforced.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 

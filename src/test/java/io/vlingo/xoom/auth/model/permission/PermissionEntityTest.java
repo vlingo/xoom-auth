@@ -68,7 +68,7 @@ public class PermissionEntityTest {
 
     givenPermissionIsProvisioned(PERMISSION_ID);
 
-    final Constraint constraint = Constraint.from(Constraint.Type.String, "updated-permission-constraints-name", "updated-permission-constraints-value", "updated-permission-constraints-description");
+    final Constraint constraint = Constraint.from(Constraint.Type.String, "constraint-name", "A", "constraint-description");
     final PermissionState state = permissionOf(PERMISSION_ID).enforce(constraint).await();
 
     assertEquals(PERMISSION_ID, state.id);
@@ -78,18 +78,16 @@ public class PermissionEntityTest {
 
   @Test
   public void permissionConstraintReplacementIsEnforced() {
-    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final AccessSafely dispatcherAccess = dispatcher.afterCompleting(3);
 
-    givenPermissionIsProvisioned(PERMISSION_ID);
+    givenPermissionIsProvisionedWithEnforcedConstraint(PERMISSION_ID, "constraint-A");
 
-    final Constraint constraint = Constraint.from(Constraint.Type.String, "updated-permission-constraints-name", "updated-permission-constraints-value", "updated-permission-constraints-description");
-    final PermissionState state = permissionOf(PERMISSION_ID).enforceReplacement(constraint).await();
+    final Constraint replacementConstraint = Constraint.from(Constraint.Type.String, "constraint-B", "updated-permission-constraints-value", "updated-permission-constraints-description");
+    final PermissionState state = permissionOf(PERMISSION_ID).enforceReplacement("constraint-A", replacementConstraint).await();
 
-    assertEquals(PERMISSION_NAME, state.name);
-    assertEquals(PERMISSION_DESCRIPTION, state.description);
-    assertEquals(PERMISSION_ID, state.id);
-    assertNotNull(state.constraints);
-    assertEventDispatched(dispatcherAccess, 2, PermissionConstraintReplacementEnforced.class);
+    assertEquals(1, state.constraints.size());
+    assertEquals(replacementConstraint, state.constraints.stream().findFirst().get());
+    assertEventDispatched(dispatcherAccess, 3, PermissionConstraintReplacementEnforced.class);
   }
 
   @Test
@@ -124,6 +122,18 @@ public class PermissionEntityTest {
 
   private void givenPermissionIsProvisioned(final PermissionId permissionId) {
     permissionOf(permissionId).provisionPermission(PERMISSION_NAME, PERMISSION_DESCRIPTION).await();
+  }
+
+  private void givenPermissionIsProvisionedWithEnforcedConstraint(final PermissionId permissionId, final String name) {
+    givenPermissionIsProvisioned(permissionId);
+    permissionOf(PERMISSION_ID).enforce(
+            Constraint.from(
+                    Constraint.Type.String,
+                    name,
+                    "A",
+                    "constraint-description"
+            )
+    ).await(100);
   }
 
   private Permission permissionOf(PermissionId permissionId) {

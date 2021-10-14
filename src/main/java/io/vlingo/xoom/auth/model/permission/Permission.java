@@ -9,7 +9,7 @@ public interface Permission {
 
   Completes<PermissionState> enforce(final Constraint constraint);
 
-  Completes<PermissionState> enforceReplacement(final Constraint constraint);
+  Completes<PermissionState> enforceReplacement(String constraintName, final Constraint constraint);
 
   Completes<PermissionState> forget(final Constraint constraint);
 

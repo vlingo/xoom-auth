@@ -22,18 +22,19 @@ public final class PermissionState {
   }
 
   public PermissionState provisionPermission(final String name, final String description) {
-    //TODO: Implement command logic.
     return new PermissionState(this.id, this.constraints, name, description);
   }
 
   public PermissionState enforce(final Constraint constraint) {
-    //TODO: Implement command logic.
     this.constraints.add(constraint);
     return new PermissionState(this.id, this.constraints, this.name, this.description);
   }
 
-  public PermissionState enforceReplacement(final Constraint constraint) {
-    //TODO: Implement command logic.
+  public PermissionState enforceReplacement(final String constraintName, final Constraint constraint) {
+    this.constraints.stream()
+            .filter(c -> c.name.equals(constraintName))
+            .findFirst()
+            .ifPresent(c -> constraints.remove(c));
     this.constraints.add(constraint);
     return new PermissionState(this.id, this.constraints, this.name, this.description);
   }
