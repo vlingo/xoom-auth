@@ -68,7 +68,7 @@ public class PermissionEntityTest {
 
     givenPermissionIsProvisioned(PERMISSION_ID);
 
-    final Constraint constraint = Constraint.from("updated-permission-constraints-description", "updated-permission-constraints-name", "updated-permission-constraints-type", "updated-permission-constraints-value");
+    final Constraint constraint = Constraint.from(Constraint.Type.String, "updated-permission-constraints-name", "updated-permission-constraints-value", "updated-permission-constraints-description");
     final PermissionState state = permissionOf(PERMISSION_ID).enforce(constraint).await();
 
     assertEquals(PERMISSION_ID, state.id);
@@ -77,12 +77,12 @@ public class PermissionEntityTest {
   }
 
   @Test
-  public void enforceReplacement() {
+  public void permissionConstraintReplacementIsEnforced() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
 
     givenPermissionIsProvisioned(PERMISSION_ID);
 
-    final Constraint constraint = Constraint.from("updated-permission-constraints-description", "updated-permission-constraints-name", "updated-permission-constraints-type", "updated-permission-constraints-value");
+    final Constraint constraint = Constraint.from(Constraint.Type.String, "updated-permission-constraints-name", "updated-permission-constraints-value", "updated-permission-constraints-description");
     final PermissionState state = permissionOf(PERMISSION_ID).enforceReplacement(constraint).await();
 
     assertEquals(PERMISSION_NAME, state.name);
@@ -98,7 +98,7 @@ public class PermissionEntityTest {
 
     givenPermissionIsProvisioned(PERMISSION_ID);
 
-    final Constraint constraint = Constraint.from("updated-permission-constraints-description", "updated-permission-constraints-name", "updated-permission-constraints-type", "updated-permission-constraints-value");
+    final Constraint constraint = Constraint.from(Constraint.Type.String, "updated-permission-constraints-name", "updated-permission-constraints-value", "updated-permission-constraints-description");
     final PermissionState state = permissionOf(PERMISSION_ID).forget(constraint).await();
 
     assertEquals(PERMISSION_NAME, state.name);

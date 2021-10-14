@@ -6,17 +6,23 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public final class Constraint {
+  public enum Type { String, Integer, Double, Boolean }
 
   public final String description;
   public final String name;
-  public final String type;
+  public final Type type;
   public final String value;
 
-  public static Constraint from(final String description, final String name, final String type, final String value) {
-    return new Constraint(description, name, type, value);
+  @Deprecated
+  public static Constraint from(final String type, final String name, final String value, final String description) {
+    return new Constraint(Type.valueOf(type), name, value, description);
   }
 
-  private Constraint (final String description, final String name, final String type, final String value) {
+  public static Constraint from(final Type type, final String name, final String value, final String description) {
+    return new Constraint(type, name, value, description);
+  }
+
+  private Constraint(final Type type, final String name, final String value, final String description) {
     this.description = description;
     this.name = name;
     this.type = type;

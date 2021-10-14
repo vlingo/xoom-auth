@@ -12,21 +12,21 @@ import io.vlingo.xoom.auth.model.value.*;
 
 public class ConstraintData {
 
-  public final String description;
-  public final String name;
   public final String type;
+  public final String name;
   public final String value;
+  public final String description;
 
   public static ConstraintData from(final Constraint constraint) {
     if (constraint == null) {
       return ConstraintData.empty();
     } else {
-      return from(constraint.description, constraint.name, constraint.type, constraint.value);
+      return from(constraint.type.name(), constraint.name, constraint.value, constraint.description);
     }
   }
 
-  public static ConstraintData from(final String description, final String name, final String type, final String value) {
-    return new ConstraintData(description, name, type, value);
+  public static ConstraintData from(final String type, final String name,  final String value, final String description) {
+    return new ConstraintData(type, name, value, description);
   }
 
   public static Set<ConstraintData> fromAll(final Set<Constraint> correspondingObjects) {
@@ -37,7 +37,7 @@ public class ConstraintData {
     return correspondingObjects == null ? Collections.emptyList() : correspondingObjects.stream().map(ConstraintData::from).collect(Collectors.toList());
   }
 
-  private ConstraintData (final String description, final String name, final String type, final String value) {
+  private ConstraintData(final String type, final String name, final String value, final String description) {
     this.description = description;
     this.name = name;
     this.type = type;
@@ -45,7 +45,7 @@ public class ConstraintData {
   }
 
   public Constraint toConstraint() {
-    return Constraint.from(description, name, type, value);
+    return Constraint.from(Constraint.Type.valueOf(type), name, value, description);
   }
 
   public static ConstraintData empty() {
