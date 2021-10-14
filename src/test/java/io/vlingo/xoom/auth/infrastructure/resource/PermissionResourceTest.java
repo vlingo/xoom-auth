@@ -7,18 +7,16 @@
 
 package io.vlingo.xoom.auth.infrastructure.resource;
 
+import io.vlingo.xoom.auth.infrastructure.ConstraintData;
+import io.vlingo.xoom.auth.infrastructure.PermissionData;
+import io.vlingo.xoom.auth.infrastructure.TenantData;
+import io.vlingo.xoom.http.Response;
+import org.junit.jupiter.api.Test;
+
 import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
 import static io.vlingo.xoom.common.serialization.JsonSerialization.serialized;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import io.vlingo.xoom.auth.infrastructure.ConstraintData;
-import io.vlingo.xoom.auth.infrastructure.PermissionData;
-import io.vlingo.xoom.auth.infrastructure.TenantData;
-
-import io.vlingo.xoom.http.Response;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 public class PermissionResourceTest extends ResourceTest {
   private PermissionData permissionData;
@@ -91,7 +89,6 @@ public class PermissionResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatPermissionQueryFindsMultiple() {
     permission();
     final PermissionData permissionData1 = permissionData;
