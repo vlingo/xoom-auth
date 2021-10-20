@@ -3,6 +3,7 @@ package io.vlingo.xoom.auth.model.tenant;
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.persistence.*;
+import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
 import io.vlingo.xoom.symbio.EntryAdapterProvider;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
 import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +25,6 @@ public class TenantEntityTest {
   private static final String TENANT_DESCRIPTION = "tenant-description";
 
   private World world;
-  private Journal<String> journal;
   private MockDispatcher dispatcher;
 
   @BeforeEach
@@ -33,87 +34,93 @@ public class TenantEntityTest {
 
     dispatcher = new MockDispatcher();
 
-    EntryAdapterProvider entryAdapterProvider = EntryAdapterProvider.instance(world);
-
+    final EntryAdapterProvider entryAdapterProvider = EntryAdapterProvider.instance(world);
     entryAdapterProvider.registerAdapter(TenantActivated.class, new TenantActivatedAdapter());
     entryAdapterProvider.registerAdapter(TenantDeactivated.class, new TenantDeactivatedAdapter());
     entryAdapterProvider.registerAdapter(TenantDescriptionChanged.class, new TenantDescriptionChangedAdapter());
     entryAdapterProvider.registerAdapter(TenantNameChanged.class, new TenantNameChangedAdapter());
     entryAdapterProvider.registerAdapter(TenantSubscribed.class, new TenantSubscribedAdapter());
 
-    journal = world.actorFor(Journal.class, InMemoryJournalActor.class, Collections.singletonList(dispatcher));
+    final Journal<String> journal = world.actorFor(Journal.class, InMemoryJournalActor.class, Collections.singletonList(dispatcher));
 
     new SourcedTypeRegistry(world).register(new Info(journal, TenantEntity.class, TenantEntity.class.getSimpleName()));
   }
 
   @Test
-  public void subscribeFor() {
+  public void tenantSubscribesWithNameAndDescription() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final TenantState state = tenantOf(TENANT_ID).subscribeFor(TENANT_NAME, TENANT_DESCRIPTION, true).await();
+    final Completes<TenantState> outcome = tenantOf(TENANT_ID)
+            .subscribeFor(TENANT_NAME, TENANT_DESCRIPTION, true);
 
-    assertEquals(TENANT_NAME, state.name);
-    assertEquals(TENANT_DESCRIPTION, state.description);
-    assertTrue(state.active);
-    assertEventDispatched(dispatcherAccess, 1, TenantSubscribed.class);
+    assertCompletes(outcome, state -> {
+      assertEquals(TENANT_NAME, state.name);
+      assertEquals(TENANT_DESCRIPTION, state.description);
+      assertTrue(state.active);
+      assertEventDispatched(dispatcherAccess, 1, TenantSubscribed.class);
+    });
   }
 
   @Test
-  public void activate() {
+  public void tenantIsActivated() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
 
-    givenInactiveTenant(TENANT_ID);
+    final Completes<TenantState> outcome = givenInactiveTenant(TENANT_ID)
+            .andThenTo(t -> tenantOf(TENANT_ID).activate());
 
-    final TenantState state = tenantOf(TENANT_ID).activate().await();
-
-    assertTrue(state.active);
-    assertEventDispatched(dispatcherAccess, 2, TenantActivated.class);
+    assertCompletes(outcome, state -> {
+      assertTrue(state.active);
+      assertEventDispatched(dispatcherAccess, 2, TenantActivated.class);
+    });
   }
 
   @Test
-  public void deactivate() {
+  public void tenantIsDeactivated() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
 
-    givenActiveTenant(TENANT_ID);
+    final Completes<TenantState> outcome = givenActiveTenant(TENANT_ID)
+            .andThenTo(t -> tenantOf(TENANT_ID).deactivate());
 
-    final TenantState state = tenantOf(TENANT_ID).deactivate().await();
-
-    assertFalse(state.active);
-    assertEventDispatched(dispatcherAccess, 2, TenantDeactivated.class);
+    assertCompletes(outcome, state -> {
+      assertFalse(state.active);
+      assertEventDispatched(dispatcherAccess, 2, TenantDeactivated.class);
+    });
   }
 
   @Test
-  public void changeName() {
+  public void tenantNameIsChanged() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
 
-    givenActiveTenant(TENANT_ID);
+    final Completes<TenantState> outcome = givenActiveTenant(TENANT_ID)
+            .andThenTo(t -> tenantOf(TENANT_ID).changeName("updated-tenant-name"));
 
-    final TenantState state = tenantOf(TENANT_ID).changeName("updated-tenant-name").await();
-
-    assertEquals("updated-tenant-name", state.name);
-    assertEventDispatched(dispatcherAccess, 2, TenantNameChanged.class);
+    assertCompletes(outcome, state -> {
+      assertEquals("updated-tenant-name", state.name);
+      assertEventDispatched(dispatcherAccess, 2, TenantNameChanged.class);
+    });
   }
 
   @Test
-  public void changeDescription() {
+  public void tenantDescriptionIsChanged() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
 
-    givenActiveTenant(TENANT_ID);
+    final Completes<TenantState> outcome = givenActiveTenant(TENANT_ID)
+            .andThenTo(t -> tenantOf(TENANT_ID).changeDescription("updated-tenant-description"));
 
-    final TenantState state = tenantOf(TENANT_ID).changeDescription("updated-tenant-description").await();
-
-    assertEquals("updated-tenant-description", state.description);
-    assertEventDispatched(dispatcherAccess, 2, TenantDescriptionChanged.class);
+    assertCompletes(outcome, state -> {
+      assertEquals("updated-tenant-description", state.description);
+      assertEventDispatched(dispatcherAccess, 2, TenantDescriptionChanged.class);
+    });
   }
 
-  private void givenActiveTenant(TenantId tenantId) {
-    tenantOf(TENANT_ID).subscribeFor(TENANT_NAME, TENANT_DESCRIPTION, true).await();
+  private Completes<TenantState> givenActiveTenant(final TenantId tenantId) {
+    return tenantOf(tenantId).subscribeFor(TENANT_NAME, TENANT_DESCRIPTION, true);
   }
 
-  private void givenInactiveTenant(TenantId tenantId) {
-    tenantOf(TENANT_ID).subscribeFor(TENANT_NAME, TENANT_DESCRIPTION, false).await();
+  private Completes<TenantState> givenInactiveTenant(final TenantId tenantId) {
+    return tenantOf(tenantId).subscribeFor(TENANT_NAME, TENANT_DESCRIPTION, false);
   }
 
-  private Tenant tenantOf(TenantId tenantId) {
+  private Tenant tenantOf(final TenantId tenantId) {
     return world.actorFor(Tenant.class, TenantEntity.class, tenantId);
   }
 }
