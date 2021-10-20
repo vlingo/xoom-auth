@@ -9,6 +9,7 @@ import io.vlingo.xoom.auth.model.group.Group;
 import io.vlingo.xoom.auth.model.group.GroupEntity;
 import io.vlingo.xoom.auth.model.group.GroupId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
+import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.http.ContentType;
 import io.vlingo.xoom.http.Response;
@@ -73,7 +74,7 @@ public class GroupResource extends DynamicResourceHandler {
 
   public Completes<Response> assignUser(final String tenantId, final String groupName, final String username, final GroupData data) {
     return resolve(tenantId, groupName)
-            .andThenTo(group -> group.assignUser(TenantId.from(data.tenantId)))
+            .andThenTo(group -> group.assignUser(UserId.from(TenantId.from(data.tenantId), username)))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -81,7 +82,7 @@ public class GroupResource extends DynamicResourceHandler {
 
   public Completes<Response> unassignUser(final String tenantId, final String groupName, final String username, final GroupData data) {
     return resolve(tenantId, groupName)
-            .andThenTo(group -> group.unassignUser(TenantId.from(data.tenantId)))
+            .andThenTo(group -> group.unassignUser(UserId.from(TenantId.from(data.tenantId), username)))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));

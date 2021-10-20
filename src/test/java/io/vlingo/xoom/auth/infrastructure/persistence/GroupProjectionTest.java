@@ -3,6 +3,7 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
+import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.serialization.JsonSerialization;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.Projection;
@@ -259,7 +260,8 @@ public class GroupProjectionTest {
   }
 
   private Projectable createUserAssignedToGroup(GroupState data) {
-    final UserAssignedToGroup eventData = new UserAssignedToGroup(data.id);
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
+    final UserAssignedToGroup eventData = new UserAssignedToGroup(data.id, userId);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserAssignedToGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
@@ -270,7 +272,8 @@ public class GroupProjectionTest {
   }
 
   private Projectable createUserUnassignedFromGroup(GroupState data) {
-    final UserUnassignedFromGroup eventData = new UserUnassignedFromGroup(data.id);
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
+    final UserUnassignedFromGroup eventData = new UserUnassignedFromGroup(data.id, userId);
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserUnassignedFromGroup.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 

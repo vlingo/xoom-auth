@@ -1,13 +1,14 @@
 package io.vlingo.xoom.auth.infrastructure;
 
 import io.vlingo.xoom.auth.model.group.GroupId;
+import io.vlingo.xoom.auth.model.group.GroupState;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.*;
-import io.vlingo.xoom.auth.model.group.GroupState;
 
 @SuppressWarnings("all")
 public class GroupData {
@@ -51,7 +52,7 @@ public class GroupData {
   }
 
   public GroupState toGroupState() {
-    return new GroupState(GroupId.from(TenantId.from(tenantId), name), name, description);
+    return new GroupState(groupId(), name, description);
   }
 
   @Override
@@ -81,4 +82,7 @@ public class GroupData {
               .toString();
   }
 
+  public GroupId groupId() {
+    return GroupId.from(TenantId.from(tenantId), name);
+  }
 }

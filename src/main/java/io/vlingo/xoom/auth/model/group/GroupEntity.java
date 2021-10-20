@@ -1,8 +1,7 @@
 package io.vlingo.xoom.auth.model.group;
 
-import io.vlingo.xoom.auth.model.tenant.TenantId;
+import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.Completes;
-
 import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
 
 /**
@@ -36,35 +35,23 @@ public final class GroupEntity extends EventSourced implements Group {
   }
 
   @Override
-  public Completes<GroupState> assignGroup(final GroupId groupId) {
-    /**
-     * TODO: Implement command logic. See {@link GroupState#assignGroup()}
-     */
+  public Completes<GroupState> assignGroup(GroupId groupId) {
     return apply(new GroupAssignedToGroup(state.id, groupId), () -> state);
   }
 
   @Override
   public Completes<GroupState> unassignGroup(final GroupId groupId) {
-    /**
-     * TODO: Implement command logic. See {@link GroupState#unassignGroup()}
-     */
     return apply(new GroupUnassignedFromGroup(state.id, groupId), () -> state);
   }
 
   @Override
-  public Completes<GroupState> assignUser(final TenantId tenantId) {
-    /**
-     * TODO: Implement command logic. See {@link GroupState#assignUser()}
-     */
-    return apply(new UserAssignedToGroup(state.id), () -> state);
+  public Completes<GroupState> assignUser(final UserId userId) {
+    return apply(new UserAssignedToGroup(state.id, userId), () -> state);
   }
 
   @Override
-  public Completes<GroupState> unassignUser(final TenantId tenantId) {
-    /**
-     * TODO: Implement command logic. See {@link GroupState#unassignUser()}
-     */
-    return apply(new UserUnassignedFromGroup(state.id), () -> state);
+  public Completes<GroupState> unassignUser(final UserId userId) {
+    return apply(new UserUnassignedFromGroup(state.id, userId), () -> state);
   }
 
   private void applyGroupProvisioned(final GroupProvisioned event) {
@@ -84,11 +71,11 @@ public final class GroupEntity extends EventSourced implements Group {
   }
 
   private void applyUserAssignedToGroup(final UserAssignedToGroup event) {
-    state = state.assignUser(event.groupId.tenantId);
+    state = state.assignUser(event.userId);
   }
 
   private void applyUserUnassignedFromGroup(final UserUnassignedFromGroup event) {
-    state = state.unassignUser(event.groupId.tenantId);
+    state = state.unassignUser(event.userId);
   }
 
   /*

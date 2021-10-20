@@ -4,19 +4,24 @@ import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.persistence.*;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
+import io.vlingo.xoom.auth.model.user.UserId;
+import io.vlingo.xoom.auth.model.value.EncodedMember;
+import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
 import io.vlingo.xoom.symbio.EntryAdapterProvider;
 import io.vlingo.xoom.symbio.store.journal.Journal;
 import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.HashSet;
 
+import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
 import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class GroupEntityTest {
 
@@ -26,18 +31,15 @@ public class GroupEntityTest {
   private final GroupId GROUP_ID = GroupId.from(TENANT_ID, GROUP_NAME);
 
   private World world;
-  private Journal<String> journal;
   private MockDispatcher dispatcher;
 
   @BeforeEach
   @SuppressWarnings({"unchecked", "rawtypes"})
-  public void setUp(){
+  public void setUp() {
     world = World.startWithDefaults("test-es");
-
     dispatcher = new MockDispatcher();
 
-    EntryAdapterProvider entryAdapterProvider = EntryAdapterProvider.instance(world);
-
+    final EntryAdapterProvider entryAdapterProvider = EntryAdapterProvider.instance(world);
     entryAdapterProvider.registerAdapter(GroupProvisioned.class, new GroupProvisionedAdapter());
     entryAdapterProvider.registerAdapter(GroupDescriptionChanged.class, new GroupDescriptionChangedAdapter());
     entryAdapterProvider.registerAdapter(GroupAssignedToGroup.class, new GroupAssignedToGroupAdapter());
@@ -45,109 +47,123 @@ public class GroupEntityTest {
     entryAdapterProvider.registerAdapter(UserAssignedToGroup.class, new UserAssignedToGroupAdapter());
     entryAdapterProvider.registerAdapter(UserUnassignedFromGroup.class, new UserUnassignedFromGroupAdapter());
 
-    journal = world.actorFor(Journal.class, InMemoryJournalActor.class, Collections.singletonList(dispatcher));
+    final Journal<String> journal = world.actorFor(Journal.class, InMemoryJournalActor.class, Collections.singletonList(dispatcher));
 
     new SourcedTypeRegistry(world).register(new Info(journal, GroupEntity.class, GroupEntity.class.getSimpleName()));
   }
 
   @Test
-  public void provisionGroup() {
+  public void groupIsProvisionedWithNameAndDescription() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final GroupState state = groupOf(GROUP_ID).provisionGroup(GROUP_NAME, GROUP_DESCRIPTION).await();
+    final Completes<GroupState> outcome = groupOf(GROUP_ID).provisionGroup(GROUP_NAME, GROUP_DESCRIPTION);
 
-    assertEquals(GROUP_NAME, state.name);
-    assertEquals(GROUP_DESCRIPTION, state.description);
-    assertEquals(GROUP_ID, state.id);
-    assertEventDispatched(dispatcherAccess, 1, GroupProvisioned.class);
+    assertCompletes(outcome, state -> {
+      assertEquals(GROUP_NAME, state.name);
+      assertEquals(GROUP_DESCRIPTION, state.description);
+      assertEquals(GROUP_ID, state.id);
+      assertEventDispatched(dispatcherAccess, 1, GroupProvisioned.class);
+    });
   }
 
   @Test
-  public void changeDescription() {
+  public void groupDescriptionIsChanged() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
 
-    givenGroupIsProvisioned(GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION);
+    final Completes<GroupState> outcome = givenGroupIsProvisioned(GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION)
+            .andThenTo(g -> groupOf(GROUP_ID).changeDescription("updated-groupOf-description"));
 
-    final GroupState state = groupOf(GROUP_ID).changeDescription("updated-groupOf-description").await();
-
-    assertEquals(GROUP_NAME, state.name);
-    assertEquals("updated-groupOf-description", state.description);
-    assertEquals(GROUP_ID, state.id);
-    assertEventDispatched(dispatcherAccess, 2, GroupDescriptionChanged.class);
+    assertCompletes(outcome, state -> {
+      assertEquals(GROUP_NAME, state.name);
+      assertEquals("updated-groupOf-description", state.description);
+      assertEquals(GROUP_ID, state.id);
+      assertEventDispatched(dispatcherAccess, 2, GroupDescriptionChanged.class);
+    });
   }
 
   @Test
-  public void assignGroup() {
+  public void groupIsAssignedAnotherGroup() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final GroupId innerGroupId = GroupId.from(TENANT_ID, "Group B");
 
-    givenGroupIsProvisioned(GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION);
-    GroupState innerGroup = givenGroupIsProvisioned(GroupId.from(TENANT_ID, "Group B"), "Group B", "Group B description");
+    final Completes<GroupState> outcome = givenGroupIsProvisioned(GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION)
+            .andThenTo(g -> givenGroupIsProvisioned(innerGroupId, "Group B", "Group B description"))
+            .andThenTo(g -> groupOf(GROUP_ID).assignGroup(innerGroupId));
 
-    final GroupState state = groupOf(GROUP_ID).assignGroup(innerGroup.id).await();
-
-    // @TODO implement assignGroup()
-    assertEquals(GROUP_NAME, state.name);
-    assertEquals(GROUP_DESCRIPTION, state.description);
-    assertEquals(GROUP_ID, state.id);
-    assertEventDispatched(dispatcherAccess, 3, GroupAssignedToGroup.class);
+    assertCompletes(outcome, state -> {
+      assertContainsMember(EncodedMember.group(innerGroupId), state);
+      assertEventDispatched(dispatcherAccess, 3, GroupAssignedToGroup.class);
+    });
   }
 
   @Test
-  public void unassignGroup() {
+  public void groupIsUnassignedFromAnotherGroup() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final GroupId groupBId = GroupId.from(TENANT_ID, "Group B");
+    final GroupId groupCId = GroupId.from(TENANT_ID, "Group C");
 
-    givenGroupIsProvisioned(GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION);
-    GroupState innerGroup = givenGroupIsProvisioned(GroupId.from(TENANT_ID, "Group B"), "Group B", "Group B description");
+    final Completes<GroupState> outcome = givenGroupIsProvisioned(GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION)
+            .andThenTo(g -> givenGroupIsProvisioned(groupBId, "Group B", "Group B description"))
+            .andThenTo(g -> givenGroupIsProvisioned(groupBId, "Group C", "Group C description"))
+            .andThenTo(g -> groupOf(GROUP_ID).assignGroup(groupBId))
+            .andThenTo(g -> groupOf(GROUP_ID).assignGroup(groupCId))
+            .andThenTo(g -> groupOf(GROUP_ID).unassignGroup(groupBId));
 
-    groupOf(GROUP_ID).assignGroup(innerGroup.id).await();
-
-    final GroupState state = groupOf(GROUP_ID).unassignGroup(innerGroup.id).await();
-
-    // @TODO implement unassignGroup()
-    assertEquals(GROUP_NAME, state.name);
-    assertEquals(GROUP_DESCRIPTION, state.description);
-    assertEquals(GROUP_ID, state.id);
-    assertEventDispatched(dispatcherAccess, 4, GroupUnassignedFromGroup.class);
+    assertCompletes(outcome, state -> {
+      assertNotContainsMember(EncodedMember.group(groupBId), state);
+      assertContainsMember(EncodedMember.group(groupCId), state);
+      assertEventDispatched(dispatcherAccess, 6, GroupUnassignedFromGroup.class);
+    });
   }
 
   @Test
-  @Disabled("Requires user implementation")
-  public void assignUser() {
+  public void userIsAssignedToAGroup() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
 
-    givenGroupIsProvisioned(GROUP_ID);
+    final Completes<GroupState> outcome = givenGroupIsProvisioned(GROUP_ID)
+            .andThenTo(g -> groupOf(GROUP_ID).assignUser(userId));
 
-    final GroupState state = groupOf(GROUP_ID).assignUser(TenantId.from("updated-groupOf-tenantId")).await();
-
-    assertEquals(state.name, "groupOf-name");
-    assertEquals(state.description, "groupOf-description");
-    assertEquals(state.id.tenantId, "updated-groupOf-tenantId");
-    assertEventDispatched(dispatcherAccess, 2, UserAssignedToGroup.class);
+    assertCompletes(outcome, state -> {
+      assertContainsMember(EncodedMember.user(userId), state);
+      assertEventDispatched(dispatcherAccess, 2, UserAssignedToGroup.class);
+    });
   }
 
   @Test
-  @Disabled("Requires user implementation")
-  public void unassignUser() {
+  public void userIsUnassignedFromAGroup() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final UserId firstUserId = UserId.from(TenantId.unique(), "bobby");
+    final UserId secondUserId = UserId.from(TenantId.unique(), "alice");
 
-    givenGroupIsProvisioned(GROUP_ID);
+    final Completes<GroupState> outcome = givenGroupIsProvisioned(GROUP_ID)
+            .andThenTo(g -> groupOf(GROUP_ID).assignUser(firstUserId))
+            .andThenTo(g -> groupOf(GROUP_ID).assignUser(secondUserId))
+            .andThenTo(g -> groupOf(GROUP_ID).unassignUser(firstUserId));
 
-    final GroupState state = groupOf(GROUP_ID).unassignUser(TenantId.from("updated-groupOf-tenantId")).await();
-
-    assertEquals(state.name, "groupOf-name");
-    assertEquals(state.description, "groupOf-description");
-    assertEquals(state.id.tenantId, "updated-groupOf-tenantId");
-    assertEventDispatched(dispatcherAccess, 2, UserUnassignedFromGroup.class);
+    assertCompletes(outcome, state -> {
+      assertNotContainsMember(EncodedMember.user(firstUserId), state);
+      assertContainsMember(EncodedMember.user(secondUserId), state);
+      assertEventDispatched(dispatcherAccess, 4, UserUnassignedFromGroup.class);
+    });
   }
 
   private Group groupOf(final GroupId groupId) {
     return world.actorFor(Group.class, GroupEntity.class, groupId);
   }
 
-  private GroupState givenGroupIsProvisioned(final GroupId groupId) {
-    return groupOf(groupId).provisionGroup(GROUP_NAME, GROUP_DESCRIPTION).await();
+  private Completes<GroupState> givenGroupIsProvisioned(final GroupId groupId) {
+    return groupOf(groupId).provisionGroup(GROUP_NAME, GROUP_DESCRIPTION);
   }
 
-  private GroupState givenGroupIsProvisioned(final GroupId groupId, final String name, final String description) {
-    return groupOf(groupId).provisionGroup(name, description).await();
+  private Completes<GroupState> givenGroupIsProvisioned(final GroupId groupId, final String name, final String description) {
+    return groupOf(groupId).provisionGroup(name, description);
+  }
+
+  private void assertContainsMember(final EncodedMember member, final GroupState state) {
+    assertEquals(new HashSet<>(Collections.singletonList(member)), state.members);
+  }
+
+  private void assertNotContainsMember(final EncodedMember member, final GroupState state) {
+    state.members.forEach(m -> assertNotEquals(m, member));
   }
 }

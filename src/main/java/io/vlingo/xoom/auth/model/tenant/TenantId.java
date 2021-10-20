@@ -4,12 +4,17 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class TenantId {
   public final String id;
 
   public static TenantId from(final String tenantId) {
     return new TenantId(tenantId);
+  }
+
+  public static TenantId unique() {
+    return new TenantId(UUID.randomUUID().toString());
   }
 
   private TenantId(final String id) {
