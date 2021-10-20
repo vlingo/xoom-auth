@@ -1,7 +1,6 @@
 package io.vlingo.xoom.auth.model.tenant;
 
 import io.vlingo.xoom.common.Completes;
-
 import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
 
 /**
@@ -40,17 +39,11 @@ public final class TenantEntity extends EventSourced implements Tenant {
 
   @Override
   public Completes<TenantState> changeName(final String name) {
-    /**
-     * TODO: Implement command logic. See {@link TenantState#changeName()}
-     */
     return apply(new TenantNameChanged(state.tenantId, name), () -> state);
   }
 
   @Override
   public Completes<TenantState> changeDescription(final String description) {
-    /**
-     * TODO: Implement command logic. See {@link TenantState#changeDescription()}
-     */
     return apply(new TenantDescriptionChanged(state.tenantId, description), () -> state);
   }
 

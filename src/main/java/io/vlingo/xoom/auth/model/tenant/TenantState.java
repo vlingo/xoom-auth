@@ -32,13 +32,10 @@ public final class TenantState {
   }
 
   public TenantState changeName(final String name) {
-    //TODO: Implement command logic.
     return new TenantState(this.tenantId, name, this.description, this.active);
   }
 
   public TenantState changeDescription(final String description) {
-    //TODO: Implement command logic.
     return new TenantState(this.tenantId, this.name, description, this.active);
   }
-
 }
