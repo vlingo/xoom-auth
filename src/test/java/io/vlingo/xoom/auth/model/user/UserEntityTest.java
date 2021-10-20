@@ -17,10 +17,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
 import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
@@ -116,7 +113,8 @@ public class UserEntityTest {
 
     assertCompletes(outcome, state -> {
       assertEquals(USER_ID, state.userId);
-      assertEquals(new HashSet<>(Arrays.asList(USER_CREDENTIAL, newCredential)), state.credentials);
+      assertContainsCredential(USER_CREDENTIAL, state);
+      assertContainsCredential(newCredential, state);
       assertEventDispatched(dispatcherAccess, 2, UserCredentialAdded.class);
     });
   }
@@ -130,6 +128,7 @@ public class UserEntityTest {
 
     assertCompletes(outcome, state -> {
       assertEquals(USER_ID, state.userId);
+      assertNotContainsCredential(USER_CREDENTIAL, state);
       assertEquals(0, state.credentials.size());
       assertEventDispatched(dispatcherAccess, 2, UserCredentialRemoved.class);
     });
@@ -145,7 +144,8 @@ public class UserEntityTest {
 
     assertCompletes(outcome, state -> {
       assertEquals(USER_ID, state.userId);
-      assertEquals(new HashSet<>(Arrays.asList(newCredential)), state.credentials);
+      assertContainsCredential(newCredential, state);
+      assertNotContainsCredential(USER_CREDENTIAL, state);
       assertEventDispatched(dispatcherAccess, 2, UserCredentialReplaced.class);
     });
   }
@@ -174,5 +174,15 @@ public class UserEntityTest {
 
   private Completes<UserState> givenActiveUser(final UserId userId) {
     return userOf(userId).registerUser(USER_USERNAME, USER_PROFILE, USER_CREDENTIALS, true);
+  }
+
+  private void assertContainsCredential(final Credential credential, final UserState state) {
+    Optional<Credential> foundCredential = state.credentials.stream().filter(c -> c.equals(credential)).findFirst();
+    assertTrue(foundCredential.isPresent(), String.format("Credential not found %s", credential));
+  }
+
+  private void assertNotContainsCredential(final Credential credential, final UserState state) {
+    Optional<Credential> foundCredential = state.credentials.stream().filter(c -> c.equals(credential)).findFirst();
+    assertFalse(foundCredential.isPresent(), String.format("Credential found %s", credential));
   }
 }
