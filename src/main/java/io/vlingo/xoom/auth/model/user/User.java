@@ -18,7 +18,7 @@ public interface User {
 
   Completes<UserState> removeCredential(final String authority);
 
-  Completes<UserState> replaceCredential(final Credential credential);
+  Completes<UserState> replaceCredential(final String authority, final Credential credential);
 
   Completes<UserState> replaceProfile(final Profile profile);
 

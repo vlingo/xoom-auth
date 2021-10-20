@@ -3,26 +3,29 @@ package io.vlingo.xoom.auth.model.user;
 import io.vlingo.xoom.auth.model.value.Credential;
 import io.vlingo.xoom.auth.model.value.Profile;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class UserState {
 
   public final UserId userId;
   public final String username;
   public final boolean active;
-  public final Set<Credential> credentials = new HashSet<>();
+  public final Set<Credential> credentials;
   public final Profile profile;
 
   public static UserState identifiedBy(final UserId userId) {
-    return new UserState(userId, null, null, new HashSet<>(), false);
+    return new UserState(userId, null, null, Collections.emptySet(), false);
   }
 
   public UserState(final UserId userId, final String username, final Profile profile, final Set<Credential> credentials, final boolean active) {
     this.userId = userId;
     this.username = username;
     this.active = active;
-    this.credentials.addAll(credentials);
+    this.credentials = Collections.unmodifiableSet(credentials);
     this.profile = profile;
   }
 
@@ -39,28 +42,39 @@ public final class UserState {
   }
 
   public UserState addCredential(final Credential credential) {
-    this.credentials.add(credential);
-    return new UserState(this.userId, this.username, this.profile, this.credentials, this.active);
+    return new UserState(this.userId, this.username, this.profile, includeCredential(this.credentials, credential), this.active);
   }
 
   public UserState removeCredential(final String authority) {
-    this.credentials.stream()
-            .filter(c -> c.authority.equals(authority))
-            .findFirst()
-            .ifPresent(credentials::remove);
-    return new UserState(this.userId, this.username, this.profile, this.credentials, this.active);
+    final Set<Credential> updatedCredentials = credentialOf(authority)
+            .map(c -> removeCredential(this.credentials, c))
+            .orElse(this.credentials);
+    return new UserState(this.userId, this.username, this.profile, updatedCredentials, this.active);
   }
 
-  public UserState replaceCredential(final Credential credential) {
-    this.credentials.stream().filter(c -> c.authority.equals(credential.authority))
-            .findFirst()
-            .ifPresent(c -> this.credentials.remove(c));
-    this.credentials.add(credential);
-    return new UserState(this.userId, this.username, this.profile, this.credentials, this.active);
+  public UserState replaceCredential(final String authority, final Credential credential) {
+    final Set<Credential> updatedCredentials = credentialOf(authority)
+            .map(c -> removeCredential(this.credentials, c))
+            .map(c -> includeCredential(c, credential))
+            .orElse(this.credentials);
+    return new UserState(this.userId, this.username, this.profile, updatedCredentials, this.active);
   }
 
   public UserState replaceProfile(final Profile profile) {
     return new UserState(this.userId, this.username, profile, this.credentials, this.active);
   }
 
+  private Optional<Credential> credentialOf(final String authority) {
+    return this.credentials.stream()
+            .filter(c -> c.authority.equals(authority))
+            .findFirst();
+  }
+
+  private Set<Credential> includeCredential(final Set<Credential> credentials, final Credential credential) {
+    return Stream.concat(credentials.stream(), Stream.of(credential)).collect(Collectors.toSet());
+  }
+
+  private Set<Credential> removeCredential(final Set<Credential> credentials, final Credential credential) {
+    return credentials.stream().filter(c -> !c.authority.equals(credential.authority)).collect(Collectors.toSet());
+  }
 }

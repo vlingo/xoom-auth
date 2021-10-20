@@ -17,7 +17,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
 import static io.vlingo.xoom.auth.test.Assertions.assertEventDispatched;
@@ -137,10 +139,10 @@ public class UserEntityTest {
   @Test
   public void credentialsAreReplaced() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
-    final Credential newCredential = Credential.xoomCredentialFrom(USER_CREDENTIAL.authority, "updated-user-credentials-id", "updated-user-credentials-secret");
+    final Credential newCredential = Credential.xoomCredentialFrom("updated-authority", "updated-user-credentials-id", "updated-user-credentials-secret");
 
     final Completes<UserState> outcome = givenActiveUser(USER_ID)
-            .andThenTo(u -> userOf(USER_ID).replaceCredential(newCredential));
+            .andThenTo(u -> userOf(USER_ID).replaceCredential(USER_CREDENTIAL.authority, newCredential));
 
     assertCompletes(outcome, state -> {
       assertEquals(USER_ID, state.userId);

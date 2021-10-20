@@ -54,8 +54,8 @@ public final class UserEntity extends EventSourced implements User {
   }
 
   @Override
-  public Completes<UserState> replaceCredential(final Credential credential) {
-    return apply(new UserCredentialReplaced(state.userId, credential), () -> state);
+  public Completes<UserState> replaceCredential(final String authority, final Credential credential) {
+    return apply(new UserCredentialReplaced(state.userId, authority, credential), () -> state);
   }
 
   @Override
@@ -84,7 +84,7 @@ public final class UserEntity extends EventSourced implements User {
   }
 
   private void applyUserCredentialReplaced(final UserCredentialReplaced event) {
-    state = state.replaceCredential(event.credential);
+    state = state.replaceCredential(event.authority, event.credential);
   }
 
   private void applyUserProfileReplaced(final UserProfileReplaced event) {

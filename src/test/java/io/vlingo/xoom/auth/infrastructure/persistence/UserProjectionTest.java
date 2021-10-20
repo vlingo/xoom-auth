@@ -303,7 +303,7 @@ public class UserProjectionTest {
   }
 
   private Projectable createUserCredentialReplaced(UserState data) {
-    final UserCredentialReplaced eventData = new UserCredentialReplaced(data.userId, data.credentials.stream().findFirst().orElse(null));
+    final UserCredentialReplaced eventData = new UserCredentialReplaced(data.userId, data.credentials.stream().findFirst().get().authority, data.credentials.stream().findFirst().orElse(null));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialReplaced.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 

@@ -89,7 +89,7 @@ public class UserResource extends DynamicResourceHandler {
 
   public Completes<Response> replaceCredential(final String tenantId, final String username, final String authority, final CredentialData data) {
     return resolve(tenantId, username)
-            .andThenTo(user -> user.replaceCredential(data.toCredential()))
+            .andThenTo(user -> user.replaceCredential(authority, data.toCredential()))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(UserRegistrationData.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
