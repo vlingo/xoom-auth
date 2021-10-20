@@ -1,8 +1,7 @@
 package io.vlingo.xoom.auth.model.permission;
 
-import io.vlingo.xoom.auth.model.value.*;
+import io.vlingo.xoom.auth.model.value.Constraint;
 import io.vlingo.xoom.common.Completes;
-
 import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
 
 /**
@@ -41,17 +40,11 @@ public final class PermissionEntity extends EventSourced implements Permission {
 
   @Override
   public Completes<PermissionState> forget(final String constraintName) {
-    /**
-     * TODO: Implement command logic. See {@link PermissionState#forget()}
-     */
     return apply(new PermissionConstraintForgotten(state.id, constraintName), () -> state);
   }
 
   @Override
   public Completes<PermissionState> changeDescription(final String description) {
-    /**
-     * TODO: Implement command logic. See {@link PermissionState#changeDescription()}
-     */
     return apply(new PermissionDescriptionChanged(state.id, description), () -> state);
   }
 

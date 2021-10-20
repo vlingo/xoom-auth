@@ -1,12 +1,18 @@
 package io.vlingo.xoom.auth.model.permission;
 
-import java.util.*;
-import io.vlingo.xoom.auth.model.value.*;
+import io.vlingo.xoom.auth.model.value.Constraint;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class PermissionState {
 
   public final PermissionId id;
-  public final Set<Constraint> constraints = new HashSet<>();
+  public final Set<Constraint> constraints;
   public final String name;
   public final String description;
 
@@ -16,7 +22,7 @@ public final class PermissionState {
 
   public PermissionState(final PermissionId permissionId, final Set<Constraint> constraints, final String name, final String description) {
     this.id = permissionId;
-    this.constraints.addAll(constraints);
+    this.constraints = Collections.unmodifiableSet(constraints);
     this.name = name;
     this.description = description;
   }
@@ -26,23 +32,25 @@ public final class PermissionState {
   }
 
   public PermissionState enforce(final Constraint constraint) {
-    this.constraints.add(constraint);
-    return new PermissionState(this.id, this.constraints, this.name, this.description);
+    return new PermissionState(this.id, includeConstraint(constraints, constraint), this.name, this.description);
   }
 
   public PermissionState enforceReplacement(final String constraintName, final Constraint constraint) {
-    constraintOf(constraintName).ifPresent(c -> constraints.remove(c));
-    this.constraints.add(constraint);
-    return new PermissionState(this.id, this.constraints, this.name, this.description);
+    Set<Constraint> updatedConstraints = constraintOf(constraintName)
+            .map(c -> removeConstraint(this.constraints, c))
+            .map(c -> includeConstraint(c, constraint))
+            .orElse(this.constraints);
+    return new PermissionState(this.id, updatedConstraints, this.name, this.description);
   }
 
   public PermissionState forget(final String constraintName) {
-    constraintOf(constraintName).ifPresent(constraints::remove);
-    return new PermissionState(this.id, this.constraints, this.name, this.description);
+    Set<Constraint> updatedConstraints = constraintOf(constraintName)
+            .map(c -> removeConstraint(this.constraints, c))
+            .orElse(this.constraints);
+    return new PermissionState(this.id, updatedConstraints, this.name, this.description);
   }
 
   public PermissionState changeDescription(final String description) {
-    //TODO: Implement command logic.
     return new PermissionState(this.id, this.constraints, this.name, description);
   }
 
@@ -50,5 +58,13 @@ public final class PermissionState {
     return this.constraints.stream()
             .filter(c -> c.name.equals(constraintName))
             .findFirst();
+  }
+
+  private Set<Constraint> includeConstraint(final Set<Constraint> constraints, final Constraint constraint) {
+    return Stream.concat(constraints.stream(), Stream.of(constraint)).collect(Collectors.toSet());
+  }
+
+  private Set<Constraint> removeConstraint(final Set<Constraint> constraints, final Constraint constraint) {
+    return constraints.stream().filter(c -> !c.equals(constraint)).collect(Collectors.toSet());
   }
 }
