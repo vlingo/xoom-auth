@@ -43,7 +43,7 @@ public class Assertions {
    * @param <T>        the type of the outcome
    */
   public static <T> void assertCompletes(final Completes<T> completes, final Consumer<T> assertions) {
-    final T outcome = completes.await(2000);
+    final T outcome = completes.await(3000);
     assertNotEquals(null, outcome);
     assertions.accept(outcome);
   }
