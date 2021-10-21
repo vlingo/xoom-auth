@@ -9,6 +9,7 @@ import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
 import io.vlingo.xoom.symbio.EntryAdapterProvider;
 import io.vlingo.xoom.symbio.store.journal.Journal;
 import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -44,6 +45,11 @@ public class TenantEntityTest {
     final Journal<String> journal = world.actorFor(Journal.class, InMemoryJournalActor.class, Collections.singletonList(dispatcher));
 
     new SourcedTypeRegistry(world).register(new Info(journal, TenantEntity.class, TenantEntity.class.getSimpleName()));
+  }
+
+  @AfterEach
+  public void tearDown() {
+    world.terminate();
   }
 
   @Test
