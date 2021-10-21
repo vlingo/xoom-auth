@@ -4,7 +4,6 @@ import io.vlingo.xoom.auth.model.value.Credential;
 import io.vlingo.xoom.auth.model.value.Profile;
 
 import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,35 +45,22 @@ public final class UserState {
   }
 
   public UserState removeCredential(final String authority) {
-    final Set<Credential> updatedCredentials = credentialOf(authority)
-            .map(c -> removeCredential(this.credentials, c))
-            .orElse(this.credentials);
-    return new UserState(this.userId, this.username, this.profile, updatedCredentials, this.active);
+    return new UserState(this.userId, this.username, this.profile, removeCredential(this.credentials, authority), this.active);
   }
 
   public UserState replaceCredential(final String authority, final Credential credential) {
-    final Set<Credential> updatedCredentials = credentialOf(authority)
-            .map(c -> removeCredential(this.credentials, c))
-            .map(c -> includeCredential(c, credential))
-            .orElse(this.credentials);
-    return new UserState(this.userId, this.username, this.profile, updatedCredentials, this.active);
+    return new UserState(this.userId, this.username, this.profile, includeCredential(removeCredential(this.credentials, authority), credential), this.active);
   }
 
   public UserState replaceProfile(final Profile profile) {
     return new UserState(this.userId, this.username, profile, this.credentials, this.active);
   }
 
-  private Optional<Credential> credentialOf(final String authority) {
-    return this.credentials.stream()
-            .filter(c -> c.authority.equals(authority))
-            .findFirst();
-  }
-
   private Set<Credential> includeCredential(final Set<Credential> credentials, final Credential credential) {
     return Stream.concat(credentials.stream(), Stream.of(credential)).collect(Collectors.toSet());
   }
 
-  private Set<Credential> removeCredential(final Set<Credential> credentials, final Credential credential) {
-    return credentials.stream().filter(c -> !c.authority.equals(credential.authority)).collect(Collectors.toSet());
+  private Set<Credential> removeCredential(final Set<Credential> credentials, final String authority) {
+    return credentials.stream().filter(c -> !c.authority.equals(authority)).collect(Collectors.toSet());
   }
 }

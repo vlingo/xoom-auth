@@ -11,9 +11,9 @@ import io.vlingo.xoom.symbio.Source;
 import io.vlingo.xoom.symbio.store.state.StateStore;
 import io.vlingo.xoom.turbo.ComponentRegistry;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * See
@@ -70,24 +70,20 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
         case UserCredentialAdded: {
           final UserCredentialAdded typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
-          previousData.credentials.add(credential);
-          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, previousData.active);
+          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, includeCredential(previousData.credentials, credential), previousData.active);
           break;
         }
 
         case UserCredentialRemoved: {
           final UserCredentialRemoved typedEvent = typed(event);
-          previousData.credentials.stream().filter(credential -> credential.authority.equals(typedEvent.authority))
-                  .forEach(credential -> previousData.credentials.remove(credential));
-          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, previousData.active);
+          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, removeCredential(previousData.credentials, typedEvent.authority), previousData.active);
           break;
         }
 
         case UserCredentialReplaced: {
           final UserCredentialReplaced typedEvent = typed(event);
           final CredentialData credential = CredentialData.from(typedEvent.credential);
-          previousData.credentials.add(credential);
-          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, previousData.active);
+          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, includeCredential(removeCredential(previousData.credentials, typedEvent.authority), credential), previousData.active);
           break;
         }
 
@@ -105,5 +101,13 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
     }
 
     return merged;
+  }
+
+  private Set<CredentialData> includeCredential(final Set<CredentialData> credentials, final CredentialData credential) {
+    return Stream.concat(credentials.stream(), Stream.of(credential)).collect(Collectors.toSet());
+  }
+
+  private Set<CredentialData> removeCredential(final Set<CredentialData> credentials, final String authority) {
+    return credentials.stream().filter(c -> !c.authority.equals(authority)).collect(Collectors.toSet());
   }
 }
