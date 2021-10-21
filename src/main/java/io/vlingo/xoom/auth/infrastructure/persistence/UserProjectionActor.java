@@ -12,6 +12,8 @@ import io.vlingo.xoom.symbio.store.state.StateStore;
 import io.vlingo.xoom.turbo.ComponentRegistry;
 
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * See
@@ -48,7 +50,8 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
         case UserRegistered: {
           final UserRegistered typedEvent = typed(event);
           final ProfileData profile = ProfileData.from(typedEvent.profile);
-          merged = UserRegistrationData.from(typedEvent.userId, typedEvent.username, profile, new HashSet<>(), typedEvent.active);
+          final Set<CredentialData> credentials = typedEvent.credentials.stream().map(c -> CredentialData.from(c)).collect(Collectors.toSet());
+          merged = UserRegistrationData.from(typedEvent.userId, typedEvent.username, profile, credentials, typedEvent.active);
           break;
         }
 

@@ -128,7 +128,6 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatUserQueries() {
     user();
 
@@ -145,7 +144,7 @@ public class UserResourceTest extends ResourceTest {
     assertEquals(userData.credentials.stream().findFirst().get().authority, userDataAsQueried.credentials.stream().findFirst().get().authority);
     assertEquals(userData.credentials.stream().findFirst().get().id, userDataAsQueried.credentials.stream().findFirst().get().id);
     assertEquals(userData.credentials.stream().findFirst().get().secret, userDataAsQueried.credentials.stream().findFirst().get().secret);
-    assertEquals("VLINGO", userDataAsQueried.credentials.stream().findFirst().get().type);
+    assertEquals("XOOM", userDataAsQueried.credentials.stream().findFirst().get().type);
     assertTrue(userDataAsQueried.active);
   }
 
