@@ -1,5 +1,8 @@
 package io.vlingo.xoom.auth.model.role;
 
+import io.vlingo.xoom.auth.model.group.GroupId;
+import io.vlingo.xoom.auth.model.permission.PermissionId;
+import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.lattice.model.sourcing.EventSourced;
 
@@ -42,51 +45,51 @@ public final class RoleEntity extends EventSourced implements Role {
   }
 
   @Override
-  public Completes<RoleState> assignGroup(final String name) {
+  public Completes<RoleState> assignGroup(final GroupId groupId) {
     /**
      * TODO: Implement command logic. See {@link RoleState#assignGroup()}
      */
-    return apply(new GroupAssignedToRole(state.roleId, name), () -> state);
+    return apply(new GroupAssignedToRole(state.roleId, groupId), () -> state);
   }
 
   @Override
-  public Completes<RoleState> unassignGroup(final String name) {
+  public Completes<RoleState> unassignGroup(final GroupId groupId) {
     /**
      * TODO: Implement command logic. See {@link RoleState#unassignGroup()}
      */
-    return apply(new GroupUnassignedFromRole(state.roleId, name), () -> state);
+    return apply(new GroupUnassignedFromRole(state.roleId, groupId), () -> state);
   }
 
   @Override
-  public Completes<RoleState> assignUser(final String name) {
+  public Completes<RoleState> assignUser(final UserId userId) {
     /**
      * TODO: Implement command logic. See {@link RoleState#assignUser()}
      */
-    return apply(new UserAssignedToRole(state.roleId, name), () -> state);
+    return apply(new UserAssignedToRole(state.roleId, userId), () -> state);
   }
 
   @Override
-  public Completes<RoleState> unassignUser(final String name) {
+  public Completes<RoleState> unassignUser(final UserId userId) {
     /**
      * TODO: Implement command logic. See {@link RoleState#unassignUser()}
      */
-    return apply(new UserUnassignedFromRole(state.roleId, name), () -> state);
+    return apply(new UserUnassignedFromRole(state.roleId, userId), () -> state);
   }
 
   @Override
-  public Completes<RoleState> attach(final String name) {
+  public Completes<RoleState> attach(final PermissionId permissionId) {
     /**
      * TODO: Implement command logic. See {@link RoleState#attach()}
      */
-    return apply(new RolePermissionAttached(state.roleId, name), () -> state);
+    return apply(new RolePermissionAttached(state.roleId, permissionId), () -> state);
   }
 
   @Override
-  public Completes<RoleState> detach(final String name) {
+  public Completes<RoleState> detach(final PermissionId permissionId) {
     /**
      * TODO: Implement command logic. See {@link RoleState#detach()}
      */
-    return apply(new RolePermissionDetached(state.roleId, name), () -> state);
+    return apply(new RolePermissionDetached(state.roleId, permissionId), () -> state);
   }
 
   private void applyRoleProvisioned(final RoleProvisioned event) {
@@ -98,27 +101,27 @@ public final class RoleEntity extends EventSourced implements Role {
   }
 
   private void applyGroupAssignedToRole(final GroupAssignedToRole event) {
-    state = state.assignGroup(event.name);
+    state = state.assignGroup(event.groupId);
   }
 
   private void applyGroupUnassignedFromRole(final GroupUnassignedFromRole event) {
-    state = state.unassignGroup(event.name);
+    state = state.unassignGroup(event.groupId);
   }
 
   private void applyUserAssignedToRole(final UserAssignedToRole event) {
-    state = state.assignUser(event.name);
+    state = state.assignUser(event.userId);
   }
 
   private void applyUserUnassignedFromRole(final UserUnassignedFromRole event) {
-    state = state.unassignUser(event.name);
+    state = state.unassignUser(event.userId);
   }
 
   private void applyRolePermissionAttached(final RolePermissionAttached event) {
-    state = state.attach(event.name);
+    state = state.attach(event.permissionId);
   }
 
   private void applyRolePermissionDetached(final RolePermissionDetached event) {
-    state = state.detach(event.name);
+    state = state.detach(event.permissionId);
   }
 
   /*

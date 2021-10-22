@@ -3,8 +3,11 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.RoleData;
+import io.vlingo.xoom.auth.model.group.GroupId;
+import io.vlingo.xoom.auth.model.permission.PermissionId;
 import io.vlingo.xoom.auth.model.role.*;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
+import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.serialization.JsonSerialization;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.Projection;
@@ -295,7 +298,7 @@ public class RoleProjectionTest {
   }
 
   private Projectable createGroupAssignedToRole(RoleState data) {
-    final GroupAssignedToRole eventData = new GroupAssignedToRole(data.roleId, data.name);
+    final GroupAssignedToRole eventData = new GroupAssignedToRole(data.roleId, GroupId.from(TENANT_ID, ""));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupAssignedToRole.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
@@ -306,7 +309,7 @@ public class RoleProjectionTest {
   }
 
   private Projectable createGroupUnassignedFromRole(RoleState data) {
-    final GroupUnassignedFromRole eventData = new GroupUnassignedFromRole(data.roleId, data.name);
+    final GroupUnassignedFromRole eventData = new GroupUnassignedFromRole(data.roleId, GroupId.from(TENANT_ID, ""));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(GroupUnassignedFromRole.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
@@ -317,7 +320,7 @@ public class RoleProjectionTest {
   }
 
   private Projectable createUserAssignedToRole(RoleState data) {
-    final UserAssignedToRole eventData = new UserAssignedToRole(data.roleId, data.name);
+    final UserAssignedToRole eventData = new UserAssignedToRole(data.roleId, UserId.from(TENANT_ID, ""));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserAssignedToRole.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
@@ -328,7 +331,7 @@ public class RoleProjectionTest {
   }
 
   private Projectable createUserUnassignedFromRole(RoleState data) {
-    final UserUnassignedFromRole eventData = new UserUnassignedFromRole(data.roleId, data.name);
+    final UserUnassignedFromRole eventData = new UserUnassignedFromRole(data.roleId, UserId.from(TENANT_ID, ""));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserUnassignedFromRole.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
@@ -339,7 +342,7 @@ public class RoleProjectionTest {
   }
 
   private Projectable createRolePermissionAttached(RoleState data) {
-    final RolePermissionAttached eventData = new RolePermissionAttached(data.roleId, data.name);
+    final RolePermissionAttached eventData = new RolePermissionAttached(data.roleId, PermissionId.from(TENANT_ID, ""));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RolePermissionAttached.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 
@@ -350,7 +353,7 @@ public class RoleProjectionTest {
   }
 
   private Projectable createRolePermissionDetached(RoleState data) {
-    final RolePermissionDetached eventData = new RolePermissionDetached(data.roleId, data.name);
+    final RolePermissionDetached eventData = new RolePermissionDetached(data.roleId, PermissionId.from(TENANT_ID, ""));
 
     BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(RolePermissionDetached.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
 

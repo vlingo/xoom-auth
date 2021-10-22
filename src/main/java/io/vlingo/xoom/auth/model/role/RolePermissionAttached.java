@@ -1,5 +1,6 @@
 package io.vlingo.xoom.auth.model.role;
 
+import io.vlingo.xoom.auth.model.permission.PermissionId;
 import io.vlingo.xoom.common.version.SemanticVersion;
 import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
 
@@ -13,12 +14,12 @@ import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
 public final class RolePermissionAttached extends IdentifiedDomainEvent {
 
   public final RoleId roleId;
-  public final String name;
+  public final PermissionId permissionId;
 
-  public RolePermissionAttached(final RoleId roleId, final String name) {
+  public RolePermissionAttached(final RoleId roleId, final PermissionId permissionId) {
     super(SemanticVersion.from("1.0.0").toValue());
     this.roleId = roleId;
-    this.name = name;
+    this.permissionId = permissionId;
   }
 
   @Override

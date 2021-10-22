@@ -3,7 +3,10 @@ package io.vlingo.xoom.auth.model.role;
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.persistence.*;
+import io.vlingo.xoom.auth.model.group.GroupId;
+import io.vlingo.xoom.auth.model.permission.PermissionId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
+import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry;
 import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry.Info;
@@ -12,6 +15,7 @@ import io.vlingo.xoom.symbio.store.journal.Journal;
 import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -86,11 +90,13 @@ public class RoleEntityTest {
   }
 
   @Test
+  @Disabled("Test not implemented")
   public void groupIsAssignedToRole() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final GroupId groupId = GroupId.from(TENANT_ID, "group-a");
 
     final Completes<RoleState> outcome = givenRoleExists(ROLE_ID)
-            .andThenTo(r -> roleOf(ROLE_ID).assignGroup("updated-role-name"));
+            .andThenTo(r -> roleOf(ROLE_ID).assignGroup(groupId));
 
     assertCompletes(outcome, state -> {
       assertEquals(ROLE_ID, state.roleId);
@@ -101,11 +107,14 @@ public class RoleEntityTest {
   }
 
   @Test
+  @Disabled("Test not implemented")
   public void groupIsUnassignedFromRole() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final GroupId groupId = GroupId.from(TENANT_ID, "group-a");
 
     final Completes<RoleState> outcome = givenRoleExists(ROLE_ID)
-            .andThenTo(r -> roleOf(ROLE_ID).unassignGroup("updated-role-name"));
+            .andThenTo(r -> roleOf(ROLE_ID).assignGroup(groupId))
+            .andThenTo(r -> roleOf(ROLE_ID).unassignGroup(groupId));
 
     assertCompletes(outcome, state -> {
       assertEquals(ROLE_ID, state.roleId);
@@ -116,11 +125,13 @@ public class RoleEntityTest {
   }
 
   @Test
+  @Disabled("Test not implemented")
   public void userIsAssignedToRole() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final UserId userId = UserId.from(TENANT_ID, "bobby");
 
     final Completes<RoleState> outcome = givenRoleExists(ROLE_ID)
-            .andThenTo(r -> roleOf(ROLE_ID).assignUser("updated-role-name"));
+            .andThenTo(r -> roleOf(ROLE_ID).assignUser(userId));
 
     assertCompletes(outcome, state -> {
       assertEquals(ROLE_ID, state.roleId);
@@ -131,11 +142,14 @@ public class RoleEntityTest {
   }
 
   @Test
+  @Disabled("Test not implemented")
   public void userIsUnassignedFromRole() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final UserId userId = UserId.from(TENANT_ID, "bobby");
 
     final Completes<RoleState> outcome = givenRoleExists(ROLE_ID)
-            .andThenTo(r -> roleOf(ROLE_ID).unassignUser("updated-role-name"));
+            .andThenTo(r -> roleOf(ROLE_ID).assignUser(userId))
+            .andThenTo(r -> roleOf(ROLE_ID).unassignUser(userId));
 
     assertCompletes(outcome, state -> {
       assertEquals(ROLE_ID, state.roleId);
@@ -146,11 +160,13 @@ public class RoleEntityTest {
   }
 
   @Test
+  @Disabled("Test not implemented")
   public void permissionIsAttachedToRole() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final PermissionId permissionId = PermissionId.from(TENANT_ID, "permission-a");
 
     final Completes<RoleState> outcome = givenRoleExists(ROLE_ID)
-            .andThenTo(r -> roleOf(ROLE_ID).attach("updated-role-name"));
+            .andThenTo(r -> roleOf(ROLE_ID).attach(permissionId));
 
     assertCompletes(outcome, state -> {
       assertEquals(ROLE_ID, state.roleId);
@@ -161,11 +177,14 @@ public class RoleEntityTest {
   }
 
   @Test
+  @Disabled("Test not implemented")
   public void permissionIsDetachedFromRole() {
     final AccessSafely dispatcherAccess = dispatcher.afterCompleting(1);
+    final PermissionId permissionId = PermissionId.from(TENANT_ID, "permission-a");
 
     final Completes<RoleState> outcome = givenRoleExists(ROLE_ID)
-            .andThenTo(state -> roleOf(ROLE_ID).detach("updated-role-name"));
+            .andThenTo(r -> roleOf(ROLE_ID).attach(permissionId))
+            .andThenTo(state -> roleOf(ROLE_ID).detach(permissionId));
 
     assertCompletes(outcome, state -> {
       assertEquals(ROLE_ID, state.roleId);

@@ -55,37 +55,37 @@ public class RoleProjectionActor extends StateStoreProjectionActor<RoleData> {
 
         case GroupAssignedToRole: {
           final GroupAssignedToRole typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, previousData.name, previousData.description);
           break;
         }
 
         case GroupUnassignedFromRole: {
           final GroupUnassignedFromRole typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, previousData.name, previousData.description);
           break;
         }
 
         case UserAssignedToRole: {
           final UserAssignedToRole typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, previousData.name, previousData.description);
           break;
         }
 
         case UserUnassignedFromRole: {
           final UserUnassignedFromRole typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, previousData.name, previousData.description);
           break;
         }
 
         case RolePermissionAttached: {
           final RolePermissionAttached typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, previousData.name, previousData.description);
           break;
         }
 
         case RolePermissionDetached: {
           final RolePermissionDetached typedEvent = typed(event);
-          merged = RoleData.from(typedEvent.roleId, typedEvent.name, previousData.description);
+          merged = RoleData.from(typedEvent.roleId, previousData.name, previousData.description);
           break;
         }
 

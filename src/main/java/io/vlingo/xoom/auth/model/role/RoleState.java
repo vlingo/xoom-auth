@@ -1,6 +1,10 @@
 package io.vlingo.xoom.auth.model.role;
 
 
+import io.vlingo.xoom.auth.model.group.GroupId;
+import io.vlingo.xoom.auth.model.permission.PermissionId;
+import io.vlingo.xoom.auth.model.user.UserId;
+
 public final class RoleState {
 
   public final RoleId roleId;
@@ -27,34 +31,34 @@ public final class RoleState {
     return new RoleState(this.roleId, this.name, description);
   }
 
-  public RoleState assignGroup(final String name) {
+  public RoleState assignGroup(final GroupId groupId) {
     //TODO: Implement command logic.
-    return new RoleState(this.roleId, name, this.description);
+    return new RoleState(this.roleId,this.name, this.description);
   }
 
-  public RoleState unassignGroup(final String name) {
+  public RoleState unassignGroup(final GroupId groupId) {
     //TODO: Implement command logic.
-    return new RoleState(this.roleId, name, this.description);
+    return new RoleState(this.roleId, this.name, this.description);
   }
 
-  public RoleState assignUser(final String name) {
+  public RoleState assignUser(final UserId userId) {
     //TODO: Implement command logic.
-    return new RoleState(this.roleId, name, this.description);
+    return new RoleState(this.roleId, this.name, this.description);
   }
 
-  public RoleState unassignUser(final String name) {
+  public RoleState unassignUser(final UserId userId) {
     //TODO: Implement command logic.
-    return new RoleState(this.roleId, name, this.description);
+    return new RoleState(this.roleId, this.name, this.description);
   }
 
-  public RoleState attach(final String name) {
+  public RoleState attach(final PermissionId permissionId) {
     //TODO: Implement command logic.
-    return new RoleState(this.roleId, name, this.description);
+    return new RoleState(this.roleId, this.name, this.description);
   }
 
-  public RoleState detach(final String name) {
+  public RoleState detach(final PermissionId permissionId) {
     //TODO: Implement command logic.
-    return new RoleState(this.roleId, name, this.description);
+    return new RoleState(this.roleId, this.name, this.description);
   }
 
 }
