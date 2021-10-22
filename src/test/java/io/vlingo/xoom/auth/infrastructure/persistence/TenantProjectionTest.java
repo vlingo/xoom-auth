@@ -1,237 +1,95 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
-import io.vlingo.xoom.actors.World;
-import io.vlingo.xoom.actors.testkit.AccessSafely;
-import io.vlingo.xoom.common.serialization.JsonSerialization;
-import io.vlingo.xoom.lattice.model.projection.Projectable;
+import io.vlingo.xoom.auth.infrastructure.TenantData;
+import io.vlingo.xoom.auth.model.tenant.*;
+import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.lattice.model.projection.Projection;
-import io.vlingo.xoom.lattice.model.projection.TextProjectable;
-import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry;
-import io.vlingo.xoom.symbio.BaseEntry;
-import io.vlingo.xoom.symbio.Metadata;
-import io.vlingo.xoom.symbio.store.dispatch.NoOpDispatcher;
-import io.vlingo.xoom.symbio.store.state.StateStore;
-import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
+import java.util.Set;
 
-import io.vlingo.xoom.auth.model.tenant.*;
-import io.vlingo.xoom.auth.infrastructure.*;
+import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+public class TenantProjectionTest extends ProjectionTest {
 
-public class TenantProjectionTest {
-
-  private World world;
-  private StateStore stateStore;
-  private Projection projection;
-  private Map<String, String> valueToProjectionId;
-
-  @BeforeEach
-  public void setUp() {
-    world = World.startWithDefaults("test-state-store-projection");
-    NoOpDispatcher dispatcher = new NoOpDispatcher();
-    valueToProjectionId = new ConcurrentHashMap<>();
-    stateStore = world.actorFor(StateStore.class, InMemoryStateStoreActor.class, Collections.singletonList(dispatcher));
-    StatefulTypeRegistry statefulTypeRegistry = StatefulTypeRegistry.registerAll(world, stateStore, TenantData.class);
-    QueryModelStateStoreProvider.using(world.stage(), statefulTypeRegistry);
-    projection = world.actorFor(Projection.class, TenantProjectionActor.class, stateStore);
+  @Override
+  protected Set<Class<?>> statefulTypes() {
+    return Collections.singleton(TenantData.class);
   }
 
-  private void registerExampleTenant(TenantState firstData, TenantState secondData) {
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(2);
-    projection.projectWith(createTenantSubscribed(firstData), control);
-    projection.projectWith(createTenantSubscribed(secondData), control);
+  @Override
+  protected Projection projection() {
+    return world.actorFor(Projection.class, TenantProjectionActor.class, stateStore);
   }
 
   @Test
-  public void subscribeFor() {
-    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
+  public void itProjectsSubscribedTenant() {
+    final TenantId tenantId = TenantId.unique();
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(2);
-    projection.projectWith(createTenantSubscribed(firstData.toTenantState()), control);
-    projection.projectWith(createTenantSubscribed(secondData.toTenantState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new TenantSubscribed(tenantId, "tenant-1", "Tenant 1", false)
+    );
 
-    assertEquals(2, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
-    assertEquals(1, valueOfProjectionIdFor(secondData.tenantId, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.tenantId, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
-
-    assertEquals(item.tenantId, "1");
-    assertEquals(item.name, "first-tenant-name");
-    assertEquals(item.description, "first-tenant-description");
-    assertEquals(item.active, true);
-
-    interest = new CountingReadResultInterest();
-    interestAccess = interest.afterCompleting(1);
-    stateStore.read(secondData.tenantId, TenantData.class, interest);
-    item = interestAccess.readFrom("item", secondData.tenantId);
-    assertEquals(secondData.tenantId, item.tenantId);
-    assertEquals(item.tenantId, "2");
-    assertEquals(item.name, "second-tenant-name");
-    assertEquals(item.description, "second-tenant-description");
-    assertEquals(item.active, true);
+    assertCompletes(tenantOf(tenantId), tenant -> {
+      assertEquals(tenantId.idString(), tenant.tenantId);
+      assertEquals("tenant-1", tenant.name);
+      assertEquals("Tenant 1", tenant.description);
+      assertFalse(tenant.active);
+    });
   }
 
   @Test
-  public void activate() {
-    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
-    registerExampleTenant(firstData.toTenantState(), secondData.toTenantState());
+  public void itProjectsActivatedTenant() {
+    final TenantId tenantId = TenantId.unique();
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createTenantActivated(firstData.toTenantState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new TenantSubscribed(tenantId, "tenant-1", "Tenant 1", false),
+            new TenantActivated(tenantId)
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.tenantId, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
-
-    assertEquals(item.tenantId, "1");
+    assertCompletes(tenantOf(tenantId), tenant -> assertTrue(tenant.active));
   }
 
   @Test
-  public void deactivate() {
-    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
-    registerExampleTenant(firstData.toTenantState(), secondData.toTenantState());
+  public void itProjectsDeactivatedTenant() {
+    final TenantId tenantId = TenantId.unique();
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createTenantDeactivated(firstData.toTenantState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new TenantSubscribed(tenantId, "tenant-1", "Tenant 1", true),
+            new TenantDeactivated(tenantId)
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.tenantId, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
-
-    assertEquals(item.tenantId, "1");
+    assertCompletes(tenantOf(tenantId), tenant -> assertFalse(tenant.active));
   }
 
   @Test
-  public void changeName() {
-    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
-    registerExampleTenant(firstData.toTenantState(), secondData.toTenantState());
+  public void itProjectsTenantNameChange() {
+    final TenantId tenantId = TenantId.unique();
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createTenantNameChanged(firstData.toTenantState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new TenantSubscribed(tenantId, "tenant-1", "Tenant 1", true),
+            new TenantNameChanged(tenantId, "tenant-1-updated")
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.tenantId, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
-
-    assertEquals(item.tenantId, "1");
-    assertEquals(item.name, "first-tenant-name");
+    assertCompletes(tenantOf(tenantId), tenant -> assertEquals("tenant-1-updated", tenant.name));
   }
+
 
   @Test
-  public void changeDescription() {
-    final TenantData firstData = TenantData.from(TenantId.from("1"), "first-tenant-name", "first-tenant-description", true);
-    final TenantData secondData = TenantData.from(TenantId.from("2"), "second-tenant-name", "second-tenant-description", true);
-    registerExampleTenant(firstData.toTenantState(), secondData.toTenantState());
+  public void itProjectsTenantDescriptionChange() {
+    final TenantId tenantId = TenantId.unique();
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createTenantDescriptionChanged(firstData.toTenantState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new TenantSubscribed(tenantId, "tenant-1", "Tenant 1", true),
+            new TenantDescriptionChanged(tenantId, "Tenant 1 Updated")
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.tenantId, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.tenantId, TenantData.class, interest);
-    TenantData item = interestAccess.readFrom("item", firstData.tenantId);
-
-    assertEquals(item.tenantId, "1");
-    assertEquals(item.description, "first-tenant-description");
+    assertCompletes(tenantOf(tenantId), tenant -> assertEquals("Tenant 1 Updated", tenant.description));
   }
 
-  private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
-    return confirmations.get(valueToProjectionId.get(valueText));
+  private Completes<TenantData> tenantOf(final TenantId tenantId) {
+    return world.actorFor(TenantQueries.class, TenantQueriesActor.class, stateStore).tenantOf(tenantId);
   }
-
-  private Projectable createTenantSubscribed(TenantState data) {
-    final TenantSubscribed eventData = new TenantSubscribed(data.tenantId, data.name, data.description, data.active);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantSubscribed.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.tenantId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
-  private Projectable createTenantActivated(TenantState data) {
-    final TenantActivated eventData = new TenantActivated(data.tenantId);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantActivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.tenantId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
-  private Projectable createTenantDeactivated(TenantState data) {
-    final TenantDeactivated eventData = new TenantDeactivated(data.tenantId);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDeactivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.tenantId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
-  private Projectable createTenantNameChanged(TenantState data) {
-    final TenantNameChanged eventData = new TenantNameChanged(data.tenantId, data.name);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantNameChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.tenantId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
-  private Projectable createTenantDescriptionChanged(TenantState data) {
-    final TenantDescriptionChanged eventData = new TenantDescriptionChanged(data.tenantId, data.description);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(TenantDescriptionChanged.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.tenantId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
 }
