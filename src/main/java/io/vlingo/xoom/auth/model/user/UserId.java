@@ -14,6 +14,11 @@ public class UserId {
     return new UserId(tenantId, username);
   }
 
+  public static UserId from(final String id) {
+    String[] pair = id.split(":", 2);
+    return from(TenantId.from(pair[0]), pair[1]);
+  }
+
   private UserId(final TenantId tenantId, final String username) {
     this.tenantId = tenantId;
     this.username = username;

@@ -3,11 +3,14 @@ package io.vlingo.xoom.auth.infrastructure;
 import io.vlingo.xoom.auth.model.group.GroupId;
 import io.vlingo.xoom.auth.model.group.GroupState;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
+import io.vlingo.xoom.auth.model.user.UserId;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("all")
@@ -16,17 +19,23 @@ public class GroupData {
   public final String name;
   public final String description;
   public final String tenantId;
+  public final Set<String> groups;
+  public final Set<String> users;
 
   public static GroupData from(final GroupState groupState) {
     return from(groupState.id, groupState.name, groupState.description);
   }
 
   public static GroupData from(final GroupId id, final String name, final String description) {
-    return new GroupData(id, name, description);
+    return new GroupData(id, name, description, new HashSet<>(), new HashSet<>());
   }
 
   public static GroupData from(final TenantId tenantId, final String name, final String description) {
     return new GroupData(tenantId, name, description);
+  }
+
+  public static GroupData from(final GroupId groupId, final String name, final String description, final Set<GroupId> groups, final Set<UserId> users) {
+    return new GroupData(groupId, name, description, groups, users);
   }
 
   public static List<GroupData> fromAll(final List<GroupState> states) {
@@ -37,11 +46,13 @@ public class GroupData {
     return from(GroupState.identifiedBy(GroupId.from(TenantId.from(""), "")));
   }
 
-  private GroupData(final GroupId groupId, final String name, final String description) {
+  private GroupData(final GroupId groupId, final String name, final String description, final Set<GroupId> groups, final Set<UserId> users) {
     this.id = groupId.idString();
     this.name = name;
     this.description = description;
     this.tenantId = groupId.tenantId.idString();
+    this.groups = groups.stream().map(g -> g.idString()).collect(Collectors.toSet());
+    this.users = users.stream().map(u -> u.idString()).collect(Collectors.toSet());
   }
 
   private GroupData(final TenantId tenantId, final String name, final String description) {
@@ -49,6 +60,8 @@ public class GroupData {
     this.name = name;
     this.description = description;
     this.tenantId = tenantId.idString();
+    this.groups = new HashSet();
+    this.users = new HashSet<>();
   }
 
   public GroupState toGroupState() {
@@ -65,21 +78,21 @@ public class GroupData {
     }
     GroupData another = (GroupData) other;
     return new EqualsBuilder()
-              .append(this.id, another.id)
-              .append(this.name, another.name)
-              .append(this.description, another.description)
-              .append(this.tenantId, another.tenantId)
-              .isEquals();
+            .append(this.id, another.id)
+            .append(this.name, another.name)
+            .append(this.description, another.description)
+            .append(this.tenantId, another.tenantId)
+            .isEquals();
   }
 
   @Override
   public String toString() {
     return new ToStringBuilder(this, ToStringStyle.DEFAULT_STYLE)
-              .append("id", id)
-              .append("name", name)
-              .append("description", description)
-              .append("tenantId", tenantId)
-              .toString();
+            .append("id", id)
+            .append("name", name)
+            .append("description", description)
+            .append("tenantId", tenantId)
+            .toString();
   }
 
   public GroupId groupId() {

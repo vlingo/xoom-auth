@@ -24,4 +24,11 @@ public class UserIdTest {
     assertNotEquals(userId, UserId.from(TenantId.from("97d57df1-1b38-4583-bd3c-6b4731e7a605"), "alice"));
     assertNotEquals(userId, UserId.from(TenantId.from("c60317e9-cf4f-408a-9fd1-8e0f4e69d2be"), "bob"));
   }
+
+  @Test
+  public void itIsCreatedFromString() {
+    final UserId userId = UserId.from(TenantId.from("c60317e9-cf4f-408a-9fd1-8e0f4e69d2be"), "alice");
+
+    assertEquals(userId, UserId.from("c60317e9-cf4f-408a-9fd1-8e0f4e69d2be:alice"));
+  }
 }

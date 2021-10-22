@@ -14,6 +14,11 @@ public class GroupId {
     return new GroupId(tenantId, groupName);
   }
 
+  public static GroupId from(String id) {
+    String[] pair = id.split(":", 2);
+    return from(TenantId.from(pair[0]), pair[1]);
+  }
+
   private GroupId(final TenantId tenantId, final String groupName) {
     this.tenantId = tenantId;
     this.groupName = groupName;

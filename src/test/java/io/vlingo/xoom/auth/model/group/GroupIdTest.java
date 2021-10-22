@@ -23,4 +23,11 @@ public class GroupIdTest {
     assertNotEquals(groupId, GroupId.from(TenantId.from("97d57df1-1b38-4583-bd3c-6b4731e7a605"), "Admin"));
     assertNotEquals(groupId, GroupId.from(TenantId.from("7c467e63-2b63-43dd-8198-67d31a776f4d"), "Staff"));
   }
+
+  @Test
+  public void itCreatesGroupIdFromString() {
+    final GroupId groupId = GroupId.from(TenantId.from("7c467e63-2b63-43dd-8198-67d31a776f4d"), "Admin");
+
+    assertEquals(groupId, GroupId.from("7c467e63-2b63-43dd-8198-67d31a776f4d:Admin"));
+  }
 }
