@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public abstract class ProjectionTest {
   protected World world;
   protected StateStore stateStore;
-  private Projection projection;
+  protected Projection projection;
 
   @BeforeEach
   public void setUp() throws Exception {

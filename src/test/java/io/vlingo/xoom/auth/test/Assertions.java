@@ -24,6 +24,17 @@ public class Assertions {
   }
 
   /**
+   * Asserts if the item is NOT included in the collection.
+   *
+   * @param item  the unexpected item
+   * @param items the collection
+   * @param <I>   type of the item
+   */
+  public static <I> void assertNotContains(final I item, final Collection<I> items) {
+    assertFalse(items.stream().filter(i -> i.equals(item)).findFirst().isPresent(), String.format("Unexpected item %s found in %s", item, items));
+  }
+
+  /**
    * Asserts the number of dispatched events and the type of the last dispatched event.
    *
    * @param dispatcherAccess Access to dispatcher's state (entriesCount)
