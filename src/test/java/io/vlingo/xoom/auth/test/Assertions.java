@@ -35,6 +35,17 @@ public class Assertions {
   }
 
   /**
+   * Asserts if all expected items are included in the collection
+   *
+   * @param expectedItems items to be searched for
+   * @param items         the collection
+   * @param <I>           type of items
+   */
+  public static <I> void assertContainsAll(final Collection<I> expectedItems, Collection<I> items) {
+    expectedItems.forEach(item -> assertContains(item, items));
+  }
+
+  /**
    * Asserts the number of dispatched events and the type of the last dispatched event.
    *
    * @param dispatcherAccess Access to dispatcher's state (entriesCount)

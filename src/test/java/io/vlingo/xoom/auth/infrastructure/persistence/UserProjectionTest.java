@@ -1,327 +1,158 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
-import io.vlingo.xoom.actors.World;
-import io.vlingo.xoom.actors.testkit.AccessSafely;
 import io.vlingo.xoom.auth.infrastructure.CredentialData;
-import io.vlingo.xoom.auth.infrastructure.PersonNameData;
 import io.vlingo.xoom.auth.infrastructure.ProfileData;
 import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.*;
 import io.vlingo.xoom.auth.model.value.Credential;
-import io.vlingo.xoom.common.serialization.JsonSerialization;
-import io.vlingo.xoom.lattice.model.projection.Projectable;
+import io.vlingo.xoom.auth.model.value.PersonName;
+import io.vlingo.xoom.auth.model.value.Profile;
+import io.vlingo.xoom.common.Completes;
 import io.vlingo.xoom.lattice.model.projection.Projection;
-import io.vlingo.xoom.lattice.model.projection.TextProjectable;
-import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry;
-import io.vlingo.xoom.symbio.BaseEntry;
-import io.vlingo.xoom.symbio.Metadata;
-import io.vlingo.xoom.symbio.store.dispatch.NoOpDispatcher;
-import io.vlingo.xoom.symbio.store.state.StateStore;
-import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
+import static io.vlingo.xoom.auth.test.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserProjectionTest {
+public class UserProjectionTest extends ProjectionTest {
 
-  private World world;
-  private StateStore stateStore;
-  private Projection projection;
-  private Map<String, String> valueToProjectionId;
-
-  @BeforeEach
-  public void setUp() {
-    world = World.startWithDefaults("test-state-store-projection");
-    NoOpDispatcher dispatcher = new NoOpDispatcher();
-    valueToProjectionId = new ConcurrentHashMap<>();
-    stateStore = world.actorFor(StateStore.class, InMemoryStateStoreActor.class, Collections.singletonList(dispatcher));
-    StatefulTypeRegistry statefulTypeRegistry = StatefulTypeRegistry.registerAll(world, stateStore, UserRegistrationData.class);
-    QueryModelStateStoreProvider.using(world.stage(), statefulTypeRegistry);
-    projection = world.actorFor(Projection.class, UserProjectionActor.class, stateStore);
+  @Override
+  protected Set<Class<?>> statefulTypes() {
+    return Collections.singleton(UserRegistrationData.class);
   }
 
-  private void registerExampleUser(UserState firstData, UserState secondData) {
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(2);
-    projection.projectWith(createUserRegistered(firstData), control);
-    projection.projectWith(createUserRegistered(secondData), control);
+  @Override
+  protected Projection projection() {
+    return world.actorFor(Projection.class, UserProjectionActor.class, stateStore);
   }
 
   @Test
-  public void registerUser() {
-    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), true);
-    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), true);
+  public void itProjectsRegisteredUser() {
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
+    final Profile profile = Profile.from("bobby@example.com", PersonName.from("Bobby", "Tables", "Little"), "07777123123");
+    final Set<Credential> credentials = Collections.singleton(Credential.xoomCredentialFrom("authority", "credential-id", "secret"));
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(2);
-    projection.projectWith(createUserRegistered(firstData.toUserState()), control);
-    projection.projectWith(createUserRegistered(secondData.toUserState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new UserRegistered(userId, "bobby", profile, credentials, false)
+    );
 
-    assertEquals(2, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-    assertEquals(1, valueOfProjectionIdFor(secondData.id, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserRegistrationData.class, interest);
-    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
-
-    assertEquals(firstData, item);
-
-    interest = new CountingReadResultInterest();
-    interestAccess = interest.afterCompleting(1);
-    stateStore.read(secondData.id, UserRegistrationData.class, interest);
-    item = interestAccess.readFrom("item", secondData.id);
-
-    assertEquals(secondData, item);
+    assertCompletes(userOf(userId), user -> {
+      assertEquals(userId.idString(), user.id);
+      assertEquals(userId.tenantId.idString(), user.tenantId);
+      assertEquals(ProfileData.from(profile), user.profile);
+      assertEquals(CredentialData.fromAll(credentials), user.credentials);
+      assertFalse(user.active);
+    });
   }
 
   @Test
-  public void activate() {
-    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), false);
-    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), false);
-    registerExampleUser(firstData.toUserState(), secondData.toUserState());
+  public void itProjectsUserActivation() {
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createUserActivated(firstData.toUserState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new UserRegistered(userId, "bobby", profile(), credentials(), false),
+            new UserActivated(userId)
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserRegistrationData.class, interest);
-    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
-
-    assertEquals(firstData.id, item.id);
-    assertTrue(item.active);
+    assertCompletes(userOf(userId), user -> assertTrue(user.active));
   }
 
   @Test
-  public void deactivate() {
-    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), true);
-    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), true);
-    registerExampleUser(firstData.toUserState(), secondData.toUserState());
+  public void itProjectsUserDeactivation() {
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createUserDeactivated(firstData.toUserState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new UserRegistered(userId, "bobby", profile(), credentials(), true),
+            new UserDeactivated(userId)
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserRegistrationData.class, interest);
-    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
-
-    assertEquals(firstData.id, item.id);
-    assertFalse(item.active);
+    assertCompletes(userOf(userId), user -> assertFalse(user.active));
   }
 
   @Test
-  public void addCredential() {
-    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), false);
-    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), false);
-    registerExampleUser(firstData.toUserState(), secondData.toUserState());
+  public void itProjectsAddedCredentials() {
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
+    final Set<Credential> registeredCredentials = Collections.singleton(Credential.xoomCredentialFrom("authority", "credential-id", "secret"));
+    final Credential addedCredential = Credential.xoomCredentialFrom("authority-added", "credential-id-added", "secret-added");
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createUserCredentialAdded(firstData.toUserState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new UserRegistered(userId, "bobby", profile(), registeredCredentials, false),
+            new UserCredentialAdded(userId, addedCredential)
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserRegistrationData.class, interest);
-    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
-
-    assertEquals(firstData.id, item.id);
-    assertNotNull(item.credentials);
+    assertCompletes(userOf(userId), user -> {
+      assertContainsAll(CredentialData.fromAll(registeredCredentials), user.credentials);
+      assertContains(CredentialData.from(addedCredential), user.credentials);
+    });
   }
 
   @Test
-  public void removeCredential() {
-    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), CredentialData.from("first-authority", "first-id", "first-secret", Credential.Type.XOOM.name()), false);
-    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), CredentialData.from("second-authority", "second-id", "second-secret", Credential.Type.XOOM.name()), false);
-    registerExampleUser(firstData.toUserState(), secondData.toUserState());
+  public void itProjectsRemovedCredentials() {
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
+    final Credential firstCredential = Credential.xoomCredentialFrom("authority-1", "credential-id-1", "secret-1");
+    final Credential secondCredential = Credential.xoomCredentialFrom("authority-2", "credential-id-2", "secret-2");
+    final Set<Credential> credentials = new HashSet<>(Arrays.asList(firstCredential, secondCredential));
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createUserCredentialRemoved(firstData.toUserState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new UserRegistered(userId, "bobby", profile(), credentials, false),
+            new UserCredentialRemoved(userId, "authority-1")
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserRegistrationData.class, interest);
-    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
-
-    assertEquals(firstData.id, item.id);
-    assertNotNull(item.credentials);
+    assertCompletes(userOf(userId), user -> {
+      assertNotContains(CredentialData.from(firstCredential), user.credentials);
+      assertContains(CredentialData.from(secondCredential), user.credentials);
+    });
   }
 
   @Test
-  public void replaceCredential() {
-    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), CredentialData.from("first-authority", "first-id", "first-secret", Credential.Type.XOOM.name()), false);
-    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), CredentialData.from("second-authority", "second-id", "second-secret", Credential.Type.XOOM.name()), false);
-    registerExampleUser(firstData.toUserState(), secondData.toUserState());
+  public void itProjectsReplacementCredentials() {
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
+    final Credential firstCredential = Credential.xoomCredentialFrom("authority-1", "credential-id-1", "secret-1");
+    final Credential secondCredential = Credential.xoomCredentialFrom("authority-2", "credential-id-2", "secret-2");
+    final Credential replacementCredential = Credential.xoomCredentialFrom("authority-3", "credential-id-3", "secret-3");
+    final Set<Credential> credentials = new HashSet<>(Arrays.asList(firstCredential, secondCredential));
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createUserCredentialReplaced(firstData.toUserState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new UserRegistered(userId, "bobby", profile(), credentials, false),
+            new UserCredentialReplaced(userId, "authority-1", replacementCredential)
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserRegistrationData.class, interest);
-    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
-
-    assertEquals(firstData.id, item.id);
-    assertNotNull(item.credentials);
+    assertCompletes(userOf(userId), user -> {
+      assertNotContains(CredentialData.from(firstCredential), user.credentials);
+      assertContains(CredentialData.from(secondCredential), user.credentials);
+      assertContains(CredentialData.from(replacementCredential), user.credentials);
+    });
   }
 
   @Test
-  public void replaceProfile() {
-    final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserRegistrationData firstData = UserRegistrationData.from(firstUserId, "first-user-username", ProfileData.from("first-user-profile-emailAddress", PersonNameData.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), false);
-    final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserRegistrationData secondData = UserRegistrationData.from(secondUserId, "second-user-username", ProfileData.from("second-user-profile-emailAddress", PersonNameData.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), false);
-    registerExampleUser(firstData.toUserState(), secondData.toUserState());
+  public void itProjectsReplacementProfile() {
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
+    final Profile profile = Profile.from("bobby@example.com", PersonName.from("Bobby", "Tables", "Little"), "07777123123");
+    final Profile replacementProfile = Profile.from("alice@example.com", PersonName.from("Alice", "Green", "Gabrielle"), "07777999888");
 
-    final CountingProjectionControl control = new CountingProjectionControl();
-    final AccessSafely access = control.afterCompleting(1);
-    projection.projectWith(createUserProfileReplaced(firstData.toUserState()), control);
-    final Map<String, Integer> confirmations = access.readFrom("confirmations");
+    givenEvents(
+            new UserRegistered(userId, "bobby", profile, credentials(), false),
+            new UserProfileReplaced(userId, replacementProfile)
+    );
 
-    assertEquals(1, confirmations.size());
-    assertEquals(1, valueOfProjectionIdFor(firstData.id, confirmations));
-
-    CountingReadResultInterest interest = new CountingReadResultInterest();
-    AccessSafely interestAccess = interest.afterCompleting(1);
-    stateStore.read(firstData.id, UserRegistrationData.class, interest);
-    UserRegistrationData item = interestAccess.readFrom("item", firstData.id);
-
-    assertEquals(firstData.id, item.id);
-    assertEquals(item.tenantId, "first-user-tenantId");
-    assertEquals(item.username, "first-user-username");
-    assertEquals(item.profile.emailAddress, "first-user-profile-emailAddress");
-    assertEquals(item.profile.name.given, "first-user-profile-name-given");
-    assertEquals(item.profile.name.family, "first-user-profile-name-family");
-    assertEquals(item.profile.name.second, "first-user-profile-name-second");
-    assertEquals(item.profile.phone, "first-user-profile-phone");
+    assertCompletes(userOf(userId), user -> assertEquals(ProfileData.from(replacementProfile), user.profile));
   }
 
-  private int valueOfProjectionIdFor(final String valueText, final Map<String, Integer> confirmations) {
-    return confirmations.get(valueToProjectionId.get(valueText));
+  private Completes<UserRegistrationData> userOf(final UserId userId) {
+    return world.actorFor(UserQueries.class, UserQueriesActor.class, stateStore).userOf(userId);
   }
 
-  private Projectable createUserRegistered(UserState data) {
-    final UserRegistered eventData = new UserRegistered(data.userId, data.username, data.profile, data.credentials, data.active);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserRegistered.class, 1, JsonSerialization.serialized(eventData), 1, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.userId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  private Set<Credential> credentials() {
+    return Collections.singleton(Credential.xoomCredentialFrom("authority", "credential-id", "secret"));
   }
 
-  private Projectable createUserActivated(UserState data) {
-    final UserActivated eventData = new UserActivated(data.userId);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserActivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.userId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
+  private Profile profile() {
+    return Profile.from("bobby@example.com", PersonName.from("Bobby", "Tables", "Little"), "07777123123");
   }
-
-  private Projectable createUserDeactivated(UserState data) {
-    final UserDeactivated eventData = new UserDeactivated(data.userId);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserDeactivated.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.userId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
-  private Projectable createUserCredentialAdded(UserState data) {
-    final UserCredentialAdded eventData = new UserCredentialAdded(data.userId, data.credentials.stream().findFirst().orElse(null));
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialAdded.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.userId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
-  private Projectable createUserCredentialRemoved(UserState data) {
-    final UserCredentialRemoved eventData = new UserCredentialRemoved(data.userId, data.credentials.stream().findFirst().get().authority);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialRemoved.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.userId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
-  private Projectable createUserCredentialReplaced(UserState data) {
-    final UserCredentialReplaced eventData = new UserCredentialReplaced(data.userId, data.credentials.stream().findFirst().get().authority, data.credentials.stream().findFirst().orElse(null));
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserCredentialReplaced.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.userId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
-  private Projectable createUserProfileReplaced(UserState data) {
-    final UserProfileReplaced eventData = new UserProfileReplaced(data.userId, data.profile);
-
-    BaseEntry.TextEntry textEntry = new BaseEntry.TextEntry(UserProfileReplaced.class, 1, JsonSerialization.serialized(eventData), 2, Metadata.withObject(eventData));
-
-    final String projectionId = UUID.randomUUID().toString();
-    valueToProjectionId.put(data.userId.idString(), projectionId);
-
-    return new TextProjectable(null, Collections.singletonList(textEntry), projectionId);
-  }
-
 }
