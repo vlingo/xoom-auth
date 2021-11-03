@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.vlingo.xoom</groupId>
   <artifactId>xoom-auth</artifactId>
-  <version>1.8.9-SNAPSHOT</version>
+  <version>1.9.1-SNAPSHOT</version>
   <name>xoom-auth</name>
   <description>The reactive, scalable, and resilient authentication and authorization service for VLINGO XOOM Platform
     components, and also suitable for hosted platform services and applications.
@@ -39,7 +39,7 @@
     <exec.mainClass>io.vlingo.xoom.auth.infrastructure.XoomInitializer</exec.mainClass>
     <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
     <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
-    <vlingo.xoom.version>1.8.9-SNAPSHOT</vlingo.xoom.version>
+    <vlingo.xoom.version>1.9.1-SNAPSHOT</vlingo.xoom.version>
     <graalvm.version>21.1.0</graalvm.version>
     <junit-jupiter.version>5.8.1</junit-jupiter.version>
   </properties>
