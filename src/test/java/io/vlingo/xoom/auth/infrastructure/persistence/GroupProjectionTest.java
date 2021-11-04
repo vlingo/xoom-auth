@@ -144,7 +144,7 @@ public class GroupProjectionTest extends ProjectionTest {
     });
   }
 
-  private Completes<GroupData> groupOf(final GroupId groupId) {
+  private Completes<GroupView> groupOf(final GroupId groupId) {
     return world.actorFor(GroupQueries.class, GroupQueriesActor.class, stateStore).groupOf(groupId);
   }
 

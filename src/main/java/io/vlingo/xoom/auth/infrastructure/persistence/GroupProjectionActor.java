@@ -1,7 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.auth.infrastructure.Events;
-import io.vlingo.xoom.auth.infrastructure.GroupData;
 import io.vlingo.xoom.auth.model.group.*;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
@@ -21,9 +20,9 @@ import java.util.stream.Stream;
  *   StateStoreProjectionActor
  * </a>
  */
-public class GroupProjectionActor extends StateStoreProjectionActor<GroupData> {
+public class GroupProjectionActor extends StateStoreProjectionActor<GroupView> {
 
-  private static final GroupData Empty = GroupData.empty();
+  private static final GroupView Empty = GroupView.empty();
 
   public GroupProjectionActor() {
     this(ComponentRegistry.withType(QueryModelStateStoreProvider.class).store);
@@ -34,56 +33,56 @@ public class GroupProjectionActor extends StateStoreProjectionActor<GroupData> {
   }
 
   @Override
-  protected GroupData currentDataFor(final Projectable projectable) {
+  protected GroupView currentDataFor(final Projectable projectable) {
     return Empty;
   }
 
   @Override
-  protected GroupData merge(final GroupData previousData, final int previousVersion, final GroupData currentData, final int currentVersion) {
+  protected GroupView merge(final GroupView previousData, final int previousVersion, final GroupView currentData, final int currentVersion) {
 
     if (previousVersion == currentVersion) return currentData;
 
-    GroupData merged = previousData;
+    GroupView merged = previousData;
 
     for (final Source<?> event : sources()) {
       switch (Events.valueOf(event.typeName())) {
         case GroupProvisioned: {
           final GroupProvisioned typedEvent = typed(event);
-          merged = GroupData.from(typedEvent.groupId, typedEvent.name, typedEvent.description);
+          merged = GroupView.from(typedEvent.groupId, typedEvent.name, typedEvent.description);
           break;
         }
 
         case GroupDescriptionChanged: {
           final GroupDescriptionChanged typedEvent = typed(event);
-          merged = GroupData.from(typedEvent.groupId, previousData.name, typedEvent.description, groupIds(previousData.groups), userIds(previousData.users));
+          merged = GroupView.from(typedEvent.groupId, previousData.name, typedEvent.description, groupIds(previousData.groups), userIds(previousData.users));
           break;
         }
 
         case GroupAssignedToGroup: {
           final GroupAssignedToGroup typedEvent = typed(event);
           final Set<GroupId> innerGroups = concat(groupIds(previousData.groups), typedEvent.innerGroupId);
-          merged = GroupData.from(typedEvent.groupId, previousData.name, previousData.description, innerGroups, userIds(previousData.users));
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, innerGroups, userIds(previousData.users));
           break;
         }
 
         case GroupUnassignedFromGroup: {
           final GroupUnassignedFromGroup typedEvent = typed(event);
           final Set<GroupId> innerGroups = filter(groupIds(previousData.groups), g -> !g.equals(typedEvent.innerGroupId));
-          merged = GroupData.from(typedEvent.groupId, previousData.name, previousData.description, innerGroups, userIds(previousData.users));
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, innerGroups, userIds(previousData.users));
           break;
         }
 
         case UserAssignedToGroup: {
           final UserAssignedToGroup typedEvent = typed(event);
           final Set<UserId> users = concat(userIds(previousData.users), typedEvent.userId);
-          merged = GroupData.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), users);
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), users);
           break;
         }
 
         case UserUnassignedFromGroup: {
           final UserUnassignedFromGroup typedEvent = typed(event);
           final Set<UserId> users = filter(userIds(previousData.users), u -> !u.equals(typedEvent.userId));
-          merged = GroupData.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), users);
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), users);
           break;
         }
 

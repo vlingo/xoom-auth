@@ -1,7 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.actors.World;
-import io.vlingo.xoom.auth.infrastructure.GroupData;
 import io.vlingo.xoom.auth.model.group.GroupId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Completes;
@@ -36,7 +35,7 @@ public class GroupQueriesTest {
   public void setUp() {
     world = World.startWithDefaults("test-state-store-query");
     stateStore = world.actorFor(StateStore.class, InMemoryStateStoreActor.class, Collections.singletonList(new NoOpDispatcher()));
-    StatefulTypeRegistry.registerAll(world, stateStore, GroupData.class);
+    StatefulTypeRegistry.registerAll(world, stateStore, GroupView.class);
     queries = world.actorFor(GroupQueries.class, GroupQueriesActor.class, stateStore);
   }
 
@@ -48,9 +47,9 @@ public class GroupQueriesTest {
   @Test
   public void itQueriesTheGroupById() {
     final GroupId firstGroupId = GroupId.from(TenantId.from("e79e02c5-735f-4998-b414-938479650be0"), "first-group-name");
-    final GroupData firstGroup = GroupData.from(firstGroupId, "first-group-name", "first-group-description");
+    final GroupView firstGroup = GroupView.from(firstGroupId, "first-group-name", "first-group-description");
     final GroupId secondGroupId = GroupId.from(TenantId.from("96bf1fd1-9bdc-4352-99b4-8089e28cfaa3"), "second-group-name");
-    final GroupData secondGroup = GroupData.from(secondGroupId, "second-group-name", "second-group-description");
+    final GroupView secondGroup = GroupView.from(secondGroupId, "second-group-name", "second-group-description");
 
     givenGroupsExist(firstGroup, secondGroup);
 
@@ -61,13 +60,13 @@ public class GroupQueriesTest {
   @Test
   public void itQueriesAllGroups() {
     final GroupId firstGroupId = GroupId.from(TenantId.from("e79e02c5-735f-4998-b414-938479650be0"), "first-group-name");
-    final GroupData firstGroup = GroupData.from(firstGroupId, "first-group-name", "first-group-description");
+    final GroupView firstGroup = GroupView.from(firstGroupId, "first-group-name", "first-group-description");
     final GroupId secondGroupId = GroupId.from(TenantId.from("96bf1fd1-9bdc-4352-99b4-8089e28cfaa3"), "second-group-name");
-    final GroupData secondGroup = GroupData.from(secondGroupId, "second-group-name", "second-group-description");
+    final GroupView secondGroup = GroupView.from(secondGroupId, "second-group-name", "second-group-description");
 
     givenGroupsExist(firstGroup, secondGroup);
 
-    final Completes<Collection<GroupData>> outcome = queries.groups();
+    final Completes<Collection<GroupView>> outcome = queries.groups();
 
     assertCompletes(outcome, groups -> {
       assertContains(firstGroup, groups);
@@ -77,7 +76,7 @@ public class GroupQueriesTest {
 
   @Test
   public void itReturnsAnEmptyGroupIfItIsNotFound() {
-    final Completes<GroupData> result = queries.groupOf(GroupId.from(TenantId.from("5e39f013-27f4-434d-8f8a-dba940baed7c"), "G2"));
+    final Completes<GroupView> result = queries.groupOf(GroupId.from(TenantId.from("5e39f013-27f4-434d-8f8a-dba940baed7c"), "G2"));
 
     assertCompletes(result, group -> assertEquals("", group.id));
   }
@@ -88,7 +87,7 @@ public class GroupQueriesTest {
     }
   };
 
-  private void givenGroupsExist(final GroupData... groups) {
+  private void givenGroupsExist(final GroupView... groups) {
     Arrays.stream(groups).forEach(group -> stateStore.write(group.id, group, 1, NOOP_WRITER));
   }
 }

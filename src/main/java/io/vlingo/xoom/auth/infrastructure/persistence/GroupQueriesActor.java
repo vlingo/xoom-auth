@@ -21,13 +21,13 @@ public class GroupQueriesActor extends StateStoreQueryActor implements GroupQuer
   }
 
   @Override
-  public Completes<GroupData> groupOf(GroupId groupId) {
-    return queryStateFor(groupId.idString(), GroupData.class, GroupData.empty());
+  public Completes<GroupView> groupOf(GroupId groupId) {
+    return queryStateFor(groupId.idString(), GroupView.class, GroupView.empty());
   }
 
   @Override
-  public Completes<Collection<GroupData>> groups() {
-    return streamAllOf(GroupData.class, new ArrayList<>());
+  public Completes<Collection<GroupView>> groups() {
+    return streamAllOf(GroupView.class, new ArrayList<>());
   }
 
 }

@@ -19,40 +19,9 @@ public class GroupData {
   public final String name;
   public final String description;
   public final String tenantId;
-  public final Set<String> groups;
-  public final Set<String> users;
-
-  public static GroupData from(final GroupState groupState) {
-    return from(groupState.id, groupState.name, groupState.description);
-  }
-
-  public static GroupData from(final GroupId id, final String name, final String description) {
-    return new GroupData(id, name, description, new HashSet<>(), new HashSet<>());
-  }
 
   public static GroupData from(final TenantId tenantId, final String name, final String description) {
     return new GroupData(tenantId, name, description);
-  }
-
-  public static GroupData from(final GroupId groupId, final String name, final String description, final Set<GroupId> groups, final Set<UserId> users) {
-    return new GroupData(groupId, name, description, groups, users);
-  }
-
-  public static List<GroupData> fromAll(final List<GroupState> states) {
-    return states.stream().map(GroupData::from).collect(Collectors.toList());
-  }
-
-  public static GroupData empty() {
-    return from(GroupState.identifiedBy(GroupId.from(TenantId.from(""), "")));
-  }
-
-  private GroupData(final GroupId groupId, final String name, final String description, final Set<GroupId> groups, final Set<UserId> users) {
-    this.id = groupId.idString();
-    this.name = name;
-    this.description = description;
-    this.tenantId = groupId.tenantId.idString();
-    this.groups = groups.stream().map(g -> g.idString()).collect(Collectors.toSet());
-    this.users = users.stream().map(u -> u.idString()).collect(Collectors.toSet());
   }
 
   private GroupData(final TenantId tenantId, final String name, final String description) {
@@ -60,12 +29,6 @@ public class GroupData {
     this.name = name;
     this.description = description;
     this.tenantId = tenantId.idString();
-    this.groups = new HashSet();
-    this.users = new HashSet<>();
-  }
-
-  public GroupState toGroupState() {
-    return new GroupState(groupId(), name, description);
   }
 
   @Override
@@ -93,9 +56,5 @@ public class GroupData {
             .append("description", description)
             .append("tenantId", tenantId)
             .toString();
-  }
-
-  public GroupId groupId() {
-    return GroupId.from(TenantId.from(tenantId), name);
   }
 }

@@ -4,6 +4,7 @@ import io.vlingo.xoom.actors.Address;
 import io.vlingo.xoom.actors.Definition;
 import io.vlingo.xoom.auth.infrastructure.GroupData;
 import io.vlingo.xoom.auth.infrastructure.persistence.GroupQueries;
+import io.vlingo.xoom.auth.infrastructure.persistence.GroupView;
 import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
 import io.vlingo.xoom.auth.model.group.Group;
 import io.vlingo.xoom.auth.model.group.GroupEntity;
@@ -43,7 +44,7 @@ public class GroupResource extends DynamicResourceHandler {
   public Completes<Response> provisionGroup(final GroupData data) {
     return create(data.tenantId, data.name)
       .provisionGroup(data.name, data.description)
-      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.id))), serialized(GroupData.from(state))))
+      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.id))), serialized(GroupView.from(state))))
       .otherwise(arg -> Response.of(NotFound))
       .recoverFrom(e -> Response.of(InternalServerError, e.getMessage())));
   }
@@ -51,7 +52,7 @@ public class GroupResource extends DynamicResourceHandler {
   public Completes<Response> changeDescription(final String tenantId, final String groupName, final GroupData data) {
     return resolve(tenantId, groupName)
             .andThenTo(group -> group.changeDescription(data.description))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -59,7 +60,7 @@ public class GroupResource extends DynamicResourceHandler {
   public Completes<Response> assignGroup(final String tenantId, final String groupName, final String innerGroupName, final GroupData data) {
     return resolve(tenantId, groupName)
             .andThenTo(group -> group.assignGroup(GroupId.from(TenantId.from(tenantId), innerGroupName)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -67,7 +68,7 @@ public class GroupResource extends DynamicResourceHandler {
   public Completes<Response> unassignGroup(final String tenantId, final String groupName, final String innerGroupName, final GroupData data) {
     return resolve(tenantId, groupName)
             .andThenTo(group -> group.unassignGroup(GroupId.from(TenantId.from(tenantId), innerGroupName)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -75,7 +76,7 @@ public class GroupResource extends DynamicResourceHandler {
   public Completes<Response> assignUser(final String tenantId, final String groupName, final String username, final GroupData data) {
     return resolve(tenantId, groupName)
             .andThenTo(group -> group.assignUser(UserId.from(TenantId.from(data.tenantId), username)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -83,7 +84,7 @@ public class GroupResource extends DynamicResourceHandler {
   public Completes<Response> unassignUser(final String tenantId, final String groupName, final String username, final GroupData data) {
     return resolve(tenantId, groupName)
             .andThenTo(group -> group.unassignUser(UserId.from(TenantId.from(data.tenantId), username)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(GroupView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }

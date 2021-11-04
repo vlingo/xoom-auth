@@ -92,7 +92,7 @@ import io.vlingo.xoom.auth.model.group.UserUnassignedFromGroup;
   @QueriesEntry(protocol = UserQueries.class, actor = UserQueriesActor.class),
   @QueriesEntry(protocol = PermissionQueries.class, actor = PermissionQueriesActor.class),
 })
-@DataObjects({CredentialData.class, ConstraintData.class, UserRegistrationData.class, TenantData.class, PersonNameData.class, ProfileData.class, PermissionData.class, RoleData.class, GroupData.class})
+@DataObjects({CredentialData.class, ConstraintData.class, UserRegistrationData.class, TenantData.class, PersonNameData.class, ProfileData.class, PermissionData.class, RoleData.class, GroupView.class})
 public class PersistenceSetup {
 
 
