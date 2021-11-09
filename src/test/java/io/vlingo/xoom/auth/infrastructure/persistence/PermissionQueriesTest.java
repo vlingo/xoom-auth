@@ -1,7 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.actors.World;
-import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.model.permission.PermissionId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Completes;
@@ -33,7 +32,7 @@ public class PermissionQueriesTest {
   public void setUp() {
     world = World.startWithDefaults("test-state-store-query");
     stateStore = world.actorFor(StateStore.class, InMemoryStateStoreActor.class, Collections.singletonList(new NoOpDispatcher()));
-    StatefulTypeRegistry.registerAll(world, stateStore, PermissionData.class);
+    StatefulTypeRegistry.registerAll(world, stateStore, PermissionView.class);
     queries = world.actorFor(PermissionQueries.class, PermissionQueriesActor.class, stateStore);
   }
 
@@ -45,9 +44,9 @@ public class PermissionQueriesTest {
   @Test
   public void itQueriesThePermissionById() {
     final PermissionId firstPermissionId = PermissionId.from(TenantId.from("8844bb24-811a-45c7-b98b-ba7a88a42372"), "first-permission-name");
-    final PermissionData firstPermission = PermissionData.from(firstPermissionId, new HashSet<>(), "first-permission-name", "first-permission-description");
+    final PermissionView firstPermission = PermissionView.from(firstPermissionId, new HashSet<>(), "first-permission-name", "first-permission-description");
     final PermissionId secondPermissionId = PermissionId.from(TenantId.from("2f50fc24-85b1-4657-b876-82491bfc3a70"), "second-permission-name");
-    final PermissionData secondPermission = PermissionData.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
+    final PermissionView secondPermission = PermissionView.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
 
     givenPermissionsExist(firstPermission, secondPermission);
 
@@ -58,13 +57,13 @@ public class PermissionQueriesTest {
   @Test
   public void itQueriesAllPermissions() {
     final PermissionId firstPermissionId = PermissionId.from(TenantId.from("8844bb24-811a-45c7-b98b-ba7a88a42372"), "first-permission-name");
-    final PermissionData firstPermission = PermissionData.from(firstPermissionId, new HashSet<>(), "first-permission-name", "first-permission-description");
+    final PermissionView firstPermission = PermissionView.from(firstPermissionId, new HashSet<>(), "first-permission-name", "first-permission-description");
     final PermissionId secondPermissionId = PermissionId.from(TenantId.from("2f50fc24-85b1-4657-b876-82491bfc3a70"), "second-permission-name");
-    final PermissionData secondPermission = PermissionData.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
+    final PermissionView secondPermission = PermissionView.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
 
     givenPermissionsExist(firstPermission, secondPermission);
 
-    final Completes<Collection<PermissionData>> outcome = queries.permissions();
+    final Completes<Collection<PermissionView>> outcome = queries.permissions();
 
     assertCompletes(outcome, permissions -> {
       assertContains(firstPermission, permissions);
@@ -74,7 +73,7 @@ public class PermissionQueriesTest {
 
   @Test
   public void itReturnsAnEmptyPermissionIfItIsNotFound() {
-    final Completes<PermissionData> result = queries.permissionOf(PermissionId.from(TenantId.from("02e46626-a06c-483d-a4dd-dd829c918a83"), "P1"));
+    final Completes<PermissionView> result = queries.permissionOf(PermissionId.from(TenantId.from("02e46626-a06c-483d-a4dd-dd829c918a83"), "P1"));
 
     assertCompletes(result, permission -> assertEquals("", permission.id));
   }
@@ -86,7 +85,7 @@ public class PermissionQueriesTest {
     }
   };
 
-  private void givenPermissionsExist(final PermissionData... permissions) {
+  private void givenPermissionsExist(final PermissionView... permissions) {
     Arrays.stream(permissions).forEach(permission -> stateStore.write(permission.id, permission, 1, NOOP_WRITER));
   }
 }

@@ -23,7 +23,7 @@ public class RoleView {
   public final Set<Relation<UserId, RoleId>> users;
 
   public static RoleView empty() {
-    return from(TenantId.from(""), "", "");
+    return from(RoleId.from(TenantId.from(""), ""), "", "");
   }
 
   public static RoleView from(final RoleState roleState) {

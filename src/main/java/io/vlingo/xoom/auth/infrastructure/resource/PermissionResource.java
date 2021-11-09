@@ -5,6 +5,7 @@ import io.vlingo.xoom.actors.Definition;
 import io.vlingo.xoom.auth.infrastructure.ConstraintData;
 import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.infrastructure.persistence.PermissionQueries;
+import io.vlingo.xoom.auth.infrastructure.persistence.PermissionView;
 import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
 import io.vlingo.xoom.auth.model.permission.Permission;
 import io.vlingo.xoom.auth.model.permission.PermissionEntity;
@@ -40,7 +41,7 @@ public class PermissionResource extends DynamicResourceHandler {
   public Completes<Response> provisionPermission(final PermissionData data) {
     return create(data.tenantId, data.name)
       .provisionPermission(data.name, data.description)
-      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.id))), serialized(PermissionData.from(state))))
+      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.id))), serialized(PermissionView.from(state))))
       .otherwise(arg -> Response.of(NotFound))
       .recoverFrom(e -> Response.of(InternalServerError, e.getMessage())));
   }
@@ -48,7 +49,7 @@ public class PermissionResource extends DynamicResourceHandler {
   public Completes<Response> enforce(final String tenantId, final String permissionName, final ConstraintData data) {
     return resolve(tenantId, permissionName)
             .andThenTo(permission -> permission.enforce(data.toConstraint()))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -56,7 +57,7 @@ public class PermissionResource extends DynamicResourceHandler {
   public Completes<Response> enforceReplacement(final String tenantId, final String permissionName, final String constraintName, final ConstraintData data) {
     return resolve(tenantId, permissionName)
             .andThenTo(permission -> permission.enforceReplacement(constraintName, data.toConstraint()))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -64,7 +65,7 @@ public class PermissionResource extends DynamicResourceHandler {
   public Completes<Response> forget(final String tenantId, final String permissionName, final String constraintName) {
     return resolve(tenantId, permissionName)
             .andThenTo(permission -> permission.forget(constraintName))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -72,7 +73,7 @@ public class PermissionResource extends DynamicResourceHandler {
   public Completes<Response> changeDescription(final String tenantId, final String permissionName, final PermissionData data) {
     return resolve(tenantId, permissionName)
             .andThenTo(permission -> permission.changeDescription(data.description))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(PermissionView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }

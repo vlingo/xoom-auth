@@ -1,8 +1,7 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
-import io.vlingo.xoom.auth.infrastructure.ConstraintData;
 import io.vlingo.xoom.auth.infrastructure.Events;
-import io.vlingo.xoom.auth.infrastructure.PermissionData;
+import io.vlingo.xoom.auth.infrastructure.persistence.PermissionView.ConstraintView;
 import io.vlingo.xoom.auth.model.permission.*;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.StateStoreProjectionActor;
@@ -22,9 +21,9 @@ import java.util.stream.Stream;
  *   StateStoreProjectionActor
  * </a>
  */
-public class PermissionProjectionActor extends StateStoreProjectionActor<PermissionData> {
+public class PermissionProjectionActor extends StateStoreProjectionActor<PermissionView> {
 
-  private static final PermissionData Empty = PermissionData.empty();
+  private static final PermissionView Empty = PermissionView.empty();
 
   public PermissionProjectionActor() {
     this(ComponentRegistry.withType(QueryModelStateStoreProvider.class).store);
@@ -35,50 +34,50 @@ public class PermissionProjectionActor extends StateStoreProjectionActor<Permiss
   }
 
   @Override
-  protected PermissionData currentDataFor(final Projectable projectable) {
+  protected PermissionView currentDataFor(final Projectable projectable) {
     return Empty;
   }
 
   @Override
-  protected PermissionData merge(final PermissionData previousData, final int previousVersion, final PermissionData currentData, final int currentVersion) {
+  protected PermissionView merge(final PermissionView previousData, final int previousVersion, final PermissionView currentData, final int currentVersion) {
 
     if (previousVersion == currentVersion) return currentData;
 
-    PermissionData merged = previousData;
+    PermissionView merged = previousData;
 
     for (final Source<?> event : sources()) {
       switch (Events.valueOf(event.typeName())) {
         case PermissionProvisioned: {
           final PermissionProvisioned typedEvent = typed(event);
-          merged = PermissionData.from(typedEvent.permissionId, new HashSet<>(), typedEvent.name, typedEvent.description);
+          merged = PermissionView.from(typedEvent.permissionId, new HashSet<>(), typedEvent.name, typedEvent.description);
           break;
         }
 
         case PermissionConstraintEnforced: {
           final PermissionConstraintEnforced typedEvent = typed(event);
-          final ConstraintData constraint = ConstraintData.from(typedEvent.constraint);
-          merged = PermissionData.from(typedEvent.permissionId, concat(previousData.constraints, constraint), previousData.name, previousData.description);
+          final ConstraintView constraint = ConstraintView.from(typedEvent.constraint);
+          merged = PermissionView.from(typedEvent.permissionId, concat(previousData.constraints, constraint), previousData.name, previousData.description);
           break;
         }
 
         case PermissionConstraintReplacementEnforced: {
           final PermissionConstraintReplacementEnforced typedEvent = typed(event);
-          final ConstraintData constraint = ConstraintData.from(typedEvent.constraint);
-          final Set<ConstraintData> constraints = concat(filter(previousData.constraints, c -> !c.name.equals(typedEvent.constraintName)), constraint);
-          merged = PermissionData.from(typedEvent.permissionId, constraints, previousData.name, previousData.description);
+          final ConstraintView constraint = ConstraintView.from(typedEvent.constraint);
+          final Set<ConstraintView> constraints = concat(filter(previousData.constraints, c -> !c.name.equals(typedEvent.constraintName)), constraint);
+          merged = PermissionView.from(typedEvent.permissionId, constraints, previousData.name, previousData.description);
           break;
         }
 
         case PermissionConstraintForgotten: {
           final PermissionConstraintForgotten typedEvent = typed(event);
-          final Set<ConstraintData> constraints = filter(previousData.constraints, c -> !c.name.equals(typedEvent.constraintName));
-          merged = PermissionData.from(typedEvent.permissionId, constraints, previousData.name, previousData.description);
+          final Set<ConstraintView> constraints = filter(previousData.constraints, c -> !c.name.equals(typedEvent.constraintName));
+          merged = PermissionView.from(typedEvent.permissionId, constraints, previousData.name, previousData.description);
           break;
         }
 
         case PermissionDescriptionChanged: {
           final PermissionDescriptionChanged typedEvent = typed(event);
-          merged = PermissionData.from(typedEvent.permissionId, previousData.constraints, previousData.name, typedEvent.description);
+          merged = PermissionView.from(typedEvent.permissionId, previousData.constraints, previousData.name, typedEvent.description);
           break;
         }
 

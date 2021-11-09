@@ -21,13 +21,13 @@ public class PermissionQueriesActor extends StateStoreQueryActor implements Perm
   }
 
   @Override
-  public Completes<PermissionData> permissionOf(PermissionId permissionId) {
-    return queryStateFor(permissionId.idString(), PermissionData.class, PermissionData.empty());
+  public Completes<PermissionView> permissionOf(PermissionId permissionId) {
+    return queryStateFor(permissionId.idString(), PermissionView.class, PermissionView.empty());
   }
 
   @Override
-  public Completes<Collection<PermissionData>> permissions() {
-    return streamAllOf(PermissionData.class, new ArrayList<>());
+  public Completes<Collection<PermissionView>> permissions() {
+    return streamAllOf(PermissionView.class, new ArrayList<>());
   }
 
 }

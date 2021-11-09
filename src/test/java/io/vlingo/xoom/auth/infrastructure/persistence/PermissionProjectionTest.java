@@ -1,7 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
-import io.vlingo.xoom.auth.infrastructure.ConstraintData;
-import io.vlingo.xoom.auth.infrastructure.PermissionData;
+import io.vlingo.xoom.auth.infrastructure.persistence.PermissionView.ConstraintView;
 import io.vlingo.xoom.auth.model.permission.*;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.value.Constraint;
@@ -19,7 +18,7 @@ public class PermissionProjectionTest extends ProjectionTest {
 
   @Override
   protected Set<Class<?>> statefulTypes() {
-    return Collections.singleton(PermissionData.class);
+    return Collections.singleton(PermissionView.class);
   }
 
   @Override
@@ -56,8 +55,8 @@ public class PermissionProjectionTest extends ProjectionTest {
     );
 
     assertCompletes(permissionOf(permissionId), permission -> {
-      assertContains(ConstraintData.from(constraintA), permission.constraints);
-      assertContains(ConstraintData.from(constraintB), permission.constraints);
+      assertContains(ConstraintView.from(constraintA), permission.constraints);
+      assertContains(ConstraintView.from(constraintB), permission.constraints);
     });
   }
 
@@ -74,8 +73,8 @@ public class PermissionProjectionTest extends ProjectionTest {
     );
 
     assertCompletes(permissionOf(permissionId), permission -> {
-      assertNotContains(ConstraintData.from(constraintA), permission.constraints);
-      assertContains(ConstraintData.from(constraintB), permission.constraints);
+      assertNotContains(ConstraintView.from(constraintA), permission.constraints);
+      assertContains(ConstraintView.from(constraintB), permission.constraints);
     });
   }
 
@@ -93,8 +92,8 @@ public class PermissionProjectionTest extends ProjectionTest {
     );
 
     assertCompletes(permissionOf(permissionId), permission -> {
-      assertNotContains(ConstraintData.from(constraintA), permission.constraints);
-      assertContains(ConstraintData.from(constraintB), permission.constraints);
+      assertNotContains(ConstraintView.from(constraintA), permission.constraints);
+      assertContains(ConstraintView.from(constraintB), permission.constraints);
     });
   }
 
@@ -110,7 +109,7 @@ public class PermissionProjectionTest extends ProjectionTest {
     assertCompletes(permissionOf(permissionId), permission -> assertEquals("Permission A updated", permission.description));
   }
 
-  private Completes<PermissionData> permissionOf(PermissionId permissionId) {
+  private Completes<PermissionView> permissionOf(PermissionId permissionId) {
     return world.actorFor(PermissionQueries.class, PermissionQueriesActor.class, stateStore).permissionOf(permissionId);
   }
 }
