@@ -17,24 +17,8 @@ public class RoleData {
   public final String name;
   public final String description;
 
-  public static RoleData from(final RoleState roleState) {
-    return from(roleState.roleId, roleState.name, roleState.description);
-  }
-
   public static RoleData from(final TenantId tenantId, final String name, final String description) {
     return new RoleData(tenantId, name, description);
-  }
-
-  public static RoleData from(final RoleId roleId, final String name, final String description) {
-    return new RoleData(roleId, name, description);
-  }
-
-  public static List<RoleData> fromAll(final List<RoleState> states) {
-    return states.stream().map(RoleData::from).collect(Collectors.toList());
-  }
-
-  public static RoleData empty() {
-    return from(RoleState.identifiedBy(RoleId.from(TenantId.from(""), "")));
   }
 
   private RoleData(final TenantId tenantId, final String name, final String description) {
@@ -42,17 +26,6 @@ public class RoleData {
     this.tenantId = tenantId.idString();
     this.name = name;
     this.description = description;
-  }
-
-  private RoleData(final RoleId roleId, final String name, final String description) {
-    this.id = roleId.idString();
-    this.tenantId = roleId.tenantId.idString();
-    this.name = name;
-    this.description = description;
-  }
-
-  public RoleState toRoleState() {
-    return new RoleState(RoleId.from(TenantId.from(tenantId), name), name, description);
   }
 
   @Override

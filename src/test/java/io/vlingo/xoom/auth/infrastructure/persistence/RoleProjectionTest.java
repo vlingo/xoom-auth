@@ -1,6 +1,5 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
-import io.vlingo.xoom.auth.infrastructure.RoleData;
 import io.vlingo.xoom.auth.model.group.GroupId;
 import io.vlingo.xoom.auth.model.role.GroupAssignedToRole;
 import io.vlingo.xoom.auth.model.role.RoleDescriptionChanged;
@@ -21,7 +20,7 @@ public class RoleProjectionTest extends ProjectionTest {
 
   @Override
   protected Set<Class<?>> statefulTypes() {
-    return Collections.singleton(RoleData.class);
+    return Collections.singleton(RoleView.class);
   }
 
   @Override
@@ -72,7 +71,7 @@ public class RoleProjectionTest extends ProjectionTest {
 
   // @TODO finish the projection
 
-  private Completes<RoleData> roleOf(final RoleId roleId) {
+  private Completes<RoleView> roleOf(final RoleId roleId) {
     return world.actorFor(RoleQueries.class, RoleQueriesActor.class, stateStore).roleOf(roleId);
   }
 }

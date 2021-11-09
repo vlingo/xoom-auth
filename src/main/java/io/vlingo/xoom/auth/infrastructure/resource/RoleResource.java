@@ -5,6 +5,7 @@ import io.vlingo.xoom.actors.Definition;
 import io.vlingo.xoom.auth.infrastructure.RoleData;
 import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
 import io.vlingo.xoom.auth.infrastructure.persistence.RoleQueries;
+import io.vlingo.xoom.auth.infrastructure.persistence.RoleView;
 import io.vlingo.xoom.auth.model.group.GroupId;
 import io.vlingo.xoom.auth.model.permission.PermissionId;
 import io.vlingo.xoom.auth.model.role.Role;
@@ -42,7 +43,7 @@ public class RoleResource extends DynamicResourceHandler {
   public Completes<Response> provisionRole(final RoleData data) {
     return create(data.tenantId, data.name)
       .provisionRole(data.name, data.description)
-      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.roleId))), serialized(RoleData.from(state))))
+      .andThenTo(state -> Completes.withSuccess(entityResponseOf(Created, ResponseHeader.headers(ResponseHeader.of(Location, location(state.roleId))), serialized(RoleView.from(state))))
       .otherwise(arg -> Response.of(NotFound))
       .recoverFrom(e -> Response.of(InternalServerError, e.getMessage())));
   }
@@ -50,7 +51,7 @@ public class RoleResource extends DynamicResourceHandler {
   public Completes<Response> changeDescription(final String tenantId, final String roleName, final RoleData data) {
     return resolve(tenantId, roleName)
             .andThenTo(role -> role.changeDescription(data.description))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -58,7 +59,7 @@ public class RoleResource extends DynamicResourceHandler {
   public Completes<Response> assignGroup(final String tenantId, final String roleName, final String groupName) {
     return resolve(tenantId, roleName)
             .andThenTo(role -> role.assignGroup(GroupId.from(TenantId.from(tenantId), groupName)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -66,7 +67,7 @@ public class RoleResource extends DynamicResourceHandler {
   public Completes<Response> unassignGroup(final String tenantId, final String roleName, final String groupName) {
     return resolve(tenantId, roleName)
             .andThenTo(role -> role.unassignGroup(GroupId.from(TenantId.from(tenantId), groupName)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -74,7 +75,7 @@ public class RoleResource extends DynamicResourceHandler {
   public Completes<Response> assignUser(final String tenantId, final String roleName, final String username) {
     return resolve(tenantId, roleName)
             .andThenTo(role -> role.assignUser(UserId.from(TenantId.from(tenantId), username)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -82,7 +83,7 @@ public class RoleResource extends DynamicResourceHandler {
   public Completes<Response> unassignUser(final String tenantId, final String roleName, final String username) {
     return resolve(tenantId, roleName)
             .andThenTo(role -> role.unassignUser(UserId.from(TenantId.from(tenantId), username)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -90,7 +91,7 @@ public class RoleResource extends DynamicResourceHandler {
   public Completes<Response> attach(final String tenantId, final String roleName, final String permissionName) {
     return resolve(tenantId, roleName)
             .andThenTo(role -> role.attach(PermissionId.from(TenantId.from(tenantId), permissionName)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -98,7 +99,7 @@ public class RoleResource extends DynamicResourceHandler {
   public Completes<Response> detach(final String tenantId, final String roleName, final String permissionName) {
     return resolve(tenantId, roleName)
             .andThenTo(role -> role.detach(PermissionId.from(TenantId.from(tenantId), permissionName)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleData.from(state)))))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }

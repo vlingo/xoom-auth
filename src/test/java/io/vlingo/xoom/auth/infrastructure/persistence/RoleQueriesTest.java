@@ -1,7 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.actors.World;
-import io.vlingo.xoom.auth.infrastructure.RoleData;
 import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.common.Completes;
@@ -36,7 +35,7 @@ public class RoleQueriesTest {
   public void setUp() {
     world = World.startWithDefaults("test-state-store-query");
     stateStore = world.actorFor(StateStore.class, InMemoryStateStoreActor.class, Collections.singletonList(new NoOpDispatcher()));
-    StatefulTypeRegistry.registerAll(world, stateStore, RoleData.class);
+    StatefulTypeRegistry.registerAll(world, stateStore, RoleView.class);
     queries = world.actorFor(RoleQueries.class, RoleQueriesActor.class, stateStore);
   }
 
@@ -48,9 +47,9 @@ public class RoleQueriesTest {
   @Test
   public void itQueriesTheRoleById() {
     final RoleId firstRoleId = RoleId.from(TenantId.from("06f22ad4-49f5-46a4-b350-f6198a7646a3"), "first-role-name");
-    final RoleData firstRole = RoleData.from(firstRoleId, "first-role-name", "first-role-description");
+    final RoleView firstRole = RoleView.from(firstRoleId, "first-role-name", "first-role-description");
     final RoleId secondRoleId = RoleId.from(TenantId.from("3f51d0fd-335e-41b0-b57c-766470cf6ad7"), "second-role-name");
-    final RoleData secondRole = RoleData.from(secondRoleId, "second-role-name", "second-role-description");
+    final RoleView secondRole = RoleView.from(secondRoleId, "second-role-name", "second-role-description");
 
     givenRolesExist(firstRole, secondRole);
 
@@ -61,13 +60,13 @@ public class RoleQueriesTest {
   @Test
   public void itQueriesAllRoles() {
     final RoleId firstRoleId = RoleId.from(TenantId.from("06f22ad4-49f5-46a4-b350-f6198a7646a3"), "first-role-name");
-    final RoleData firstRole = RoleData.from(firstRoleId, "first-role-name", "first-role-description");
+    final RoleView firstRole = RoleView.from(firstRoleId, "first-role-name", "first-role-description");
     final RoleId secondRoleId = RoleId.from(TenantId.from("3f51d0fd-335e-41b0-b57c-766470cf6ad7"), "second-role-name");
-    final RoleData secondRole = RoleData.from(secondRoleId, "second-role-name", "second-role-description");
+    final RoleView secondRole = RoleView.from(secondRoleId, "second-role-name", "second-role-description");
 
     givenRolesExist(firstRole, secondRole);
 
-    final Completes<Collection<RoleData>> outcome = queries.roles();
+    final Completes<Collection<RoleView>> outcome = queries.roles();
 
     assertCompletes(outcome, roles -> {
       assertContains(firstRole, roles);
@@ -77,7 +76,7 @@ public class RoleQueriesTest {
 
   @Test
   public void itReturnsAnEmptyRoleIfItIsNotFound() {
-    final Completes<RoleData> result = queries.roleOf(RoleId.from(TenantId.from("8e8c0fe5-c727-43a6-9307-926214a71af4"), "role-c"));
+    final Completes<RoleView> result = queries.roleOf(RoleId.from(TenantId.from("8e8c0fe5-c727-43a6-9307-926214a71af4"), "role-c"));
 
     assertCompletes(result, role -> assertEquals("", role.id));
   }
@@ -88,7 +87,7 @@ public class RoleQueriesTest {
     }
   };
 
-  private void givenRolesExist(final RoleData... roles) {
+  private void givenRolesExist(final RoleView... roles) {
     Arrays.stream(roles).forEach(role -> stateStore.write(role.id, role, 1, NOOP_WRITER));
   }
 }

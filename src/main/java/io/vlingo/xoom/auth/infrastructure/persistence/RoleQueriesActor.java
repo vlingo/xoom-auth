@@ -21,13 +21,13 @@ public class RoleQueriesActor extends StateStoreQueryActor implements RoleQuerie
   }
 
   @Override
-  public Completes<RoleData> roleOf(RoleId roleId) {
-    return queryStateFor(roleId.idString(), RoleData.class, RoleData.empty());
+  public Completes<RoleView> roleOf(RoleId roleId) {
+    return queryStateFor(roleId.idString(), RoleView.class, RoleView.empty());
   }
 
   @Override
-  public Completes<Collection<RoleData>> roles() {
-    return streamAllOf(RoleData.class, new ArrayList<>());
+  public Completes<Collection<RoleView>> roles() {
+    return streamAllOf(RoleView.class, new ArrayList<>());
   }
 
 }
