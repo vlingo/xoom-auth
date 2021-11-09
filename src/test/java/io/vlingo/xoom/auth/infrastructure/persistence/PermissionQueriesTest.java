@@ -44,9 +44,9 @@ public class PermissionQueriesTest {
   @Test
   public void itQueriesThePermissionById() {
     final PermissionId firstPermissionId = PermissionId.from(TenantId.from("8844bb24-811a-45c7-b98b-ba7a88a42372"), "first-permission-name");
-    final PermissionView firstPermission = PermissionView.from(firstPermissionId, new HashSet<>(), "first-permission-name", "first-permission-description");
+    final PermissionView firstPermission = PermissionView.from(firstPermissionId, new HashSet<>(), "first-permission-name", "first-permission-description", new HashSet<>());
     final PermissionId secondPermissionId = PermissionId.from(TenantId.from("2f50fc24-85b1-4657-b876-82491bfc3a70"), "second-permission-name");
-    final PermissionView secondPermission = PermissionView.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
+    final PermissionView secondPermission = PermissionView.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description", new HashSet<>());
 
     givenPermissionsExist(firstPermission, secondPermission);
 
@@ -57,9 +57,9 @@ public class PermissionQueriesTest {
   @Test
   public void itQueriesAllPermissions() {
     final PermissionId firstPermissionId = PermissionId.from(TenantId.from("8844bb24-811a-45c7-b98b-ba7a88a42372"), "first-permission-name");
-    final PermissionView firstPermission = PermissionView.from(firstPermissionId, new HashSet<>(), "first-permission-name", "first-permission-description");
+    final PermissionView firstPermission = PermissionView.from(firstPermissionId, new HashSet<>(), "first-permission-name", "first-permission-description", new HashSet<>());
     final PermissionId secondPermissionId = PermissionId.from(TenantId.from("2f50fc24-85b1-4657-b876-82491bfc3a70"), "second-permission-name");
-    final PermissionView secondPermission = PermissionView.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description");
+    final PermissionView secondPermission = PermissionView.from(secondPermissionId, new HashSet<>(), "second-permission-name", "second-permission-description", new HashSet<>());
 
     givenPermissionsExist(firstPermission, secondPermission);
 

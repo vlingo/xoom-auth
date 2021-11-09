@@ -86,7 +86,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRolePermissionAttaches() {
     roleWithPermission();
 
@@ -99,7 +98,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRolePermissionDetaches() {
     roleWithPermission();
     final Response putRolePermissionResponse = putRolePermissionRequestResponse(roleData, permissionData.name);
@@ -138,7 +136,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRolePermissionQueries() {
     roleWithPermission();
 

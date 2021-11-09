@@ -1,47 +1,13 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.auth.infrastructure.*;
-import io.vlingo.xoom.turbo.annotation.persistence.Persistence;
+import io.vlingo.xoom.auth.model.group.*;
+import io.vlingo.xoom.auth.model.permission.*;
+import io.vlingo.xoom.auth.model.role.*;
+import io.vlingo.xoom.auth.model.tenant.*;
+import io.vlingo.xoom.auth.model.user.*;
+import io.vlingo.xoom.turbo.annotation.persistence.*;
 import io.vlingo.xoom.turbo.annotation.persistence.Persistence.StorageType;
-import io.vlingo.xoom.turbo.annotation.persistence.Projections;
-import io.vlingo.xoom.turbo.annotation.persistence.Projection;
-import io.vlingo.xoom.turbo.annotation.persistence.ProjectionType;
-import io.vlingo.xoom.turbo.annotation.persistence.Adapters;
-import io.vlingo.xoom.turbo.annotation.persistence.EnableQueries;
-import io.vlingo.xoom.turbo.annotation.persistence.QueriesEntry;
-import io.vlingo.xoom.turbo.annotation.persistence.DataObjects;
-import io.vlingo.xoom.auth.model.role.GroupUnassignedFromRole;
-import io.vlingo.xoom.auth.model.tenant.TenantDeactivated;
-import io.vlingo.xoom.auth.model.user.UserRegistered;
-import io.vlingo.xoom.auth.model.permission.PermissionProvisioned;
-import io.vlingo.xoom.auth.model.tenant.TenantActivated;
-import io.vlingo.xoom.auth.model.role.RolePermissionDetached;
-import io.vlingo.xoom.auth.model.user.UserCredentialReplaced;
-import io.vlingo.xoom.auth.model.role.GroupAssignedToRole;
-import io.vlingo.xoom.auth.model.permission.PermissionDescriptionChanged;
-import io.vlingo.xoom.auth.model.permission.PermissionConstraintReplacementEnforced;
-import io.vlingo.xoom.auth.model.user.UserCredentialRemoved;
-import io.vlingo.xoom.auth.model.permission.PermissionConstraintForgotten;
-import io.vlingo.xoom.auth.model.role.UserAssignedToRole;
-import io.vlingo.xoom.auth.model.group.GroupDescriptionChanged;
-import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
-import io.vlingo.xoom.auth.model.tenant.TenantSubscribed;
-import io.vlingo.xoom.auth.model.group.UserAssignedToGroup;
-import io.vlingo.xoom.auth.model.tenant.TenantNameChanged;
-import io.vlingo.xoom.auth.model.group.GroupProvisioned;
-import io.vlingo.xoom.auth.model.role.UserUnassignedFromRole;
-import io.vlingo.xoom.auth.model.user.UserActivated;
-import io.vlingo.xoom.auth.model.role.RoleProvisioned;
-import io.vlingo.xoom.auth.model.group.GroupAssignedToGroup;
-import io.vlingo.xoom.auth.model.role.RoleDescriptionChanged;
-import io.vlingo.xoom.auth.model.user.UserProfileReplaced;
-import io.vlingo.xoom.auth.model.user.UserCredentialAdded;
-import io.vlingo.xoom.auth.model.user.UserDeactivated;
-import io.vlingo.xoom.auth.model.role.RolePermissionAttached;
-import io.vlingo.xoom.auth.model.permission.PermissionConstraintEnforced;
-import io.vlingo.xoom.auth.model.group.GroupUnassignedFromGroup;
-import io.vlingo.xoom.auth.model.tenant.TenantDescriptionChanged;
-import io.vlingo.xoom.auth.model.group.UserUnassignedFromGroup;
 
 @SuppressWarnings("unused")
 @Persistence(basePackage = "io.vlingo.xoom.auth", storageType = StorageType.JOURNAL, cqrs = true)
@@ -50,7 +16,7 @@ import io.vlingo.xoom.auth.model.group.UserUnassignedFromGroup;
   @Projection(actor = TenantProjectionActor.class, becauseOf = {TenantSubscribed.class, TenantDeactivated.class, TenantNameChanged.class, TenantDescriptionChanged.class, TenantActivated.class}),
   @Projection(actor = GroupProjectionActor.class, becauseOf = {GroupDescriptionChanged.class, UserAssignedToGroup.class, GroupAssignedToGroup.class, GroupUnassignedFromGroup.class, UserUnassignedFromGroup.class, GroupProvisioned.class}),
   @Projection(actor = UserProjectionActor.class, becauseOf = {UserCredentialAdded.class, UserProfileReplaced.class, UserCredentialRemoved.class, UserDeactivated.class, UserRegistered.class, UserActivated.class, UserCredentialReplaced.class}),
-  @Projection(actor = PermissionProjectionActor.class, becauseOf = {PermissionConstraintEnforced.class, PermissionDescriptionChanged.class, PermissionProvisioned.class, PermissionConstraintReplacementEnforced.class, PermissionConstraintForgotten.class})
+  @Projection(actor = PermissionProjectionActor.class, becauseOf = {PermissionConstraintEnforced.class, PermissionDescriptionChanged.class, PermissionProvisioned.class, PermissionConstraintReplacementEnforced.class, PermissionConstraintForgotten.class, RolePermissionAttached.class, RolePermissionDetached.class})
 }, type = ProjectionType.EVENT_BASED)
 @Adapters({
   RolePermissionAttached.class,

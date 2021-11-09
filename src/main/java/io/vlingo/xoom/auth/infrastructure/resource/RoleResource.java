@@ -2,7 +2,9 @@ package io.vlingo.xoom.auth.infrastructure.resource;
 
 import io.vlingo.xoom.actors.Address;
 import io.vlingo.xoom.actors.Definition;
+import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.infrastructure.RoleData;
+import io.vlingo.xoom.auth.infrastructure.persistence.PermissionQueries;
 import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
 import io.vlingo.xoom.auth.infrastructure.persistence.RoleQueries;
 import io.vlingo.xoom.auth.infrastructure.persistence.RoleView;
@@ -32,12 +34,14 @@ import static io.vlingo.xoom.http.resource.ResourceBuilder.resource;
  */
 public class RoleResource extends DynamicResourceHandler {
   private final Grid grid;
-  private final RoleQueries $queries;
+  private final RoleQueries $roleQueries;
+  private final PermissionQueries $permissionQueries;
 
   public RoleResource(final Grid grid) {
       super(grid.world().stage());
       this.grid = grid;
-      this.$queries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).roleQueries;
+      this.$roleQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).roleQueries;
+      this.$permissionQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).permissionQueries;
   }
 
   public Completes<Response> provisionRole(final RoleData data) {
@@ -88,10 +92,11 @@ public class RoleResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> attach(final String tenantId, final String roleName, final String permissionName) {
+  public Completes<Response> attach(final String tenantId, final String roleName, final PermissionData permissionData) {
+    final PermissionId permissionId = PermissionId.from(TenantId.from(tenantId), permissionData.name);
     return resolve(tenantId, roleName)
-            .andThenTo(role -> role.attach(PermissionId.from(TenantId.from(tenantId), permissionName)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
+            .andThenTo(role -> role.attach(permissionId))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, rolePermissionLocation(state.roleId, permissionId))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -105,14 +110,25 @@ public class RoleResource extends DynamicResourceHandler {
   }
 
   public Completes<Response> roles() {
-    return $queries.roles()
+    return $roleQueries.roles()
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
   public Completes<Response> roleOf(final String tenantId, final String roleName) {
-    return $queries.roleOf(RoleId.from(TenantId.from(tenantId), roleName))
+    return $roleQueries.roleOf(RoleId.from(TenantId.from(tenantId), roleName))
+            .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
+            .otherwise(arg -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
+
+  public Completes<Response> permissionOf(final String tenantIdString, final String roleName, final String permissionName) {
+    final TenantId tenantId = TenantId.from(tenantIdString);
+    final RoleId roleId = RoleId.from(tenantId, roleName);
+    final PermissionId permissionId = PermissionId.from(tenantId, permissionName);
+    return $permissionQueries.permissionOf(permissionId)
+            .andThen(permissionView -> permissionView.isAttachedTo(roleId) ? permissionView : null)
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -149,16 +165,21 @@ public class RoleResource extends DynamicResourceHandler {
             .param(String.class)
             .param(String.class)
             .handle(this::unassignUser),
-        io.vlingo.xoom.http.resource.ResourceBuilder.put("/tenants/{tenantId}/roles/{roleName}/permissions/{permissionName}")
+        io.vlingo.xoom.http.resource.ResourceBuilder.put("/tenants/{tenantId}/roles/{roleName}/permissions")
             .param(String.class)
             .param(String.class)
-            .param(String.class)
+            .body(PermissionData.class)
             .handle(this::attach),
         io.vlingo.xoom.http.resource.ResourceBuilder.delete("/tenants/{tenantId}/roles/{roleName}/permissions/{permissionName}")
             .param(String.class)
             .param(String.class)
             .param(String.class)
             .handle(this::detach),
+        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/roles/{roleName}/permissions/{permissionName}")
+            .param(String.class)
+            .param(String.class)
+            .param(String.class)
+            .handle(this::permissionOf),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/roles")
             .handle(this::roles),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/roles/{roleName}")
@@ -175,6 +196,10 @@ public class RoleResource extends DynamicResourceHandler {
 
   private String location(final RoleId roleId) {
     return String.format("/tenants/%s/roles/%s", roleId.tenantId.id, roleId.roleName);
+  }
+
+  private String rolePermissionLocation(final RoleId roleId, final PermissionId permissionId) {
+    return String.format("/tenants/%s/roles/%s/permissions/%s", roleId.tenantId.id, roleId.roleName, permissionId.permissionName);
   }
 
   private Completes<Role> resolve(final String tenantId, String roleName) {
