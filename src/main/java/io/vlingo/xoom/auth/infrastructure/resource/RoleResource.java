@@ -56,9 +56,9 @@ public class RoleResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> assignGroup(final String tenantId, final String roleName, final String groupName) {
+  public Completes<Response> assignGroup(final String tenantId, final String roleName, final RoleData roleData) {
     return resolve(tenantId, roleName)
-            .andThenTo(role -> role.assignGroup(GroupId.from(TenantId.from(tenantId), groupName)))
+            .andThenTo(role -> role.assignGroup(GroupId.from(TenantId.from(tenantId), roleData.name)))
             .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -129,10 +129,10 @@ public class RoleResource extends DynamicResourceHandler {
             .param(String.class)
             .body(RoleData.class)
             .handle(this::changeDescription),
-        io.vlingo.xoom.http.resource.ResourceBuilder.put("/tenants/{tenantId}/roles/{roleName}/groups/{groupName}")
+        io.vlingo.xoom.http.resource.ResourceBuilder.put("/tenants/{tenantId}/roles/{roleName}/groups")
             .param(String.class)
             .param(String.class)
-            .param(String.class)
+            .body(RoleData.class)
             .handle(this::assignGroup),
         io.vlingo.xoom.http.resource.ResourceBuilder.delete("/tenants/{tenantId}/roles/{roleName}/groups/{groupName}")
             .param(String.class)
