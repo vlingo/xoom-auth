@@ -72,7 +72,11 @@ public class GroupProjectionTest extends ProjectionTest {
             new GroupAssignedToGroup(groupIdA, groupIdB)
     );
 
-    assertCompletes(groupOf(groupIdA), group -> assertEquals(setOf(groupIdB.idString()), group.groups));
+    assertCompletes(groupOf(groupIdA), group -> {
+      assertEquals(setOf(Relation.groupWithMember(groupIdA, groupIdB)), group.groups);
+      assertFalse(group.hasMember(groupIdA));
+      assertTrue(group.hasMember(groupIdB));
+    });
   }
 
   @Test
@@ -90,7 +94,12 @@ public class GroupProjectionTest extends ProjectionTest {
             new GroupUnassignedFromGroup(groupIdA, groupIdB)
     );
 
-    assertCompletes(groupOf(groupIdA), group -> assertEquals(setOf(groupIdC.idString()), group.groups));
+    assertCompletes(groupOf(groupIdA), group -> {
+      assertEquals(setOf(Relation.groupWithMember(groupIdA, groupIdC)), group.groups);
+      assertFalse(group.hasMember(groupIdA));
+      assertFalse(group.hasMember(groupIdB));
+      assertTrue(group.hasMember(groupIdC));
+    });
   }
 
   @Test
@@ -104,7 +113,7 @@ public class GroupProjectionTest extends ProjectionTest {
             new UserAssignedToGroup(groupId, userId)
     );
 
-    assertCompletes(groupOf(groupId), group -> assertEquals(setOf(userId.idString()), group.users));
+    assertCompletes(groupOf(groupId), group -> assertEquals(setOf(userId.idString()), group.deprecatedUsers));
   }
 
   @Test
@@ -121,7 +130,7 @@ public class GroupProjectionTest extends ProjectionTest {
             new UserUnassignedFromGroup(groupId, userIdBobby)
     );
 
-    assertCompletes(groupOf(groupId), group -> assertEquals(setOf(userIdAlice.idString()), group.users));
+    assertCompletes(groupOf(groupId), group -> assertEquals(setOf(userIdAlice.idString()), group.deprecatedUsers));
   }
 
   @Test
@@ -140,8 +149,8 @@ public class GroupProjectionTest extends ProjectionTest {
     );
 
     assertCompletes(groupOf(groupIdA), group -> {
-      assertEquals(setOf(groupIdB.idString()), group.groups);
-      assertEquals(setOf(userId.idString()), group.users);
+      assertEquals(setOf(Relation.groupWithMember(groupIdA, groupIdB)), group.groups);
+      assertEquals(setOf(userId.idString()), group.deprecatedUsers);
       assertEquals("Group A improved", group.description);
     });
   }

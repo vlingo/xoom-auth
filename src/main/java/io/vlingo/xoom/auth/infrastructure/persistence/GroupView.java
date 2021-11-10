@@ -17,8 +17,8 @@ public class GroupView {
   public final String tenantId;
   public final String name;
   public final String description;
-  public final Set<String> groups;
-  public final Set<String> users;
+  public final Set<Relation<GroupId, GroupId>> groups;
+  public final Set<String> deprecatedUsers;
   public final Set<Relation<GroupId, RoleId>> roles;
 
   public static GroupView empty() {
@@ -33,25 +33,25 @@ public class GroupView {
     return from(groupId, name, description, Collections.emptySet(), Collections.emptySet(), Collections.emptySet());
   }
 
-  public static GroupView from(final GroupId groupId, final String name, final String description, final Set<GroupId> groupIds, final Set<UserId> userIds, final Set<Relation<GroupId, RoleId>> roles) {
+  public static GroupView from(final GroupId groupId, final String name, final String description, final Set<Relation<GroupId, GroupId>> groups, final Set<UserId> userIds, final Set<Relation<GroupId, RoleId>> roles) {
     return new GroupView(
             groupId.idString(),
             groupId.tenantId.idString(),
             name,
             description,
-            groupIds.stream().map(g -> g.idString()).collect(Collectors.toSet()),
+            groups,
             userIds.stream().map(u -> u.idString()).collect(Collectors.toSet()),
             roles
     );
   }
 
-  private GroupView(final String id, final String tenantId, final String name, final String description, final Set<String> groups, final Set<String> users, final Set<Relation<GroupId, RoleId>> roles) {
+  private GroupView(final String id, final String tenantId, final String name, final String description, final Set<Relation<GroupId, GroupId>> groups, final Set<String> deprecatedUsers, final Set<Relation<GroupId, RoleId>> roles) {
     this.id = id;
     this.tenantId = tenantId;
     this.name = name;
     this.description = description;
     this.groups = groups;
-    this.users = users;
+    this.deprecatedUsers = deprecatedUsers;
     this.roles = roles;
   }
 
@@ -59,17 +59,21 @@ public class GroupView {
     return roles.stream().filter(r -> r.right.equals(roleId)).findFirst().isPresent();
   }
 
+  public boolean hasMember(final GroupId groupId) {
+    return groups.stream().filter(g -> g.right.equals(groupId)).findFirst().isPresent();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof GroupView)) return false;
     GroupView groupView = (GroupView) o;
-    return id.equals(groupView.id) && tenantId.equals(groupView.tenantId) && name.equals(groupView.name) && description.equals(groupView.description) && groups.equals(groupView.groups) && users.equals(groupView.users) && roles.equals(groupView.roles);
+    return id.equals(groupView.id) && tenantId.equals(groupView.tenantId) && name.equals(groupView.name) && description.equals(groupView.description) && groups.equals(groupView.groups) && deprecatedUsers.equals(groupView.deprecatedUsers) && roles.equals(groupView.roles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, tenantId, name, description, groups, users, roles);
+    return Objects.hash(id, tenantId, name, description, groups, deprecatedUsers, roles);
   }
 
   @Override
@@ -80,7 +84,7 @@ public class GroupView {
             .append("name", name)
             .append("description", description)
             .append("groups", groups)
-            .append("users", users)
+            .append("users", deprecatedUsers)
             .append("roles", roles)
             .toString();
   }
