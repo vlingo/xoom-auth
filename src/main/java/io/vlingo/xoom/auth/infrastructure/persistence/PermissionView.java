@@ -4,6 +4,7 @@ import io.vlingo.xoom.auth.model.permission.PermissionId;
 import io.vlingo.xoom.auth.model.permission.PermissionState;
 import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
+import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.auth.model.value.Constraint;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -73,6 +74,10 @@ public class PermissionView {
 
   public boolean isAttachedTo(final RoleId roleId) {
     return roles.stream().filter(r -> r.left.equals(roleId)).findFirst().isPresent();
+  }
+
+  public boolean isAttachedTo(final UserId userId) {
+    return false;
   }
 
   public static class ConstraintView {

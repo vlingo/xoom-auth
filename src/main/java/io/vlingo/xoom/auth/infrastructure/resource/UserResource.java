@@ -5,9 +5,11 @@ import io.vlingo.xoom.actors.Definition;
 import io.vlingo.xoom.auth.infrastructure.CredentialData;
 import io.vlingo.xoom.auth.infrastructure.ProfileData;
 import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
+import io.vlingo.xoom.auth.infrastructure.persistence.PermissionQueries;
 import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
 import io.vlingo.xoom.auth.infrastructure.persistence.RoleQueries;
 import io.vlingo.xoom.auth.infrastructure.persistence.UserQueries;
+import io.vlingo.xoom.auth.model.permission.PermissionId;
 import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.User;
@@ -40,12 +42,14 @@ public class UserResource extends DynamicResourceHandler {
   private final Grid grid;
   private final UserQueries $userQueries;
   private final RoleQueries $roleQueries;
+  private final PermissionQueries $permissionQueries;
 
   public UserResource(final Grid grid) {
       super(grid.world().stage());
       this.grid = grid;
       this.$userQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).userQueries;
       this.$roleQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).roleQueries;
+      this.$permissionQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).permissionQueries;
   }
 
   public Completes<Response> registerUser(final UserRegistrationData data) {
@@ -131,6 +135,16 @@ public class UserResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
+  public Completes<Response> permissionOf(final String tenantId, final String username, final String permissionName) {
+    final UserId userId = UserId.from(TenantId.from(tenantId), username);
+    final PermissionId permissionId = PermissionId.from(userId.tenantId, permissionName);
+    return $permissionQueries.permissionOf(permissionId)
+            .andThen(permissionView -> permissionView.isAttachedTo(userId) ? permissionView : null)
+            .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
+            .otherwise(arg -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
+
   @Override
   public Resource<?> routes() {
      return resource("UserResource",
@@ -173,6 +187,11 @@ public class UserResource extends DynamicResourceHandler {
             .param(String.class)
             .param(String.class)
             .handle(this::roleOf),
+        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/users/{username}/permissions/{permissionName}")
+            .param(String.class)
+            .param(String.class)
+            .param(String.class)
+            .handle(this::permissionOf),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/users")
             .handle(this::users),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/users/{username}")
