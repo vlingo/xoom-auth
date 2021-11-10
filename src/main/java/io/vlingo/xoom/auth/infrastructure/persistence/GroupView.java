@@ -10,7 +10,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class GroupView {
   public final String id;
@@ -18,7 +17,7 @@ public class GroupView {
   public final String name;
   public final String description;
   public final Set<Relation<GroupId, GroupId>> groups;
-  public final Set<String> deprecatedUsers;
+  public final Set<Relation<UserId, GroupId>> users;
   public final Set<Relation<GroupId, RoleId>> roles;
 
   public static GroupView empty() {
@@ -33,25 +32,25 @@ public class GroupView {
     return from(groupId, name, description, Collections.emptySet(), Collections.emptySet(), Collections.emptySet());
   }
 
-  public static GroupView from(final GroupId groupId, final String name, final String description, final Set<Relation<GroupId, GroupId>> groups, final Set<UserId> userIds, final Set<Relation<GroupId, RoleId>> roles) {
+  public static GroupView from(final GroupId groupId, final String name, final String description, final Set<Relation<GroupId, GroupId>> groups, final Set<Relation<UserId, GroupId>> users, final Set<Relation<GroupId, RoleId>> roles) {
     return new GroupView(
             groupId.idString(),
             groupId.tenantId.idString(),
             name,
             description,
             groups,
-            userIds.stream().map(u -> u.idString()).collect(Collectors.toSet()),
+            users,
             roles
     );
   }
 
-  private GroupView(final String id, final String tenantId, final String name, final String description, final Set<Relation<GroupId, GroupId>> groups, final Set<String> deprecatedUsers, final Set<Relation<GroupId, RoleId>> roles) {
+  private GroupView(final String id, final String tenantId, final String name, final String description, final Set<Relation<GroupId, GroupId>> groups, final Set<Relation<UserId, GroupId>> users, final Set<Relation<GroupId, RoleId>> roles) {
     this.id = id;
     this.tenantId = tenantId;
     this.name = name;
     this.description = description;
     this.groups = groups;
-    this.deprecatedUsers = deprecatedUsers;
+    this.users = users;
     this.roles = roles;
   }
 
@@ -63,17 +62,21 @@ public class GroupView {
     return groups.stream().filter(g -> g.right.equals(groupId)).findFirst().isPresent();
   }
 
+  public boolean hasMember(final UserId userId) {
+    return users.stream().filter(u -> u.left.equals(userId)).findFirst().isPresent();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof GroupView)) return false;
     GroupView groupView = (GroupView) o;
-    return id.equals(groupView.id) && tenantId.equals(groupView.tenantId) && name.equals(groupView.name) && description.equals(groupView.description) && groups.equals(groupView.groups) && deprecatedUsers.equals(groupView.deprecatedUsers) && roles.equals(groupView.roles);
+    return id.equals(groupView.id) && tenantId.equals(groupView.tenantId) && name.equals(groupView.name) && description.equals(groupView.description) && groups.equals(groupView.groups) && users.equals(groupView.users) && roles.equals(groupView.roles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, tenantId, name, description, groups, deprecatedUsers, roles);
+    return Objects.hash(id, tenantId, name, description, groups, users, roles);
   }
 
   @Override
@@ -84,7 +87,7 @@ public class GroupView {
             .append("name", name)
             .append("description", description)
             .append("groups", groups)
-            .append("users", deprecatedUsers)
+            .append("users", users)
             .append("roles", roles)
             .toString();
   }

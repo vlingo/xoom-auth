@@ -61,4 +61,16 @@ public class RelationTest {
     assertEquals(invertedRelation, relation.invert());
     assertEquals(relation, invertedRelation.invert());
   }
+
+  @Test
+  public void itInvertsTheUserToGroupRelation() {
+    final UserId userId = UserId.from(TENANT_ID, "alice");
+    final GroupId groupId = GroupId.from(userId.tenantId, "group-a");
+
+    final Relation relation = Relation.userAssignedToGroup(userId, groupId);
+    final Relation invertedRelation = Relation.groupWithMember(groupId, userId);
+
+    assertEquals(invertedRelation, relation.invert());
+    assertEquals(relation, invertedRelation.invert());
+  }
 }

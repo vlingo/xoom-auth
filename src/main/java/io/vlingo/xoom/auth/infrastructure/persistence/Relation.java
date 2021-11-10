@@ -49,6 +49,14 @@ public class Relation<L, R> {
     return new Relation<>(role, ROLE_WITH_USER, user);
   }
 
+  public static Relation<UserId, GroupId> userAssignedToGroup(final UserId user, final GroupId group) {
+    return new Relation<>(user, USER_ASSIGNED_TO_GROUP, group);
+  }
+
+  public static Relation<GroupId, UserId> groupWithMember(final GroupId group, final UserId user) {
+    return new Relation<>(group, GROUP_HAS_USER_MEMBER, user);
+  }
+
   enum TYPE {
     GROUP_HAS_MEMBER,
     GROUP_HAS_PARENT,
@@ -57,7 +65,9 @@ public class Relation<L, R> {
     GROUP_ASSIGNED_TO_ROLE,
     ROLE_WITH_GROUP,
     USER_ASSIGNED_TO_ROLE,
-    ROLE_WITH_USER
+    ROLE_WITH_USER,
+    USER_ASSIGNED_TO_GROUP,
+    GROUP_HAS_USER_MEMBER
   }
 
   private Relation(final L left, final TYPE type, final R right) {
@@ -76,6 +86,8 @@ public class Relation<L, R> {
       put(ROLE_WITH_GROUP, GROUP_ASSIGNED_TO_ROLE);
       put(USER_ASSIGNED_TO_ROLE, ROLE_WITH_USER);
       put(ROLE_WITH_USER, USER_ASSIGNED_TO_ROLE);
+      put(USER_ASSIGNED_TO_GROUP, GROUP_HAS_USER_MEMBER);
+      put(GROUP_HAS_USER_MEMBER, USER_ASSIGNED_TO_GROUP);
     }};
 
     return new Relation<>(right, inversions.get(type), left);
