@@ -2,6 +2,7 @@ package io.vlingo.xoom.auth.infrastructure.resource;
 
 import io.vlingo.xoom.actors.Address;
 import io.vlingo.xoom.actors.Definition;
+import io.vlingo.xoom.auth.infrastructure.GroupData;
 import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.infrastructure.RoleData;
 import io.vlingo.xoom.auth.infrastructure.persistence.PermissionQueries;
@@ -60,10 +61,11 @@ public class RoleResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
-  public Completes<Response> assignGroup(final String tenantId, final String roleName, final RoleData roleData) {
+  public Completes<Response> assignGroup(final String tenantId, final String roleName, final GroupData groupData) {
+    final GroupId groupId = GroupId.from(TenantId.from(tenantId), groupData.name);
     return resolve(tenantId, roleName)
-            .andThenTo(role -> role.assignGroup(GroupId.from(TenantId.from(tenantId), roleData.name)))
-            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, serialized(RoleView.from(state)))))
+            .andThenTo(role -> role.assignGroup(groupId))
+            .andThenTo(state -> Completes.withSuccess(entityResponseOf(Ok, roleGroupLocation(state.roleId, groupId))))
             .otherwise(noGreeting -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
@@ -148,7 +150,7 @@ public class RoleResource extends DynamicResourceHandler {
         io.vlingo.xoom.http.resource.ResourceBuilder.put("/tenants/{tenantId}/roles/{roleName}/groups")
             .param(String.class)
             .param(String.class)
-            .body(RoleData.class)
+            .body(GroupData.class)
             .handle(this::assignGroup),
         io.vlingo.xoom.http.resource.ResourceBuilder.delete("/tenants/{tenantId}/roles/{roleName}/groups/{groupName}")
             .param(String.class)
@@ -196,6 +198,10 @@ public class RoleResource extends DynamicResourceHandler {
 
   private String location(final RoleId roleId) {
     return String.format("/tenants/%s/roles/%s", roleId.tenantId.id, roleId.roleName);
+  }
+
+  private String roleGroupLocation(final RoleId roleId, final GroupId groupId) {
+    return String.format("/tenants/%s/roles/%s/groups/%s", roleId.tenantId.id, roleId.roleName, groupId.groupName);
   }
 
   private String rolePermissionLocation(final RoleId roleId, final PermissionId permissionId) {

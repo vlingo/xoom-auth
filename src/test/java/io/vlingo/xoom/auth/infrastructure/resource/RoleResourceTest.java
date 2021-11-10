@@ -7,14 +7,13 @@
 
 package io.vlingo.xoom.auth.infrastructure.resource;
 
-import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.vlingo.xoom.auth.infrastructure.*;
-
 import io.vlingo.xoom.http.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoleResourceTest extends ResourceTest {
   private GroupData groupData;
