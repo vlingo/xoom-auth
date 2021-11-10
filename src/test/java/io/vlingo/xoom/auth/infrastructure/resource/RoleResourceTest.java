@@ -33,7 +33,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRoleGroupIsAssigned() {
     roleWithGroup();
 
@@ -46,7 +45,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRoleGroupIsUnassigned() {
     roleWithGroup();
 
@@ -120,7 +118,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRoleGroupQueries() {
     roleWithGroup();
 

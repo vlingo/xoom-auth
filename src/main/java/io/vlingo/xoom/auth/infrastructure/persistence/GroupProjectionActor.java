@@ -2,6 +2,9 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.auth.infrastructure.Events;
 import io.vlingo.xoom.auth.model.group.*;
+import io.vlingo.xoom.auth.model.role.GroupAssignedToRole;
+import io.vlingo.xoom.auth.model.role.GroupUnassignedFromRole;
+import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.StateStoreProjectionActor;
@@ -54,35 +57,49 @@ public class GroupProjectionActor extends StateStoreProjectionActor<GroupView> {
 
         case GroupDescriptionChanged: {
           final GroupDescriptionChanged typedEvent = typed(event);
-          merged = GroupView.from(typedEvent.groupId, previousData.name, typedEvent.description, groupIds(previousData.groups), userIds(previousData.users));
+          merged = GroupView.from(typedEvent.groupId, previousData.name, typedEvent.description, groupIds(previousData.groups), userIds(previousData.users), previousData.roles);
           break;
         }
 
         case GroupAssignedToGroup: {
           final GroupAssignedToGroup typedEvent = typed(event);
           final Set<GroupId> innerGroups = concat(groupIds(previousData.groups), typedEvent.innerGroupId);
-          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, innerGroups, userIds(previousData.users));
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, innerGroups, userIds(previousData.users), previousData.roles);
           break;
         }
 
         case GroupUnassignedFromGroup: {
           final GroupUnassignedFromGroup typedEvent = typed(event);
           final Set<GroupId> innerGroups = filter(groupIds(previousData.groups), g -> !g.equals(typedEvent.innerGroupId));
-          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, innerGroups, userIds(previousData.users));
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, innerGroups, userIds(previousData.users), previousData.roles);
           break;
         }
 
         case UserAssignedToGroup: {
           final UserAssignedToGroup typedEvent = typed(event);
           final Set<UserId> users = concat(userIds(previousData.users), typedEvent.userId);
-          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), users);
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), users, previousData.roles);
           break;
         }
 
         case UserUnassignedFromGroup: {
           final UserUnassignedFromGroup typedEvent = typed(event);
           final Set<UserId> users = filter(userIds(previousData.users), u -> !u.equals(typedEvent.userId));
-          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), users);
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), users, previousData.roles);
+          break;
+        }
+
+        case GroupAssignedToRole: {
+          final GroupAssignedToRole typedEvent = typed(event);
+          final Set<Relation<GroupId, RoleId>> roles = concat(previousData.roles, Relation.groupAssignedToRole(typedEvent.groupId, typedEvent.roleId));
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), userIds(previousData.users), roles);
+          break;
+        }
+
+        case GroupUnassignedFromRole: {
+          final GroupUnassignedFromRole typedEvent = typed(event);
+          final Set<Relation<GroupId, RoleId>> roles = filter(previousData.roles, r -> !r.equals(Relation.groupAssignedToRole(typedEvent.groupId, typedEvent.roleId)));
+          merged = GroupView.from(typedEvent.groupId, previousData.name, previousData.description, groupIds(previousData.groups), userIds(previousData.users), roles);
           break;
         }
 
@@ -93,6 +110,30 @@ public class GroupProjectionActor extends StateStoreProjectionActor<GroupView> {
     }
 
     return merged;
+  }
+
+  @Override
+  protected String dataIdFor(final Projectable projectable) {
+    final Source<?> firstEvent = sources().get(0);
+    switch (Events.valueOf(firstEvent.typeName())) {
+      case GroupAssignedToRole:
+        return this.<GroupAssignedToRole>typed(firstEvent).groupId.idString();
+      case GroupUnassignedFromRole:
+        return this.<GroupUnassignedFromRole>typed(firstEvent).groupId.idString();
+      default:
+        return super.dataIdFor(projectable);
+    }
+  }
+
+  @Override
+  protected int currentDataVersionFor(final Projectable projectable, final GroupView previousData, final int previousVersion) {
+    switch (Events.valueOf(sources().get(0).typeName())) {
+      case GroupAssignedToRole:
+      case GroupUnassignedFromRole:
+        return previousVersion + 1;
+      default:
+        return super.currentDataVersionFor(projectable, previousData, previousVersion);
+    }
   }
 
   private Set<GroupId> groupIds(final Set<String> groups) {

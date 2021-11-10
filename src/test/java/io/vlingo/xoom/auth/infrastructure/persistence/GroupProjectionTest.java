@@ -1,7 +1,9 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
-import io.vlingo.xoom.auth.infrastructure.GroupData;
 import io.vlingo.xoom.auth.model.group.*;
+import io.vlingo.xoom.auth.model.role.GroupAssignedToRole;
+import io.vlingo.xoom.auth.model.role.GroupUnassignedFromRole;
+import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.Completes;
@@ -14,13 +16,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GroupProjectionTest extends ProjectionTest {
 
   @Override
   protected Set<Class<?>> statefulTypes() {
-    return Collections.singleton(GroupData.class);
+    return Collections.singleton(GroupView.class);
   }
 
   @Override
@@ -123,7 +125,7 @@ public class GroupProjectionTest extends ProjectionTest {
   }
 
   @Test
-  public void itProjectsGroupEventsToGroupData() {
+  public void itProjectsGroupEventsToGroupView() {
     final TenantId tenantId = TenantId.unique();
     final GroupId groupIdA = GroupId.from(tenantId, "group-a");
     final GroupId groupIdB = GroupId.from(TenantId.unique(), "group-b");
@@ -141,6 +143,47 @@ public class GroupProjectionTest extends ProjectionTest {
       assertEquals(setOf(groupIdB.idString()), group.groups);
       assertEquals(setOf(userId.idString()), group.users);
       assertEquals("Group A improved", group.description);
+    });
+  }
+
+  @Test
+  public void itProjectsGroupAssignedToRole() {
+    final TenantId tenantId = TenantId.unique();
+    final GroupId groupId = GroupId.from(tenantId, "group-a");
+    final RoleId roleIdA = RoleId.from(tenantId, "role-a");
+    final RoleId roleIdB = RoleId.from(tenantId, "role-b");
+
+    givenEvents(
+            new GroupProvisioned(groupId, "group-a", "Group A"),
+            new GroupAssignedToRole(roleIdA, groupId),
+            new GroupAssignedToRole(roleIdB, groupId)
+    );
+
+    assertCompletes(groupOf(groupId), group -> {
+      assertEquals(setOf(Relation.groupAssignedToRole(groupId, roleIdA), Relation.groupAssignedToRole(groupId, roleIdB)), group.roles);
+      assertTrue(group.isInRole(roleIdA));
+      assertTrue(group.isInRole(roleIdB));
+    });
+  }
+
+  @Test
+  public void itProjectsGroupUnassignedFromRole() {
+    final TenantId tenantId = TenantId.unique();
+    final GroupId groupId = GroupId.from(tenantId, "group-a");
+    final RoleId roleIdA = RoleId.from(tenantId, "role-a");
+    final RoleId roleIdB = RoleId.from(tenantId, "role-b");
+
+    givenEvents(
+            new GroupProvisioned(groupId, "group-a", "Group A"),
+            new GroupAssignedToRole(roleIdA, groupId),
+            new GroupAssignedToRole(roleIdB, groupId),
+            new GroupUnassignedFromRole(roleIdA, groupId)
+    );
+
+    assertCompletes(groupOf(groupId), group -> {
+      assertEquals(setOf(Relation.groupAssignedToRole(groupId, roleIdB)), group.roles);
+      assertFalse(group.isInRole(roleIdA));
+      assertTrue(group.isInRole(roleIdB));
     });
   }
 

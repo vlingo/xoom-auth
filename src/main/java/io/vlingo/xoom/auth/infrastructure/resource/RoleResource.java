@@ -5,10 +5,7 @@ import io.vlingo.xoom.actors.Definition;
 import io.vlingo.xoom.auth.infrastructure.GroupData;
 import io.vlingo.xoom.auth.infrastructure.PermissionData;
 import io.vlingo.xoom.auth.infrastructure.RoleData;
-import io.vlingo.xoom.auth.infrastructure.persistence.PermissionQueries;
-import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
-import io.vlingo.xoom.auth.infrastructure.persistence.RoleQueries;
-import io.vlingo.xoom.auth.infrastructure.persistence.RoleView;
+import io.vlingo.xoom.auth.infrastructure.persistence.*;
 import io.vlingo.xoom.auth.model.group.GroupId;
 import io.vlingo.xoom.auth.model.permission.PermissionId;
 import io.vlingo.xoom.auth.model.role.Role;
@@ -37,12 +34,14 @@ public class RoleResource extends DynamicResourceHandler {
   private final Grid grid;
   private final RoleQueries $roleQueries;
   private final PermissionQueries $permissionQueries;
+  private final GroupQueries $groupQueries;
 
   public RoleResource(final Grid grid) {
       super(grid.world().stage());
       this.grid = grid;
       this.$roleQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).roleQueries;
       this.$permissionQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).permissionQueries;
+      this.$groupQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).groupQueries;
   }
 
   public Completes<Response> provisionRole(final RoleData data) {
@@ -136,6 +135,16 @@ public class RoleResource extends DynamicResourceHandler {
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
+  public Completes<Response> groupOf(final String tenantId, final String roleName, final String groupName) {
+    final RoleId roleId = RoleId.from(TenantId.from(tenantId), roleName);
+    final GroupId groupId = GroupId.from(roleId.tenantId, groupName);
+    return $groupQueries.groupOf(groupId)
+            .andThen(groupView -> groupView.isInRole(roleId) ? groupView : null)
+            .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
+            .otherwise(arg -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
+
   @Override
   public Resource<?> routes() {
      return resource("RoleResource",
@@ -157,6 +166,11 @@ public class RoleResource extends DynamicResourceHandler {
             .param(String.class)
             .param(String.class)
             .handle(this::unassignGroup),
+        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/roles/{roleName}/groups/{groupName}")
+            .param(String.class)
+            .param(String.class)
+            .param(String.class)
+            .handle(this::groupOf),
         io.vlingo.xoom.http.resource.ResourceBuilder.put("/tenants/{tenantId}/roles/{roleName}/users/{username}")
             .param(String.class)
             .param(String.class)
