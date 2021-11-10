@@ -2,6 +2,9 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.auth.infrastructure.persistence.UserView.CredentialView;
 import io.vlingo.xoom.auth.infrastructure.persistence.UserView.ProfileView;
+import io.vlingo.xoom.auth.model.role.RoleId;
+import io.vlingo.xoom.auth.model.role.UserAssignedToRole;
+import io.vlingo.xoom.auth.model.role.UserUnassignedFromRole;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.*;
 import io.vlingo.xoom.auth.model.value.Credential;
@@ -143,6 +146,45 @@ public class UserProjectionTest extends ProjectionTest {
     assertCompletes(userOf(userId), user -> assertEquals(ProfileView.from(replacementProfile), user.profile));
   }
 
+  @Test
+  public void itProjectsUserAssignedToRole() {
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
+    final RoleId roleIdA = RoleId.from(userId.tenantId, "role-a");
+    final RoleId roleIdB = RoleId.from(userId.tenantId, "role-b");
+
+    givenEvents(
+            new UserRegistered(userId, "bobby", profile(), credentials(), true),
+            new UserAssignedToRole(roleIdA, userId),
+            new UserAssignedToRole(roleIdB, userId)
+    );
+
+    assertCompletes(userOf(userId), user -> {
+      assertEquals(setOf(Relation.userAssignedToRole(userId, roleIdA), Relation.userAssignedToRole(userId, roleIdB)), user.roles);
+      assertTrue(user.isInRole(roleIdA));
+      assertTrue(user.isInRole(roleIdB));
+    });
+  }
+
+  @Test
+  public void itProjectsUserUnassignedFromRole() {
+    final UserId userId = UserId.from(TenantId.unique(), "bobby");
+    final RoleId roleIdA = RoleId.from(userId.tenantId, "role-a");
+    final RoleId roleIdB = RoleId.from(userId.tenantId, "role-b");
+
+    givenEvents(
+            new UserRegistered(userId, "bobby", profile(), credentials(), true),
+            new UserAssignedToRole(roleIdA, userId),
+            new UserAssignedToRole(roleIdB, userId),
+            new UserUnassignedFromRole(roleIdA, userId)
+    );
+
+    assertCompletes(userOf(userId), user -> {
+      assertEquals(setOf(Relation.userAssignedToRole(userId, roleIdB)), user.roles);
+      assertFalse(user.isInRole(roleIdA));
+      assertTrue(user.isInRole(roleIdB));
+    });
+  }
+
   private Completes<UserView> userOf(final UserId userId) {
     return world.actorFor(UserQueries.class, UserQueriesActor.class, stateStore).userOf(userId);
   }
@@ -153,5 +195,9 @@ public class UserProjectionTest extends ProjectionTest {
 
   private Profile profile() {
     return Profile.from("bobby@example.com", PersonName.from("Bobby", "Tables", "Little"), "07777123123");
+  }
+
+  private <T> Set<T> setOf(T... elements) {
+    return new HashSet<T>(Arrays.asList(elements));
   }
 }

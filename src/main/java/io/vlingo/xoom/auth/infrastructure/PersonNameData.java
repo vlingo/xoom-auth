@@ -1,14 +1,16 @@
 package io.vlingo.xoom.auth.infrastructure;
 
+import io.vlingo.xoom.auth.infrastructure.persistence.UserView;
+import io.vlingo.xoom.auth.model.value.PersonName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import io.vlingo.xoom.auth.model.value.*;
 
 public class PersonNameData {
 
@@ -22,6 +24,10 @@ public class PersonNameData {
     } else {
       return from(personName.given, personName.family, personName.second);
     }
+  }
+
+  public static PersonNameData from(final UserView.PersonNameView name) {
+    return new PersonNameData(name.given, name.family, name.second);
   }
 
   public static PersonNameData from(final String given, final String family, final String second) {

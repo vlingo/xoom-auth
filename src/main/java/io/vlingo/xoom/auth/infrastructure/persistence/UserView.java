@@ -1,5 +1,6 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
+import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.auth.model.value.Credential;
@@ -21,30 +22,36 @@ public class UserView {
   public final ProfileView profile;
   public final boolean active;
   public final Set<CredentialView> credentials;
+  public final Set<Relation<UserId, RoleId>> roles;
 
   public static UserView empty() {
-    return from(UserId.from(TenantId.from(""), ""), "", null, Collections.emptySet(), false);
+    return from(UserId.from(TenantId.from(""), ""), "", null, Collections.emptySet(), false, Collections.emptySet());
   }
 
-  public static UserView from(final UserId userId, final String username, final ProfileView profile, final Set<CredentialView> credentials, final boolean active) {
-    return new UserView(userId, username, profile, credentials, active);
+  public static UserView from(final UserId userId, final String username, final ProfileView profile, final Set<CredentialView> credentials, final boolean active, final Set<Relation<UserId, RoleId>> roles) {
+    return new UserView(userId, username, profile, credentials, active, roles);
   }
 
-  public static UserView from(final UserId userId, final String username, final ProfileView profile, final CredentialView credential, final boolean active) {
-    return new UserView(userId, username, profile, Stream.of(credential).collect(Collectors.toSet()), active);
+  public static UserView from(final UserId userId, final String username, final ProfileView profile, final CredentialView credential, final boolean active, final Set<Relation<UserId, RoleId>> roles) {
+    return new UserView(userId, username, profile, Stream.of(credential).collect(Collectors.toSet()), active, roles);
   }
 
-  private UserView(String id, String tenantId, String username, ProfileView profile, Set<CredentialView> credentials, boolean active) {
+  private UserView(String id, String tenantId, String username, ProfileView profile, Set<CredentialView> credentials, boolean active, final Set<Relation<UserId, RoleId>> roles) {
     this.id = id;
     this.tenantId = tenantId;
     this.username = username;
     this.profile = profile;
     this.active = active;
     this.credentials = credentials;
+    this.roles = roles;
   }
 
-  private UserView(UserId userId, String username, ProfileView profile, Set<CredentialView> credentials, boolean active) {
-    this(userId.idString(), userId.tenantId.id, username, profile, credentials, active);
+  private UserView(UserId userId, String username, ProfileView profile, Set<CredentialView> credentials, boolean active, final Set<Relation<UserId, RoleId>> roles) {
+    this(userId.idString(), userId.tenantId.id, username, profile, credentials, active, roles);
+  }
+
+  public boolean isInRole(final RoleId roleId) {
+    return roles.stream().filter(r -> r.right.equals(roleId)).findFirst().isPresent();
   }
 
   public static class CredentialView {

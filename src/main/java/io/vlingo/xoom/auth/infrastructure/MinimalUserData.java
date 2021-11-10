@@ -7,6 +7,7 @@
 
 package io.vlingo.xoom.auth.infrastructure;
 
+import io.vlingo.xoom.auth.infrastructure.persistence.UserView;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 
 public final class MinimalUserData {
@@ -19,8 +20,16 @@ public final class MinimalUserData {
     return new MinimalUserData(tenantId, username, name, active);
   }
 
+  public static MinimalUserData from(final UserView user) {
+    return new MinimalUserData(user.tenantId, user.username, PersonNameData.from(user.profile.name), user.active);
+  }
+
   private MinimalUserData(final TenantId tenantId, final String username, final PersonNameData name, final boolean active) {
-    this.tenantId = tenantId.idString();
+    this(tenantId.idString(), username, name, active);
+  }
+
+  private MinimalUserData(final String tenantId, final String username, final PersonNameData name, final boolean active) {
+    this.tenantId = tenantId;
     this.username = username;
     this.name = name;
     this.active = active;

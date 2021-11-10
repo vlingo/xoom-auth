@@ -9,7 +9,6 @@ package io.vlingo.xoom.auth.infrastructure.resource;
 
 import io.vlingo.xoom.auth.infrastructure.*;
 import io.vlingo.xoom.http.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static io.vlingo.xoom.common.serialization.JsonSerialization.deserialized;
@@ -57,7 +56,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRoleUserIsAssigned() {
     roleWithUser();
 
@@ -70,7 +68,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRoleUserIsUnassigned() {
     roleWithUser();
 
@@ -147,7 +144,6 @@ public class RoleResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatRoleUserQueries() {
     roleWithUser();
 

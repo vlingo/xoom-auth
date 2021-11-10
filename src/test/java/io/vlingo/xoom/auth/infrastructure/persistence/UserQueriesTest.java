@@ -46,9 +46,9 @@ public class UserQueriesTest {
   @Test
   public void itQueriesTheUserById() {
     final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserView firstUser = UserView.from(firstUserId, "first-user-username", ProfileView.from("first-user-profile-emailAddress", PersonNameView.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), true);
+    final UserView firstUser = UserView.from(firstUserId, "first-user-username", ProfileView.from("first-user-profile-emailAddress", PersonNameView.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), Collections.emptySet(), true, Collections.emptySet());
     final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserView secondUser = UserView.from(secondUserId, "second-user-username", ProfileView.from("second-user-profile-emailAddress", PersonNameView.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), true);
+    final UserView secondUser = UserView.from(secondUserId, "second-user-username", ProfileView.from("second-user-profile-emailAddress", PersonNameView.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), Collections.emptySet(), true, Collections.emptySet());
 
     givenUsersExist(firstUser, secondUser);
 
@@ -59,9 +59,9 @@ public class UserQueriesTest {
   @Test
   public void itQueriesAllUsers() {
     final UserId firstUserId = UserId.from(TenantId.from("first-user-tenantId"), "first-user-username");
-    final UserView firstUser = UserView.from(firstUserId, "first-user-username", ProfileView.from("first-user-profile-emailAddress", PersonNameView.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), new HashSet<>(), true);
+    final UserView firstUser = UserView.from(firstUserId, "first-user-username", ProfileView.from("first-user-profile-emailAddress", PersonNameView.from("first-user-profile-name-given", "first-user-profile-name-family", "first-user-profile-name-second"), "first-user-profile-phone"), Collections.emptySet(), true, Collections.emptySet());
     final UserId secondUserId = UserId.from(TenantId.from("second-user-tenantId"), "second-user-username");
-    final UserView secondUser = UserView.from(secondUserId, "second-user-username", ProfileView.from("second-user-profile-emailAddress", PersonNameView.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), new HashSet<>(), true);
+    final UserView secondUser = UserView.from(secondUserId, "second-user-username", ProfileView.from("second-user-profile-emailAddress", PersonNameView.from("second-user-profile-name-given", "second-user-profile-name-family", "second-user-profile-name-second"), "second-user-profile-phone"), Collections.emptySet(), true, Collections.emptySet());
 
     givenUsersExist(firstUser, secondUser);
 

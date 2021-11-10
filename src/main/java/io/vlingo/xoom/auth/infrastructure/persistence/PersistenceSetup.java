@@ -15,7 +15,7 @@ import io.vlingo.xoom.turbo.annotation.persistence.Persistence.StorageType;
   @Projection(actor = RoleProjectionActor.class, becauseOf = {UserAssignedToRole.class, RolePermissionAttached.class, GroupUnassignedFromRole.class, RoleDescriptionChanged.class, RoleProvisioned.class, UserUnassignedFromRole.class, RolePermissionDetached.class, GroupAssignedToRole.class}),
   @Projection(actor = TenantProjectionActor.class, becauseOf = {TenantSubscribed.class, TenantDeactivated.class, TenantNameChanged.class, TenantDescriptionChanged.class, TenantActivated.class}),
   @Projection(actor = GroupProjectionActor.class, becauseOf = {GroupDescriptionChanged.class, UserAssignedToGroup.class, GroupAssignedToGroup.class, GroupUnassignedFromGroup.class, UserUnassignedFromGroup.class, GroupProvisioned.class, GroupAssignedToRole.class, GroupUnassignedFromRole.class}),
-  @Projection(actor = UserProjectionActor.class, becauseOf = {UserCredentialAdded.class, UserProfileReplaced.class, UserCredentialRemoved.class, UserDeactivated.class, UserRegistered.class, UserActivated.class, UserCredentialReplaced.class}),
+  @Projection(actor = UserProjectionActor.class, becauseOf = {UserCredentialAdded.class, UserProfileReplaced.class, UserCredentialRemoved.class, UserDeactivated.class, UserRegistered.class, UserActivated.class, UserCredentialReplaced.class, UserAssignedToRole.class, UserUnassignedFromRole.class}),
   @Projection(actor = PermissionProjectionActor.class, becauseOf = {PermissionConstraintEnforced.class, PermissionDescriptionChanged.class, PermissionProvisioned.class, PermissionConstraintReplacementEnforced.class, PermissionConstraintForgotten.class, RolePermissionAttached.class, RolePermissionDetached.class})
 }, type = ProjectionType.EVENT_BASED)
 @Adapters({
