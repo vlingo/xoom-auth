@@ -62,6 +62,10 @@ public class RoleView {
     this.users = users;
   }
 
+  public boolean isInRole(final UserId userId) {
+      return users.stream().filter(u -> u.left.equals(userId)).findFirst().isPresent();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

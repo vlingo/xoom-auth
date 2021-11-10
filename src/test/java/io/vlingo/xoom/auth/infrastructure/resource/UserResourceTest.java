@@ -162,7 +162,6 @@ public class UserResourceTest extends ResourceTest {
   }
 
   @Test
-  @Disabled
   public void testThatUserIsInRole() {
     userWithRolePermission();
 

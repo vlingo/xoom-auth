@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RoleProjectionTest extends ProjectionTest {
 
@@ -144,10 +144,11 @@ public class RoleProjectionTest extends ProjectionTest {
             new UserAssignedToRole(roleId, userIdBob)
     );
 
-    assertCompletes(roleOf(roleId), role -> assertEquals(
-            setOf(Relation.userAssignedToRole(userIdAlice, roleId), Relation.userAssignedToRole(userIdBob, roleId)),
-            role.users
-    ));
+    assertCompletes(roleOf(roleId), role -> {
+      assertEquals(setOf(Relation.userAssignedToRole(userIdAlice, roleId), Relation.userAssignedToRole(userIdBob, roleId)), role.users);
+      assertTrue(role.isInRole(userIdAlice));
+      assertTrue(role.isInRole(userIdBob));
+    });
   }
 
 
@@ -164,10 +165,11 @@ public class RoleProjectionTest extends ProjectionTest {
             new UserUnassignedFromRole(roleId, userIdAlice)
     );
 
-    assertCompletes(roleOf(roleId), role -> assertEquals(
-            setOf(Relation.userAssignedToRole(userIdBob, roleId)),
-            role.users
-    ));
+    assertCompletes(roleOf(roleId), role -> {
+      assertEquals(setOf(Relation.userAssignedToRole(userIdBob, roleId)), role.users);
+      assertFalse(role.isInRole(userIdAlice));
+      assertTrue(role.isInRole(userIdBob));
+    });
   }
 
   private Completes<RoleView> roleOf(final RoleId roleId) {

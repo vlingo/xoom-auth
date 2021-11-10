@@ -6,7 +6,9 @@ import io.vlingo.xoom.auth.infrastructure.CredentialData;
 import io.vlingo.xoom.auth.infrastructure.ProfileData;
 import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
 import io.vlingo.xoom.auth.infrastructure.persistence.QueryModelStateStoreProvider;
+import io.vlingo.xoom.auth.infrastructure.persistence.RoleQueries;
 import io.vlingo.xoom.auth.infrastructure.persistence.UserQueries;
+import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.User;
 import io.vlingo.xoom.auth.model.user.UserEntity;
@@ -36,12 +38,14 @@ import static io.vlingo.xoom.http.resource.ResourceBuilder.resource;
  */
 public class UserResource extends DynamicResourceHandler {
   private final Grid grid;
-  private final UserQueries $queries;
+  private final UserQueries $userQueries;
+  private final RoleQueries $roleQueries;
 
   public UserResource(final Grid grid) {
       super(grid.world().stage());
       this.grid = grid;
-      this.$queries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).userQueries;
+      this.$userQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).userQueries;
+      this.$roleQueries = ComponentRegistry.withType(QueryModelStateStoreProvider.class).roleQueries;
   }
 
   public Completes<Response> registerUser(final UserRegistrationData data) {
@@ -104,14 +108,24 @@ public class UserResource extends DynamicResourceHandler {
   }
 
   public Completes<Response> users() {
-    return $queries.users()
+    return $userQueries.users()
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
   }
 
   public Completes<Response> userOf(final String tenantId, final String username) {
-    return $queries.userOf(UserId.from(TenantId.from(tenantId), username))
+    return $userQueries.userOf(UserId.from(TenantId.from(tenantId), username))
+            .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
+            .otherwise(arg -> Response.of(NotFound))
+            .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
+  }
+
+  public Completes<Response> roleOf(final String tenantId, final String username, final String roleName) {
+    final UserId userId = UserId.from(TenantId.from(tenantId), username);
+    final RoleId roleId = RoleId.from(userId.tenantId, roleName);
+    return $roleQueries.roleOf(roleId)
+            .andThen(roleView -> roleView.isInRole(userId) ? roleView : null)
             .andThenTo(data -> Completes.withSuccess(entityResponseOf(Ok, serialized(data))))
             .otherwise(arg -> Response.of(NotFound))
             .recoverFrom(e -> Response.of(InternalServerError, e.getMessage()));
@@ -154,6 +168,11 @@ public class UserResource extends DynamicResourceHandler {
             .param(String.class)
             .body(ProfileData.class)
             .handle(this::replaceProfile),
+        io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/users/{username}/roles/{roleName}")
+            .param(String.class)
+            .param(String.class)
+            .param(String.class)
+            .handle(this::roleOf),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/users")
             .handle(this::users),
         io.vlingo.xoom.http.resource.ResourceBuilder.get("/tenants/{tenantId}/users/{username}")
