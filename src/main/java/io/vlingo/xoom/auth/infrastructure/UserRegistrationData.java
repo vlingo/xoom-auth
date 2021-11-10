@@ -1,16 +1,12 @@
 package io.vlingo.xoom.auth.infrastructure;
 
-import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.auth.model.user.UserState;
-import io.vlingo.xoom.auth.model.value.PersonName;
-import io.vlingo.xoom.auth.model.value.Profile;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,14 +34,6 @@ public class UserRegistrationData {
     return new UserRegistrationData(userId, username, profile, Stream.of(credential).collect(Collectors.toSet()), active);
   }
 
-  public static List<UserRegistrationData> fromAll(final List<UserState> states) {
-    return states.stream().map(UserRegistrationData::from).collect(Collectors.toList());
-  }
-
-  public static UserRegistrationData empty() {
-    return from(UserState.identifiedBy(UserId.from(TenantId.from(""), "")));
-  }
-
   private UserRegistrationData(final UserId userId, final String username, final ProfileData profile, final Set<CredentialData> credentials, final boolean active) {
     this.id = userId.idString();
     this.tenantId = userId.tenantId.idString();
@@ -62,12 +50,6 @@ public class UserRegistrationData {
       }
     }
     return null;
-  }
-
-  public UserState toUserState() {
-    final PersonName name = PersonName.from(this.profile.name.given, this.profile.name.family, this.profile.name.second);
-    final Profile profile = Profile.from(this.profile.emailAddress, name, this.profile.phone);
-    return new UserState(UserId.from(TenantId.from(tenantId), username), username, profile, credentials.stream().map(CredentialData::toCredential).collect(java.util.stream.Collectors.toSet()), active);
   }
 
   @Override

@@ -58,7 +58,7 @@ import io.vlingo.xoom.turbo.annotation.persistence.Persistence.StorageType;
   @QueriesEntry(protocol = UserQueries.class, actor = UserQueriesActor.class),
   @QueriesEntry(protocol = PermissionQueries.class, actor = PermissionQueriesActor.class),
 })
-@DataObjects({CredentialData.class, ConstraintData.class, UserRegistrationData.class, TenantData.class, PersonNameData.class, ProfileData.class, PermissionView.class, RoleView.class, GroupView.class})
+@DataObjects({CredentialData.class, ConstraintData.class, UserView.class, TenantData.class, PersonNameData.class, ProfileData.class, PermissionView.class, RoleView.class, GroupView.class})
 public class PersistenceSetup {
 
 

@@ -1,8 +1,7 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
-import io.vlingo.xoom.auth.infrastructure.CredentialData;
-import io.vlingo.xoom.auth.infrastructure.ProfileData;
-import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
+import io.vlingo.xoom.auth.infrastructure.persistence.UserView.CredentialView;
+import io.vlingo.xoom.auth.infrastructure.persistence.UserView.ProfileView;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.*;
 import io.vlingo.xoom.auth.model.value.Credential;
@@ -24,7 +23,7 @@ public class UserProjectionTest extends ProjectionTest {
 
   @Override
   protected Set<Class<?>> statefulTypes() {
-    return Collections.singleton(UserRegistrationData.class);
+    return Collections.singleton(UserView.class);
   }
 
   @Override
@@ -45,8 +44,8 @@ public class UserProjectionTest extends ProjectionTest {
     assertCompletes(userOf(userId), user -> {
       assertEquals(userId.idString(), user.id);
       assertEquals(userId.tenantId.idString(), user.tenantId);
-      assertEquals(ProfileData.from(profile), user.profile);
-      assertEquals(CredentialData.fromAll(credentials), user.credentials);
+      assertEquals(ProfileView.from(profile), user.profile);
+      assertEquals(CredentialView.fromAll(credentials), user.credentials);
       assertFalse(user.active);
     });
   }
@@ -87,8 +86,8 @@ public class UserProjectionTest extends ProjectionTest {
     );
 
     assertCompletes(userOf(userId), user -> {
-      assertContainsAll(CredentialData.fromAll(registeredCredentials), user.credentials);
-      assertContains(CredentialData.from(addedCredential), user.credentials);
+      assertContainsAll(CredentialView.fromAll(registeredCredentials), user.credentials);
+      assertContains(CredentialView.from(addedCredential), user.credentials);
     });
   }
 
@@ -105,8 +104,8 @@ public class UserProjectionTest extends ProjectionTest {
     );
 
     assertCompletes(userOf(userId), user -> {
-      assertNotContains(CredentialData.from(firstCredential), user.credentials);
-      assertContains(CredentialData.from(secondCredential), user.credentials);
+      assertNotContains(CredentialView.from(firstCredential), user.credentials);
+      assertContains(CredentialView.from(secondCredential), user.credentials);
     });
   }
 
@@ -124,9 +123,9 @@ public class UserProjectionTest extends ProjectionTest {
     );
 
     assertCompletes(userOf(userId), user -> {
-      assertNotContains(CredentialData.from(firstCredential), user.credentials);
-      assertContains(CredentialData.from(secondCredential), user.credentials);
-      assertContains(CredentialData.from(replacementCredential), user.credentials);
+      assertNotContains(CredentialView.from(firstCredential), user.credentials);
+      assertContains(CredentialView.from(secondCredential), user.credentials);
+      assertContains(CredentialView.from(replacementCredential), user.credentials);
     });
   }
 
@@ -141,10 +140,10 @@ public class UserProjectionTest extends ProjectionTest {
             new UserProfileReplaced(userId, replacementProfile)
     );
 
-    assertCompletes(userOf(userId), user -> assertEquals(ProfileData.from(replacementProfile), user.profile));
+    assertCompletes(userOf(userId), user -> assertEquals(ProfileView.from(replacementProfile), user.profile));
   }
 
-  private Completes<UserRegistrationData> userOf(final UserId userId) {
+  private Completes<UserView> userOf(final UserId userId) {
     return world.actorFor(UserQueries.class, UserQueriesActor.class, stateStore).userOf(userId);
   }
 

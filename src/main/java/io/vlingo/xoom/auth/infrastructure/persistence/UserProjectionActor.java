@@ -1,9 +1,8 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
-import io.vlingo.xoom.auth.infrastructure.CredentialData;
 import io.vlingo.xoom.auth.infrastructure.Events;
-import io.vlingo.xoom.auth.infrastructure.ProfileData;
-import io.vlingo.xoom.auth.infrastructure.UserRegistrationData;
+import io.vlingo.xoom.auth.infrastructure.persistence.UserView.CredentialView;
+import io.vlingo.xoom.auth.infrastructure.persistence.UserView.ProfileView;
 import io.vlingo.xoom.auth.model.user.*;
 import io.vlingo.xoom.lattice.model.projection.Projectable;
 import io.vlingo.xoom.lattice.model.projection.StateStoreProjectionActor;
@@ -21,9 +20,9 @@ import java.util.stream.Stream;
  *   StateStoreProjectionActor
  * </a>
  */
-public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrationData> {
+public class UserProjectionActor extends StateStoreProjectionActor<UserView> {
 
-  private static final UserRegistrationData Empty = UserRegistrationData.empty();
+  private static final UserView Empty = UserView.empty();
 
   public UserProjectionActor() {
     this(ComponentRegistry.withType(QueryModelStateStoreProvider.class).store);
@@ -34,63 +33,63 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
   }
 
   @Override
-  protected UserRegistrationData currentDataFor(final Projectable projectable) {
+  protected UserView currentDataFor(final Projectable projectable) {
     return Empty;
   }
 
   @Override
-  protected UserRegistrationData merge(final UserRegistrationData previousData, final int previousVersion, final UserRegistrationData currentData, final int currentVersion) {
+  protected UserView merge(final UserView previousData, final int previousVersion, final UserView currentData, final int currentVersion) {
 
     if (previousVersion == currentVersion) return currentData;
 
-    UserRegistrationData merged = previousData;
+    UserView merged = previousData;
 
     for (final Source<?> event : sources()) {
       switch (Events.valueOf(event.typeName())) {
         case UserRegistered: {
           final UserRegistered typedEvent = typed(event);
-          final ProfileData profile = ProfileData.from(typedEvent.profile);
-          final Set<CredentialData> credentials = typedEvent.credentials.stream().map(c -> CredentialData.from(c)).collect(Collectors.toSet());
-          merged = UserRegistrationData.from(typedEvent.userId, typedEvent.username, profile, credentials, typedEvent.active);
+          final ProfileView profile = ProfileView.from(typedEvent.profile);
+          final Set<CredentialView> credentials = typedEvent.credentials.stream().map(c -> CredentialView.from(c)).collect(Collectors.toSet());
+          merged = UserView.from(typedEvent.userId, typedEvent.username, profile, credentials, typedEvent.active);
           break;
         }
 
         case UserActivated: {
           final UserActivated typedEvent = typed(event);
-          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, true);
+          merged = UserView.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, true);
           break;
         }
 
         case UserDeactivated: {
           final UserDeactivated typedEvent = typed(event);
-          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, false);
+          merged = UserView.from(typedEvent.userId, previousData.username, previousData.profile, previousData.credentials, false);
           break;
         }
 
         case UserCredentialAdded: {
           final UserCredentialAdded typedEvent = typed(event);
-          final CredentialData credential = CredentialData.from(typedEvent.credential);
-          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, includeCredential(previousData.credentials, credential), previousData.active);
+          final CredentialView credential = CredentialView.from(typedEvent.credential);
+          merged = UserView.from(typedEvent.userId, previousData.username, previousData.profile, includeCredential(previousData.credentials, credential), previousData.active);
           break;
         }
 
         case UserCredentialRemoved: {
           final UserCredentialRemoved typedEvent = typed(event);
-          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, removeCredential(previousData.credentials, typedEvent.authority), previousData.active);
+          merged = UserView.from(typedEvent.userId, previousData.username, previousData.profile, removeCredential(previousData.credentials, typedEvent.authority), previousData.active);
           break;
         }
 
         case UserCredentialReplaced: {
           final UserCredentialReplaced typedEvent = typed(event);
-          final CredentialData credential = CredentialData.from(typedEvent.credential);
-          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, previousData.profile, includeCredential(removeCredential(previousData.credentials, typedEvent.authority), credential), previousData.active);
+          final CredentialView credential = CredentialView.from(typedEvent.credential);
+          merged = UserView.from(typedEvent.userId, previousData.username, previousData.profile, includeCredential(removeCredential(previousData.credentials, typedEvent.authority), credential), previousData.active);
           break;
         }
 
         case UserProfileReplaced: {
           final UserProfileReplaced typedEvent = typed(event);
-          final ProfileData profile = ProfileData.from(typedEvent.profile);
-          merged = UserRegistrationData.from(typedEvent.userId, previousData.username, profile, previousData.credentials, previousData.active);
+          final ProfileView profile = ProfileView.from(typedEvent.profile);
+          merged = UserView.from(typedEvent.userId, previousData.username, profile, previousData.credentials, previousData.active);
           break;
         }
 
@@ -103,11 +102,11 @@ public class UserProjectionActor extends StateStoreProjectionActor<UserRegistrat
     return merged;
   }
 
-  private Set<CredentialData> includeCredential(final Set<CredentialData> credentials, final CredentialData credential) {
+  private Set<CredentialView> includeCredential(final Set<CredentialView> credentials, final CredentialView credential) {
     return Stream.concat(credentials.stream(), Stream.of(credential)).collect(Collectors.toSet());
   }
 
-  private Set<CredentialData> removeCredential(final Set<CredentialData> credentials, final String authority) {
+  private Set<CredentialView> removeCredential(final Set<CredentialView> credentials, final String authority) {
     return credentials.stream().filter(c -> !c.authority.equals(authority)).collect(Collectors.toSet());
   }
 }
