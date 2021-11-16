@@ -4,6 +4,7 @@ import io.vlingo.xoom.actors.Configuration;
 import io.vlingo.xoom.actors.UUIDAddressFactory;
 import io.vlingo.xoom.actors.World;
 import io.vlingo.xoom.actors.testkit.AccessSafely;
+import io.vlingo.xoom.actors.testkit.TestWorld;
 import io.vlingo.xoom.common.identity.IdentityGeneratorType;
 import io.vlingo.xoom.common.serialization.JsonSerialization;
 import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
@@ -24,12 +25,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class ProjectionTest {
   protected World world;
+  protected TestWorld testWorld;
   protected StateStore stateStore;
   protected Projection projection;
 
   @BeforeEach
   public void setUp() throws Exception {
-    world = World.start("test-projection", Configuration.define().with(new UUIDAddressFactory(IdentityGeneratorType.RANDOM)));
+    testWorld = TestWorld.start("test-projection", Configuration.define().with(new UUIDAddressFactory(IdentityGeneratorType.RANDOM)));
+    world = testWorld.world();
     stateStore = world.actorFor(StateStore.class, InMemoryStateStoreActor.class, Collections.singletonList(new NoOpDispatcher()));
     StatefulTypeRegistry statefulTypeRegistry = StatefulTypeRegistry.registerAll(world, stateStore, statefulTypes().toArray(new Class[0]));
     QueryModelStateStoreProvider.using(world.stage(), statefulTypeRegistry);
@@ -38,7 +41,7 @@ public abstract class ProjectionTest {
 
   @AfterEach
   public void tearDown() {
-    world.terminate();
+    testWorld.terminate();
   }
 
   abstract protected Set<Class<?>> statefulTypes();
