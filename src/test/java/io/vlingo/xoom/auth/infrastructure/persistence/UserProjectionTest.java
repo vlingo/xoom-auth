@@ -11,7 +11,6 @@ import io.vlingo.xoom.auth.model.value.Credential;
 import io.vlingo.xoom.auth.model.value.PersonName;
 import io.vlingo.xoom.auth.model.value.Profile;
 import io.vlingo.xoom.common.Completes;
-import io.vlingo.xoom.lattice.model.projection.Projection;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -23,16 +22,6 @@ import static io.vlingo.xoom.auth.test.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserProjectionTest extends ProjectionTest {
-
-  @Override
-  protected Set<Class<?>> statefulTypes() {
-    return Collections.singleton(UserView.class);
-  }
-
-  @Override
-  protected Projection projection() {
-    return world.actorFor(Projection.class, UserProjectionActor.class, stateStore);
-  }
 
   @Test
   public void itProjectsRegisteredUser() {

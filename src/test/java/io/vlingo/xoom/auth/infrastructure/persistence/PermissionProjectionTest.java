@@ -8,11 +8,9 @@ import io.vlingo.xoom.auth.model.role.RolePermissionDetached;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.value.Constraint;
 import io.vlingo.xoom.common.Completes;
-import io.vlingo.xoom.lattice.model.projection.Projection;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,16 +18,6 @@ import static io.vlingo.xoom.auth.test.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PermissionProjectionTest extends ProjectionTest {
-
-  @Override
-  protected Set<Class<?>> statefulTypes() {
-    return Collections.singleton(PermissionView.class);
-  }
-
-  @Override
-  protected Projection projection() {
-    return world.actorFor(Projection.class, PermissionProjectionActor.class, stateStore);
-  }
 
   @Test
   public void itProjectsProvisionedPermission() {

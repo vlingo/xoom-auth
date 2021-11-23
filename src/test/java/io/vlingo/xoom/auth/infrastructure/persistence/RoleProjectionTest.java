@@ -6,11 +6,9 @@ import io.vlingo.xoom.auth.model.role.*;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.Completes;
-import io.vlingo.xoom.lattice.model.projection.Projection;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,16 +16,6 @@ import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RoleProjectionTest extends ProjectionTest {
-
-  @Override
-  protected Set<Class<?>> statefulTypes() {
-    return Collections.singleton(RoleView.class);
-  }
-
-  @Override
-  protected Projection projection() {
-    return world.actorFor(Projection.class, RoleProjectionActor.class, stateStore);
-  }
 
   @Test
   public void itProjectsTheProvisionedRole() {

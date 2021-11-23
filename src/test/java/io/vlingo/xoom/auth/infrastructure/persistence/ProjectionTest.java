@@ -9,17 +9,17 @@ import io.vlingo.xoom.common.identity.IdentityGeneratorType;
 import io.vlingo.xoom.common.serialization.JsonSerialization;
 import io.vlingo.xoom.lattice.model.IdentifiedDomainEvent;
 import io.vlingo.xoom.lattice.model.projection.Projection;
-import io.vlingo.xoom.lattice.model.projection.TextProjectable;
 import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry;
 import io.vlingo.xoom.symbio.BaseEntry;
 import io.vlingo.xoom.symbio.Metadata;
-import io.vlingo.xoom.symbio.store.dispatch.NoOpDispatcher;
+import io.vlingo.xoom.symbio.store.dispatch.Dispatchable;
+import io.vlingo.xoom.symbio.store.dispatch.Dispatcher;
 import io.vlingo.xoom.symbio.store.state.StateStore;
-import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
 import io.vlingo.xoom.turbo.ComponentRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,10 +34,8 @@ public abstract class ProjectionTest {
   public void setUp() throws Exception {
     testWorld = TestWorld.start("test-projection", Configuration.define().with(new UUIDAddressFactory(IdentityGeneratorType.RANDOM)));
     world = testWorld.world();
-    stateStore = world.actorFor(StateStore.class, InMemoryStateStoreActor.class, Collections.singletonList(new NoOpDispatcher()));
-    StatefulTypeRegistry statefulTypeRegistry = StatefulTypeRegistry.registerAll(world, stateStore, statefulTypes().toArray(new Class[0]));
-    QueryModelStateStoreProvider.using(world.stage(), statefulTypeRegistry);
-    projection = projection();
+    stateStore = QueryModelStateStoreProvider.using(world.stage(), new StatefulTypeRegistry(world)).store;
+    ProjectionDispatcherProvider.using(world.stage());
   }
 
   @AfterEach
@@ -46,15 +44,14 @@ public abstract class ProjectionTest {
     ComponentRegistry.clear();
   }
 
-  abstract protected Set<Class<?>> statefulTypes();
-
-  abstract protected Projection projection();
-
   protected void givenEvents(IdentifiedDomainEvent... events) {
-    final CountingProjectionControl control = new CountingProjectionControl();
+    final Dispatcher storeDispatcher = ComponentRegistry.withType(ProjectionDispatcherProvider.class).storeDispatcher;
+    final CountingDispatcherControl control = new CountingDispatcherControl();
     final AccessSafely access = control.afterCompleting(events.length);
     final Map<String, String> valueToProjectionId = new HashMap<>();
     final Map<String, Integer> entryVersions = new HashMap<>();
+
+    storeDispatcher.controlWith(control);
 
     Arrays.stream(events).forEach(event -> {
       Integer entryVersion = entryVersions.getOrDefault(event.identity(), 0) + 1;
@@ -64,7 +61,7 @@ public abstract class ProjectionTest {
       final String projectionId = UUID.randomUUID().toString();
       valueToProjectionId.put(event.identity(), projectionId);
 
-      projection.projectWith(new TextProjectable(null, Collections.singletonList(textEntry), projectionId), control);
+      storeDispatcher.dispatch(new Dispatchable(projectionId, LocalDateTime.now(), null, Collections.singletonList(textEntry)));
     });
 
     final Map<String, Integer> confirmations = access.readFrom("confirmations");

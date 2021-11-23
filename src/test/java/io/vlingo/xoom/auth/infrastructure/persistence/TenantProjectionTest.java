@@ -3,26 +3,12 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 import io.vlingo.xoom.auth.infrastructure.TenantData;
 import io.vlingo.xoom.auth.model.tenant.*;
 import io.vlingo.xoom.common.Completes;
-import io.vlingo.xoom.lattice.model.projection.Projection;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.Set;
 
 import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TenantProjectionTest extends ProjectionTest {
-
-  @Override
-  protected Set<Class<?>> statefulTypes() {
-    return Collections.singleton(TenantData.class);
-  }
-
-  @Override
-  protected Projection projection() {
-    return world.actorFor(Projection.class, TenantProjectionActor.class, stateStore);
-  }
 
   @Test
   public void itProjectsSubscribedTenant() {
