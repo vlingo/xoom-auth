@@ -16,6 +16,7 @@ import io.vlingo.xoom.symbio.Metadata;
 import io.vlingo.xoom.symbio.store.dispatch.NoOpDispatcher;
 import io.vlingo.xoom.symbio.store.state.StateStore;
 import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor;
+import io.vlingo.xoom.turbo.ComponentRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -42,6 +43,7 @@ public abstract class ProjectionTest {
   @AfterEach
   public void tearDown() {
     testWorld.terminate();
+    ComponentRegistry.clear();
   }
 
   abstract protected Set<Class<?>> statefulTypes();
