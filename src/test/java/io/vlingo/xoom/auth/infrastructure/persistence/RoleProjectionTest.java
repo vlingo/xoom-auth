@@ -1,14 +1,21 @@
 package io.vlingo.xoom.auth.infrastructure.persistence;
 
 import io.vlingo.xoom.auth.model.group.GroupId;
+import io.vlingo.xoom.auth.model.group.GroupProvisioned;
 import io.vlingo.xoom.auth.model.permission.PermissionId;
+import io.vlingo.xoom.auth.model.permission.PermissionProvisioned;
 import io.vlingo.xoom.auth.model.role.*;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.UserId;
+import io.vlingo.xoom.auth.model.user.UserRegistered;
+import io.vlingo.xoom.auth.model.value.Credential;
+import io.vlingo.xoom.auth.model.value.PersonName;
+import io.vlingo.xoom.auth.model.value.Profile;
 import io.vlingo.xoom.common.Completes;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,6 +78,8 @@ public class RoleProjectionTest extends ProjectionTest {
 
     givenEvents(
             new RoleProvisioned(roleId, "role-a", "Role A"),
+            new PermissionProvisioned(permissionIdA, "permission-a", "Permission A"),
+            new PermissionProvisioned(permissionIdB, "permission-b", "Permission B"),
             new RolePermissionAttached(roleId, permissionIdA),
             new RolePermissionAttached(roleId, permissionIdB),
             new RolePermissionDetached(roleId, permissionIdA)
@@ -90,6 +99,8 @@ public class RoleProjectionTest extends ProjectionTest {
 
     givenEvents(
             new RoleProvisioned(roleId, "role-a", "Role A"),
+            new GroupProvisioned(groupIdA, "group-a", "Group A"),
+            new GroupProvisioned(groupIdB, "group-b", "Group B"),
             new GroupAssignedToRole(roleId, groupIdA),
             new GroupAssignedToRole(roleId, groupIdB)
     );
@@ -109,6 +120,8 @@ public class RoleProjectionTest extends ProjectionTest {
 
     givenEvents(
             new RoleProvisioned(roleId, "role-a", "Role A"),
+            new GroupProvisioned(groupIdA, "group-a", "Group A"),
+            new GroupProvisioned(groupIdB, "group-b", "Group B"),
             new GroupAssignedToRole(roleId, groupIdA),
             new GroupAssignedToRole(roleId, groupIdB),
             new GroupUnassignedFromRole(roleId, groupIdA)
@@ -128,6 +141,8 @@ public class RoleProjectionTest extends ProjectionTest {
 
     givenEvents(
             new RoleProvisioned(roleId, "role-a", "Role A"),
+            new UserRegistered(userIdAlice, "alice", Profile.from("alice@example.com", PersonName.from("Alice", "Hannah", "Little"), "07777123123"), Collections.emptySet(), true),
+            new UserRegistered(userIdBob, "bobby", Profile.from("bobby@example.com", PersonName.from("Bobby", "Tables", "Little"), "07777123123"), Collections.emptySet(), true),
             new UserAssignedToRole(roleId, userIdAlice),
             new UserAssignedToRole(roleId, userIdBob)
     );
@@ -148,6 +163,8 @@ public class RoleProjectionTest extends ProjectionTest {
 
     givenEvents(
             new RoleProvisioned(roleId, "role-a", "Role A"),
+            new UserRegistered(userIdAlice, "alice", Profile.from("alice@example.com", PersonName.from("Alice", "Hannah", "Little"), "07777123123"), Collections.emptySet(), true),
+            new UserRegistered(userIdBob, "bobby", Profile.from("bobby@example.com", PersonName.from("Bobby", "Tables", "Little"), "07777123123"), Collections.emptySet(), true),
             new UserAssignedToRole(roleId, userIdAlice),
             new UserAssignedToRole(roleId, userIdBob),
             new UserUnassignedFromRole(roleId, userIdAlice)

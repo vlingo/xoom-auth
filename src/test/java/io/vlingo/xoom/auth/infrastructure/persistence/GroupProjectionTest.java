@@ -4,6 +4,7 @@ import io.vlingo.xoom.auth.model.group.*;
 import io.vlingo.xoom.auth.model.role.GroupAssignedToRole;
 import io.vlingo.xoom.auth.model.role.GroupUnassignedFromRole;
 import io.vlingo.xoom.auth.model.role.RoleId;
+import io.vlingo.xoom.auth.model.role.RoleProvisioned;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.user.UserId;
 import io.vlingo.xoom.common.Completes;
@@ -159,6 +160,8 @@ public class GroupProjectionTest extends ProjectionTest {
 
     givenEvents(
             new GroupProvisioned(groupId, "group-a", "Group A"),
+            new RoleProvisioned(roleIdA, "role-a", "Role A"),
+            new RoleProvisioned(roleIdB, "role-b", "Role B"),
             new GroupAssignedToRole(roleIdA, groupId),
             new GroupAssignedToRole(roleIdB, groupId)
     );
@@ -179,6 +182,8 @@ public class GroupProjectionTest extends ProjectionTest {
 
     givenEvents(
             new GroupProvisioned(groupId, "group-a", "Group A"),
+            new RoleProvisioned(roleIdA, "role-a", "Role A"),
+            new RoleProvisioned(roleIdB, "role-b", "Role B"),
             new GroupAssignedToRole(roleIdA, groupId),
             new GroupAssignedToRole(roleIdB, groupId),
             new GroupUnassignedFromRole(roleIdA, groupId)

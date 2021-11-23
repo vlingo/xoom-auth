@@ -3,6 +3,7 @@ package io.vlingo.xoom.auth.infrastructure.persistence;
 import io.vlingo.xoom.auth.infrastructure.persistence.UserView.CredentialView;
 import io.vlingo.xoom.auth.infrastructure.persistence.UserView.ProfileView;
 import io.vlingo.xoom.auth.model.role.RoleId;
+import io.vlingo.xoom.auth.model.role.RoleProvisioned;
 import io.vlingo.xoom.auth.model.role.UserAssignedToRole;
 import io.vlingo.xoom.auth.model.role.UserUnassignedFromRole;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
@@ -143,6 +144,8 @@ public class UserProjectionTest extends ProjectionTest {
 
     givenEvents(
             new UserRegistered(userId, "bobby", profile(), credentials(), true),
+            new RoleProvisioned(roleIdA, "role-a", "Role A"),
+            new RoleProvisioned(roleIdB, "role-b", "Role B"),
             new UserAssignedToRole(roleIdA, userId),
             new UserAssignedToRole(roleIdB, userId)
     );
@@ -162,6 +165,8 @@ public class UserProjectionTest extends ProjectionTest {
 
     givenEvents(
             new UserRegistered(userId, "bobby", profile(), credentials(), true),
+            new RoleProvisioned(roleIdA, "role-a", "Role A"),
+            new RoleProvisioned(roleIdB, "role-b", "Role B"),
             new UserAssignedToRole(roleIdA, userId),
             new UserAssignedToRole(roleIdB, userId),
             new UserUnassignedFromRole(roleIdA, userId)

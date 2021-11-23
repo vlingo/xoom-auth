@@ -5,6 +5,7 @@ import io.vlingo.xoom.auth.model.permission.*;
 import io.vlingo.xoom.auth.model.role.RoleId;
 import io.vlingo.xoom.auth.model.role.RolePermissionAttached;
 import io.vlingo.xoom.auth.model.role.RolePermissionDetached;
+import io.vlingo.xoom.auth.model.role.RoleProvisioned;
 import io.vlingo.xoom.auth.model.tenant.TenantId;
 import io.vlingo.xoom.auth.model.value.Constraint;
 import io.vlingo.xoom.common.Completes;
@@ -109,6 +110,7 @@ public class PermissionProjectionTest extends ProjectionTest {
 
     givenEvents(
             new PermissionProvisioned(permissionId, "permission-a", "Permission A"),
+            new RoleProvisioned(roleId, "role-a", "Role A"),
             new RolePermissionAttached(roleId, permissionId)
     );
 
@@ -127,6 +129,8 @@ public class PermissionProjectionTest extends ProjectionTest {
 
     givenEvents(
             new PermissionProvisioned(permissionId, "permission-a", "Permission A"),
+            new RoleProvisioned(roleIdA, "role-a", "Role A"),
+            new RoleProvisioned(roleIdB, "role-b", "Role B"),
             new RolePermissionAttached(roleIdA, permissionId),
             new RolePermissionAttached(roleIdB, permissionId),
             new RolePermissionDetached(roleIdA, permissionId)
