@@ -60,6 +60,8 @@ public class RoleProjectionTest extends ProjectionTest {
 
     givenEvents(
             new RoleProvisioned(roleId, "role-a", "Role A"),
+            new PermissionProvisioned(permissionIdA, "permission-a", "Permission A"),
+            new PermissionProvisioned(permissionIdB, "permission-b", "Permission B"),
             new RolePermissionAttached(roleId, permissionIdA),
             new RolePermissionAttached(roleId, permissionIdB)
     );
