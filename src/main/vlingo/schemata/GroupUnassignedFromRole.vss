@@ -1,0 +1,6 @@
+event GroupUnassignedFromRole {
+  version semanticVersion
+  string id
+  string tenantId
+  string name
+}

@@ -1,0 +1,7 @@
+event PermissionProvisioned {
+  version semanticVersion
+  string id
+  string description
+  string name
+  string tenantId
+}

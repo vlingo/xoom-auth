@@ -1,0 +1,189 @@
+package io.vlingo.xoom.auth.infrastructure.persistence;
+
+import io.vlingo.xoom.auth.model.group.GroupId;
+import io.vlingo.xoom.auth.model.group.GroupProvisioned;
+import io.vlingo.xoom.auth.model.permission.PermissionId;
+import io.vlingo.xoom.auth.model.permission.PermissionProvisioned;
+import io.vlingo.xoom.auth.model.role.*;
+import io.vlingo.xoom.auth.model.tenant.TenantId;
+import io.vlingo.xoom.auth.model.user.UserId;
+import io.vlingo.xoom.auth.model.user.UserRegistered;
+import io.vlingo.xoom.auth.model.value.Credential;
+import io.vlingo.xoom.auth.model.value.PersonName;
+import io.vlingo.xoom.auth.model.value.Profile;
+import io.vlingo.xoom.common.Completes;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import static io.vlingo.xoom.auth.test.Assertions.assertCompletes;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class RoleProjectionTest extends ProjectionTest {
+
+  @Test
+  public void itProjectsTheProvisionedRole() {
+    final RoleId roleId = RoleId.from(TenantId.unique(), "role-a");
+
+    givenEvents(
+            new RoleProvisioned(roleId, "role-a", "Role A")
+    );
+
+    assertCompletes(roleOf(roleId), role -> {
+      assertEquals(roleId.idString(), role.id);
+      assertEquals(roleId.tenantId.idString(), role.tenantId);
+      assertEquals("role-a", role.name);
+      assertEquals("Role A", role.description);
+    });
+  }
+
+  @Test
+  public void itProjectsTheRoleDescriptionUpdate() {
+    final RoleId roleId = RoleId.from(TenantId.unique(), "role-a");
+
+    givenEvents(
+            new RoleProvisioned(roleId, "role-a", "Role A"),
+            new RoleDescriptionChanged(roleId, "Role A updated")
+    );
+
+    assertCompletes(roleOf(roleId), role -> assertEquals("Role A updated", role.description));
+  }
+
+  @Test
+  public void itProjectsPermissionAttachedToRole() {
+    final RoleId roleId = RoleId.from(TenantId.unique(), "role-a");
+    final PermissionId permissionIdA = PermissionId.from(roleId.tenantId, "permission-a");
+    final PermissionId permissionIdB = PermissionId.from(roleId.tenantId, "permission-b");
+
+    givenEvents(
+            new RoleProvisioned(roleId, "role-a", "Role A"),
+            new PermissionProvisioned(permissionIdA, "permission-a", "Permission A"),
+            new PermissionProvisioned(permissionIdB, "permission-b", "Permission B"),
+            new RolePermissionAttached(roleId, permissionIdA),
+            new RolePermissionAttached(roleId, permissionIdB)
+    );
+
+    assertCompletes(roleOf(roleId), role -> assertEquals(
+            setOf(Relation.permissionAttachedToRole(permissionIdA, roleId), Relation.permissionAttachedToRole(permissionIdB, roleId)),
+            role.permissions
+    ));
+  }
+
+  @Test
+  public void itProjectsPermissionDetachedFromRole() {
+    final RoleId roleId = RoleId.from(TenantId.unique(), "role-a");
+    final PermissionId permissionIdA = PermissionId.from(roleId.tenantId, "permission-a");
+    final PermissionId permissionIdB = PermissionId.from(roleId.tenantId, "permission-b");
+
+    givenEvents(
+            new RoleProvisioned(roleId, "role-a", "Role A"),
+            new PermissionProvisioned(permissionIdA, "permission-a", "Permission A"),
+            new PermissionProvisioned(permissionIdB, "permission-b", "Permission B"),
+            new RolePermissionAttached(roleId, permissionIdA),
+            new RolePermissionAttached(roleId, permissionIdB),
+            new RolePermissionDetached(roleId, permissionIdA)
+    );
+
+    assertCompletes(roleOf(roleId), role -> assertEquals(
+            setOf(Relation.permissionAttachedToRole(permissionIdB, roleId)),
+            role.permissions
+    ));
+  }
+
+  @Test
+  public void itProjectsGroupAssignedToRole() {
+    final RoleId roleId = RoleId.from(TenantId.unique(), "role-a");
+    final GroupId groupIdA = GroupId.from(roleId.tenantId, "group-a");
+    final GroupId groupIdB = GroupId.from(roleId.tenantId, "group-b");
+
+    givenEvents(
+            new RoleProvisioned(roleId, "role-a", "Role A"),
+            new GroupProvisioned(groupIdA, "group-a", "Group A"),
+            new GroupProvisioned(groupIdB, "group-b", "Group B"),
+            new GroupAssignedToRole(roleId, groupIdA),
+            new GroupAssignedToRole(roleId, groupIdB)
+    );
+
+    assertCompletes(roleOf(roleId), role -> assertEquals(
+            setOf(Relation.groupAssignedToRole(groupIdA, roleId), Relation.groupAssignedToRole(groupIdB, roleId)),
+            role.groups
+    ));
+  }
+
+
+  @Test
+  public void itProjectsGroupUnassignedFromRole() {
+    final RoleId roleId = RoleId.from(TenantId.unique(), "role-a");
+    final GroupId groupIdA = GroupId.from(roleId.tenantId, "group-a");
+    final GroupId groupIdB = GroupId.from(roleId.tenantId, "group-b");
+
+    givenEvents(
+            new RoleProvisioned(roleId, "role-a", "Role A"),
+            new GroupProvisioned(groupIdA, "group-a", "Group A"),
+            new GroupProvisioned(groupIdB, "group-b", "Group B"),
+            new GroupAssignedToRole(roleId, groupIdA),
+            new GroupAssignedToRole(roleId, groupIdB),
+            new GroupUnassignedFromRole(roleId, groupIdA)
+    );
+
+    assertCompletes(roleOf(roleId), role -> assertEquals(
+            setOf(Relation.groupAssignedToRole(groupIdB, roleId)),
+            role.groups
+    ));
+  }
+
+  @Test
+  public void itProjectsUserAssignedToRole() {
+    final RoleId roleId = RoleId.from(TenantId.unique(), "role-a");
+    final UserId userIdAlice = UserId.from(roleId.tenantId, "alice");
+    final UserId userIdBob = UserId.from(roleId.tenantId, "bob");
+
+    givenEvents(
+            new RoleProvisioned(roleId, "role-a", "Role A"),
+            new UserRegistered(userIdAlice, "alice", Profile.from("alice@example.com", PersonName.from("Alice", "Hannah", "Little"), "07777123123"), Collections.emptySet(), true),
+            new UserRegistered(userIdBob, "bobby", Profile.from("bobby@example.com", PersonName.from("Bobby", "Tables", "Little"), "07777123123"), Collections.emptySet(), true),
+            new UserAssignedToRole(roleId, userIdAlice),
+            new UserAssignedToRole(roleId, userIdBob)
+    );
+
+    assertCompletes(roleOf(roleId), role -> {
+      assertEquals(setOf(Relation.userAssignedToRole(userIdAlice, roleId), Relation.userAssignedToRole(userIdBob, roleId)), role.users);
+      assertTrue(role.isInRole(userIdAlice));
+      assertTrue(role.isInRole(userIdBob));
+    });
+  }
+
+
+  @Test
+  public void itProjectsUserUnassignedFromRole() {
+    final RoleId roleId = RoleId.from(TenantId.unique(), "role-a");
+    final UserId userIdAlice = UserId.from(roleId.tenantId, "alice");
+    final UserId userIdBob = UserId.from(roleId.tenantId, "bob");
+
+    givenEvents(
+            new RoleProvisioned(roleId, "role-a", "Role A"),
+            new UserRegistered(userIdAlice, "alice", Profile.from("alice@example.com", PersonName.from("Alice", "Hannah", "Little"), "07777123123"), Collections.emptySet(), true),
+            new UserRegistered(userIdBob, "bobby", Profile.from("bobby@example.com", PersonName.from("Bobby", "Tables", "Little"), "07777123123"), Collections.emptySet(), true),
+            new UserAssignedToRole(roleId, userIdAlice),
+            new UserAssignedToRole(roleId, userIdBob),
+            new UserUnassignedFromRole(roleId, userIdAlice)
+    );
+
+    assertCompletes(roleOf(roleId), role -> {
+      assertEquals(setOf(Relation.userAssignedToRole(userIdBob, roleId)), role.users);
+      assertFalse(role.isInRole(userIdAlice));
+      assertTrue(role.isInRole(userIdBob));
+    });
+  }
+
+  private Completes<RoleView> roleOf(final RoleId roleId) {
+    return world.actorFor(RoleQueries.class, RoleQueriesActor.class, stateStore).roleOf(roleId);
+  }
+
+  private <T> Set<T> setOf(T... elements) {
+    return new HashSet<>(Arrays.asList(elements));
+  }
+}

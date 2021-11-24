@@ -1,0 +1,7 @@
+event UserProfileReplaced {
+  version semanticVersion
+  string id
+  string tenantId
+  string username
+  data.Profile:1.0.0 profile
+}

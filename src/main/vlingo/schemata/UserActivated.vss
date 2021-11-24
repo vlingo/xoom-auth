@@ -1,0 +1,6 @@
+event UserActivated {
+  version semanticVersion
+  string id
+  string tenantId
+  string username
+}

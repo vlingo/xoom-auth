@@ -31,10 +31,17 @@
     <url>http://github.com/vlingo/xoom-auth/tree/master</url>
   </scm>
   <properties>
+    <jdk.version>1.8</jdk.version>
+    <maven.compiler.target>${jdk.version}</maven.compiler.target>
+    <maven.compiler.source>${jdk.version}</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <exec.mainClass>io.vlingo.xoom.auth.infrastructure.XoomInitializer</exec.mainClass>
+    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+    <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+    <vlingo.xoom.version>1.9.1-SNAPSHOT</vlingo.xoom.version>
     <graalvm.version>21.1.0</graalvm.version>
+    <junit-jupiter.version>5.8.1</junit-jupiter.version>
   </properties>
   <build>
     <plugins>
@@ -75,36 +82,322 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>io.vlingo.xoom</groupId>
+        <artifactId>xoom-build-plugins</artifactId>
+        <version>${vlingo.xoom.version}</version>
+        <executions>
+
+          <execution>
+            <id>push</id>
+            <!-- Run to push the schema to schemata: `mvn io.vlingo.xoom:xoom-build-plugins:push-schema@push` -->
+            <!-- Uncomment the following line to automatically push the schema during `mvn deploy`: -->
+            <!-- <phase>deploy</phase> -->
+            <goals>
+              <goal>push-schema</goal>
+            </goals>
+            <configuration>
+              <srcDirectory>${basedir}/src/main/vlingo/schemata</srcDirectory>
+              <schemataService>
+                <url>http://xoom-schemata:9019</url>
+                <clientOrganization>vlingo</clientOrganization>
+                <clientUnit>xoom</clientUnit>
+                <hierarchicalCascade>true</hierarchicalCascade>
+                <skipPrompt>true</skipPrompt>
+              </schemataService>
+              <schemata>
+                <schema>
+                  <ref>vlingo:xoom:auth:Credential:1.0.0</ref>
+                  <src>Credential.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:PersonName:1.0.0</ref>
+                  <src>PersonName.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:Constraint:1.0.0</ref>
+                  <src>Constraint.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:Profile:1.0.0</ref>
+                  <src>Profile.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:RoleProvisioned:1.0.0</ref>
+                  <src>RoleProvisioned.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:RoleDescriptionChanged:1.0.0</ref>
+                  <src>RoleDescriptionChanged.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupAssignedToRole:1.0.0</ref>
+                  <src>GroupAssignedToRole.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupUnassignedFromRole:1.0.0</ref>
+                  <src>GroupUnassignedFromRole.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserUnassignedFromRole:1.0.0</ref>
+                  <src>UserUnassignedFromRole.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserAssignedToRole:1.0.0</ref>
+                  <src>UserAssignedToRole.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:RolePermissionAttached:1.0.0</ref>
+                  <src>RolePermissionAttached.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:RolePermissionDetached:1.0.0</ref>
+                  <src>RolePermissionDetached.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:TenantActivated:1.0.0</ref>
+                  <src>TenantActivated.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:TenantDeactivated:1.0.0</ref>
+                  <src>TenantDeactivated.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:TenantDescriptionChanged:1.0.0</ref>
+                  <src>TenantDescriptionChanged.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:TenantNameChanged:1.0.0</ref>
+                  <src>TenantNameChanged.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:TenantSubscribed:1.0.0</ref>
+                  <src>TenantSubscribed.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupProvisioned:1.0.0</ref>
+                  <src>GroupProvisioned.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupDescriptionChanged:1.0.0</ref>
+                  <src>GroupDescriptionChanged.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupAssignedToGroup:1.0.0</ref>
+                  <src>GroupAssignedToGroup.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:GroupUnassignedFromGroup:1.0.0</ref>
+                  <src>GroupUnassignedFromGroup.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserAssignedToGroup:1.0.0</ref>
+                  <src>UserAssignedToGroup.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserUnassignedFromGroup:1.0.0</ref>
+                  <src>UserUnassignedFromGroup.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserRegistered:1.0.0</ref>
+                  <src>UserRegistered.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserActivated:1.0.0</ref>
+                  <src>UserActivated.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserDeactivated:1.0.0</ref>
+                  <src>UserDeactivated.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserCredentialAdded:1.0.0</ref>
+                  <src>UserCredentialAdded.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserCredentialRemoved:1.0.0</ref>
+                  <src>UserCredentialRemoved.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserCredentialReplaced:1.0.0</ref>
+                  <src>UserCredentialReplaced.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:UserProfileReplaced:1.0.0</ref>
+                  <src>UserProfileReplaced.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:PermissionProvisioned:1.0.0</ref>
+                  <src>PermissionProvisioned.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:PermissionConstraintEnforced:1.0.0</ref>
+                  <src>PermissionConstraintEnforced.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:PermissionConstraintReplacementEnforced:1.0.0</ref>
+                  <src>PermissionConstraintReplacementEnforced.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:PermissionConstraintForgotten:1.0.0</ref>
+                  <src>PermissionConstraintForgotten.vss</src>
+                </schema>
+                <schema>
+                  <ref>vlingo:xoom:auth:PermissionDescriptionChanged:1.0.0</ref>
+                  <src>PermissionDescriptionChanged.vss</src>
+                </schema>
+              </schemata>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>pull</id>
+            <goals>
+              <goal>pull-schema</goal>
+            </goals>
+            <configuration>
+              <schemataService>
+                <url>http://xoom-schemata:9019</url>
+                <clientOrganization>Inform the client organization</clientOrganization>
+                <clientUnit>Inform the client unit</clientUnit>
+              </schemataService>
+              <schemata>
+              </schemata>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>${exec.mainClass}</mainClass>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                  <resource>.SF</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                  <resource>.DSA</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                  <resource>.RSA</resource>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <configuration>
+          <executable>java</executable>
+          <arguments>
+            <argument>-classpath</argument>
+            <classpath />
+            <argument>-noverify</argument>
+            <argument>-XX:TieredStopAtLevel=1</argument>
+            <argument>-Dcom.sun.management.jmxremote</argument>
+            <argument>${exec.mainClass}</argument>
+          </arguments>
+        </configuration>
+      </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+          <configuration>
+            <detail>true</detail>
+            <includes>
+              <include>%regex[.*]</include>
+            </includes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-failsafe-plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.7.0</version>
+          <configuration>
+            <compilerArgs>
+              <arg>-parameters</arg>
+            </compilerArgs>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>io.vlingo.xoom</groupId>
+                <artifactId>xoom-turbo</artifactId>
+                <version>${vlingo.xoom.version}</version>
+              </path>
+            </annotationProcessorPaths>
+          </configuration>
+          <executions>
+            <execution>
+              <id>test-compile</id>
+              <goals>
+                <goal>testCompile</goal>
+              </goals>
+              <configuration>
+                <compilerArgs>
+                  <arg>-parameters</arg>
+                </compilerArgs>
+                <annotationProcessorPaths>
+                  <path>
+                    <groupId>io.vlingo.xoom</groupId>
+                    <artifactId>xoom-turbo</artifactId>
+                    <version>${vlingo.xoom.version}</version>
+                  </path>
+                </annotationProcessorPaths>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
-      <scope>test</scope>
+      <groupId>io.vlingo.xoom</groupId>
+      <artifactId>xoom-turbo</artifactId>
+      <version>${vlingo.xoom.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.vlingo.xoom</groupId>
-      <artifactId>xoom-actors</artifactId>
-      <version>1.9.1-SNAPSHOT</version>
+      <artifactId>xoom-build-plugins</artifactId>
+      <version>${vlingo.xoom.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.vlingo.xoom</groupId>
-      <artifactId>xoom-cluster</artifactId>
-      <version>1.9.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.vlingo.xoom</groupId>
-      <artifactId>xoom-http</artifactId>
-      <version>1.9.1-SNAPSHOT</version>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna</artifactId>
+      <version>5.9.0</version>
     </dependency>
     <dependency>
       <groupId>org.graalvm.sdk</groupId>
@@ -112,20 +405,48 @@
       <version>${graalvm.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>4.4.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <repositories>
     <repository>
       <id>ossrh-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>ossrh-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 
   <profiles>
     <profile>

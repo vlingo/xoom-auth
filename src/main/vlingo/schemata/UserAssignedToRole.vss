@@ -1,0 +1,6 @@
+event UserAssignedToRole {
+  version semanticVersion
+  string id
+  string tenantId
+  string name
+}
