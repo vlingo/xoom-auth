@@ -13,7 +13,7 @@ Docs: https://docs.vlingo.io/xoom-auth
     <dependency>
       <groupId>io.vlingo.xoom</groupId>
       <artifactId>xoom-auth</artifactId>
-      <version>1.10.1</version>
+      <version>1.11.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -21,7 +21,7 @@ Docs: https://docs.vlingo.io/xoom-auth
 
 ```gradle
 dependencies {
-    compile 'io.vlingo.xoom:xoom-auth:1.10.1'
+    compile 'io.vlingo.xoom:xoom-auth:1.11.0'
 }
 ```
 
